@@ -30,7 +30,7 @@
 	</action>
 
 	<!-- Custom hotspot styles - arrow navigation with tooltip -->
-	<style name="hotspot_nav" url="skin/hotspot_arrow.png" edge="center" distorted="true"
+	<style name="hotspot_nav" url="skin/hotspot_arrow.png" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
 	       depth="1000" scale="0.22"
@@ -45,7 +45,7 @@
 		);
 	</action>
 
-	<style name="hotspot_info" url="skin/hotspot_info.svg" edge="center" distorted="true"
+	<style name="hotspot_info" url="skin/hotspot_info.svg" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
 	       depth="1000" scale="0.55"
