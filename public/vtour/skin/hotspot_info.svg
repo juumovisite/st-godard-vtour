@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <circle cx="40" cy="40" r="28" fill="rgba(255,255,255,0.9)" filter="url(#shadow)"/>
+  <text x="40" y="48" text-anchor="middle" font-family="Georgia, serif" font-size="28" font-style="italic" font-weight="600" fill="#2D3E50">i</text>
+</svg>
