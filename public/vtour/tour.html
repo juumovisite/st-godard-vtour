@@ -36,6 +36,28 @@
         window.showInfoPoint = function(infoId) {
             window.parent.postMessage({action: "showinfo", id: infoId}, "*");
         };
+
+        // Hide ALL overlaid elements inside the krpano container
+        var hideAttempts = 0;
+        var hideInterval = setInterval(function() {
+            // Find the krpano container div and hide any child divs that are overlays
+            var container = document.getElementById("krpanoSWFObject");
+            if (container) {
+                var children = container.parentElement.querySelectorAll('div');
+                for (var i = 0; i < children.length; i++) {
+                    var el = children[i];
+                    // Skip the main krpano element and its direct rendering
+                    if (el.id === 'krpanoSWFObject' || el.parentElement.id === 'krpanoSWFObject') continue;
+                    var s = el.style;
+                    // Find small positioned overlay elements (compass, buttons)
+                    if (s && s.position === 'absolute' && el.offsetWidth < 100 && el.offsetHeight < 100 && el.offsetTop > (window.innerHeight - 100)) {
+                        el.style.display = 'none';
+                    }
+                }
+            }
+            hideAttempts++;
+            if (hideAttempts > 30) clearInterval(hideInterval);
+        }, 300);
     </script>
     <script>
         window.addEventListener("message", function(e) {
