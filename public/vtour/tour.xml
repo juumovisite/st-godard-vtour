@@ -30,7 +30,7 @@
 	</action>
 
 	<!-- Custom hotspot styles - arrow navigation with tooltip -->
-	<style name="hotspot_nav" url="skin/hotspot_arrow.svg" edge="center" distorted="true"
+	<style name="hotspot_nav" url="skin/hotspot_arrow.png" edge="center" distorted="true"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
 	       depth="1000" scale="0.45"
@@ -39,18 +39,9 @@
 	       onout.addevent="tween(scale,0.45,0.3,easeOutQuad);"
 	       />
 
-	<style name="skin_tooltips" type="text" bg="true" bgcolor="0x2D3E50" bgalpha="0.9"
-	       bgroundedge="8" padding="8 14" bgborder="0"
-	       bgshadow="0 3 10 0x000000 0.3"
-	       css="color:#FFFFFF; font-family:Inter,sans-serif; font-size:12px; font-weight:600; letter-spacing:0.5px;"
-	       edge="bottom" oy="-10" enabled="false"
-	       alpha="0" onover.parent="tween(alpha,1,0.2);" onout.parent="tween(alpha,0,0.2);"
-	       />
-
 	<action name="hotspot_arrow_setup" scope="local">
 		if(isvalue(caller.linkedscene) AND caller.linkedscene != 'scene_taginfo',
 			copy(caller.tooltip, scene[get(caller.linkedscene)].title);
-			caller.loadstyle(skin_tooltips);
 		);
 	</action>
 
@@ -74,7 +65,7 @@
 	               thumbs_opened="false"
 	               tooltips_buttons="false"
 	               tooltips_thumbs="false"
-	               tooltips_hotspots="false"
+	               tooltips_hotspots="true"
 	               tooltips_mapspots="false"
 	               deeplinking="false"
 	               loadscene_flags="MERGE"
