@@ -81,6 +81,28 @@
           "label": "Ordre d'affichage",
           "placeholder": "1"
         }
+      },
+      "description_longue": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description détaillée",
+          "placeholder": "Paragraphe détaillé sur l'histoire et les éléments remarquables...",
+          "multi": "paragraph,strong,em,hyperlink,list-item"
+        }
+      },
+      "audio_url": {
+        "type": "Text",
+        "config": {
+          "label": "URL Audio",
+          "placeholder": "https://example.com/audio.mp3"
+        }
+      },
+      "video_url": {
+        "type": "Text",
+        "config": {
+          "label": "URL Vidéo (Vimeo/YouTube)",
+          "placeholder": "https://vimeo.com/123456789"
+        }
       }
     }
   },

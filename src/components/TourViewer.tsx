@@ -13,6 +13,9 @@ interface SceneData {
     style_architectural?: string;
     element_remarquable?: string;
     ordre?: number;
+    description_longue?: { text: string }[];
+    audio_url?: string;
+    video_url?: string;
   };
 }
 
@@ -41,7 +44,11 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   );
   const [showHistoire, setShowHistoire] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
+  const [showAudio, setShowAudio] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const currentIndex = sortedScenes.findIndex(
     (s) => s.data.nom_scene_krpano === activeScene
@@ -54,6 +61,10 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       if (event.data?.action === "scenechanged" && event.data.scene) {
         setActiveScene(event.data.scene);
         setShowHistoire(false);
+        setShowDetailedInfo(false);
+        setShowAudio(false);
+        setShowVideo(false);
+        if (audioRef.current) audioRef.current.pause();
       }
     };
     window.addEventListener("message", handleMessage);
@@ -63,6 +74,10 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   const changeScene = (sceneName: string) => {
     setActiveScene(sceneName);
     setShowHistoire(false);
+    setShowDetailedInfo(false);
+    setShowAudio(false);
+    setShowVideo(false);
+    if (audioRef.current) audioRef.current.pause();
     setShowMenu(false);
     iframeRef.current?.contentWindow?.postMessage(
       { action: "loadscene", scene: sceneName },
@@ -215,13 +230,14 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       {showHistoire && currentScene && (
         <div style={{
           position: "absolute", left: 36, bottom: 120, zIndex: 15,
-          width: 380, borderRadius: 24,
+          width: 380, maxHeight: "60vh", overflowY: "auto",
+          borderRadius: 24,
           background: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(20px)",
           boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
           padding: "28px 24px",
         }}>
-          <button onClick={() => setShowHistoire(false)} style={{
+          <button onClick={() => { setShowHistoire(false); setShowDetailedInfo(false); setShowAudio(false); if (audioRef.current) audioRef.current.pause(); }} style={{
             position: "absolute", top: 14, right: 16,
             background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#999",
           }}>✕</button>
@@ -234,7 +250,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
 
           <h2 style={{
             fontSize: 26, fontWeight: 700, color: "#1a2332", margin: "8px 0 12px",
-            fontFamily: "'Playfair Display', serif", lineHeight: 1.15,
+            fontFamily: "'Cormorant Garamond', serif", lineHeight: 1.15,
           }}>
             {currentScene.data.title}
           </h2>
@@ -245,19 +261,74 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             </p>
           )}
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {currentScene.data.epoque && (
-              <InfoCard label="Époque" value={currentScene.data.epoque} />
-            )}
-            {currentScene.data.style_architectural && (
-              <InfoCard label="Style" value={currentScene.data.style_architectural} />
-            )}
-            {currentScene.data.element_remarquable && (
-              <InfoCard label="À voir" value={currentScene.data.element_remarquable} />
-            )}
-            {currentScene.data.categorie && (
-              <InfoCard label="Zone" value={currentScene.data.categorie} />
-            )}
+          {/* Detailed info expanded */}
+          {showDetailedInfo && currentScene.data.description_longue?.[0]?.text && (
+            <div style={{ marginBottom: 20, padding: "16px", background: "rgba(45,62,80,0.04)", borderRadius: 14 }}>
+              {currentScene.data.description_longue.map((p, i) => (
+                <p key={i} style={{ fontSize: 13, lineHeight: 1.7, color: "#3a4a5a", margin: i > 0 ? "10px 0 0" : 0 }}>
+                  {p.text}
+                </p>
+              ))}
+            </div>
+          )}
+
+          {/* Audio player expanded */}
+          {showAudio && currentScene.data.audio_url && (
+            <div style={{ marginBottom: 20 }}>
+              <audio ref={audioRef} controls autoPlay style={{ width: "100%", borderRadius: 12 }} src={currentScene.data.audio_url} />
+            </div>
+          )}
+
+          {/* 3 action buttons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <ActionButton
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>}
+              label="Voir plus d'info"
+              onClick={() => setShowDetailedInfo(!showDetailedInfo)}
+              active={showDetailedInfo}
+              visible={!!currentScene.data.description_longue?.[0]?.text}
+            />
+            <ActionButton
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>}
+              label="Découvrir l'audio"
+              onClick={() => { setShowAudio(!showAudio); if (showAudio && audioRef.current) audioRef.current.pause(); }}
+              active={showAudio}
+              visible={!!currentScene.data.audio_url}
+            />
+            <ActionButton
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>}
+              label="Découvrir en vidéo"
+              onClick={() => setShowVideo(true)}
+              visible={!!currentScene.data.video_url}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Video modal overlay */}
+      {showVideo && currentScene?.data.video_url && (
+        <div
+          style={{
+            position: "absolute", inset: 0, zIndex: 30,
+            background: "rgba(0,0,0,0.85)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+          onClick={() => setShowVideo(false)}
+        >
+          <div style={{ position: "relative", width: "80%", maxWidth: 800, aspectRatio: "16/9" }} onClick={(e) => e.stopPropagation()}>
+            <iframe
+              src={getEmbedUrl(currentScene.data.video_url)}
+              width="100%"
+              height="100%"
+              style={{ border: "none", borderRadius: 16 }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+            />
+            <button onClick={() => setShowVideo(false)} style={{
+              position: "absolute", top: -40, right: 0,
+              background: "none", border: "none", color: "white",
+              fontSize: 28, cursor: "pointer",
+            }}>✕</button>
           </div>
         </div>
       )}
@@ -335,18 +406,36 @@ function NavButton({ icon, label, onClick, active }: {
   );
 }
 
-function InfoCard({ label, value }: { label: string; value: string }) {
+function ActionButton({ icon, label, onClick, active, visible }: {
+  icon: React.ReactNode; label: string; onClick: () => void; active?: boolean; visible?: boolean;
+}) {
+  if (visible === false) return null;
   return (
-    <div style={{
-      background: "rgba(45,62,80,0.04)", border: "1px solid rgba(45,62,80,0.08)",
-      borderRadius: 14, padding: 14, textAlign: "center",
-    }}>
-      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.8, color: "#2D3E50", textTransform: "uppercase", marginBottom: 4 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 13, fontWeight: 700, color: "#1a2332" }}>
-        {value}
-      </div>
-    </div>
+    <button
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", gap: 14,
+        padding: "14px 18px", border: "none", borderRadius: 14,
+        background: active ? "#2D3E50" : "rgba(45,62,80,0.06)",
+        color: active ? "white" : "#2D3E50",
+        cursor: "pointer", fontFamily: "'Inter', sans-serif",
+        fontSize: 13, fontWeight: 600, textAlign: "left",
+        transition: "all 0.25s ease",
+        width: "100%",
+      }}
+    >
+      <span style={{ flexShrink: 0, opacity: 0.8 }}>{icon}</span>
+      {label}
+    </button>
   );
+}
+
+function getEmbedUrl(url: string): string {
+  // Vimeo
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+  // YouTube
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+  return url;
 }
