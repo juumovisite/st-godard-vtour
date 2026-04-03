@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 
 interface SceneData {
   id: string;
@@ -16,7 +16,6 @@ interface SceneData {
   };
 }
 
-// Scènes par défaut si Prismic n'est pas encore configuré
 const DEFAULT_SCENES: SceneData[] = [
   { id: "1", data: { title: "Parvis Entrée", nom_scene_krpano: "scene_parvis_entree", categorie: "Extérieur", ordre: 1 } },
   { id: "2", data: { title: "Entrée", nom_scene_krpano: "scene_entree", categorie: "Intérieur", ordre: 2 } },
@@ -30,40 +29,31 @@ const DEFAULT_SCENES: SceneData[] = [
   { id: "10", data: { title: "Vue Donjon", nom_scene_krpano: "scene_vue_donjon", categorie: "Extérieur", ordre: 10 } },
 ];
 
-const CATEGORIES = [
-  { id: "all", label: "Tout", icon: "⊞" },
-  { id: "Extérieur", label: "Extérieur", icon: "☀" },
-  { id: "Intérieur", label: "Intérieur", icon: "⛪" },
-  { id: "Crypte", label: "Crypte", icon: "🕳" },
-];
-
 export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   const allScenes = scenes.length > 0 ? scenes : DEFAULT_SCENES;
-  const sortedScenes = [...allScenes].sort(
-    (a, b) => (a.data.ordre || 99) - (b.data.ordre || 99)
+  const sortedScenes = useMemo(
+    () => [...allScenes].sort((a, b) => (a.data.ordre || 99) - (b.data.ordre || 99)),
+    [allScenes]
   );
 
   const [activeScene, setActiveScene] = useState(
     sortedScenes[0]?.data?.nom_scene_krpano || "scene_parvis_entree"
   );
-  const [showFiche, setShowFiche] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [showHistoire, setShowHistoire] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const currentScene = sortedScenes.find(
+  const currentIndex = sortedScenes.findIndex(
     (s) => s.data.nom_scene_krpano === activeScene
   );
-
-  const filteredScenes =
-    activeCategory === "all"
-      ? sortedScenes
-      : sortedScenes.filter((s) => s.data.categorie === activeCategory);
+  const currentScene = sortedScenes[currentIndex];
+  const totalScenes = sortedScenes.length;
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.action === "scenechanged" && event.data.scene) {
         setActiveScene(event.data.scene);
-        setShowFiche(false);
+        setShowHistoire(false);
       }
     };
     window.addEventListener("message", handleMessage);
@@ -72,30 +62,27 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
 
   const changeScene = (sceneName: string) => {
     setActiveScene(sceneName);
-    setShowFiche(false);
-    const iframe = iframeRef.current;
-    if (iframe?.contentWindow) {
-      iframe.contentWindow.postMessage(
-        { action: "loadscene", scene: sceneName },
-        "*"
-      );
-    }
+    setShowHistoire(false);
+    setShowMenu(false);
+    iframeRef.current?.contentWindow?.postMessage(
+      { action: "loadscene", scene: sceneName },
+      "*"
+    );
+  };
+
+  const goNext = () => {
+    const next = (currentIndex + 1) % totalScenes;
+    changeScene(sortedScenes[next].data.nom_scene_krpano!);
+  };
+
+  const goPrev = () => {
+    const prev = (currentIndex - 1 + totalScenes) % totalScenes;
+    changeScene(sortedScenes[prev].data.nom_scene_krpano!);
   };
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        position: "relative",
-        overflow: "hidden",
-        fontFamily: "'Inter', 'Segoe UI', sans-serif",
-      }}
-    >
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
+    <div style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden", fontFamily: "'Inter', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
       {/* KRPano iframe */}
       <iframe
@@ -108,454 +95,264 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         title="Visite virtuelle Cathédrale St Godard"
       />
 
-      {/* Cadre décoratif */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 12,
-          border: "2px solid rgba(255,255,255,0.12)",
+      {/* Vignette overlay for text readability */}
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
+        background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.3) 100%)",
+      }} />
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
+        background: "linear-gradient(90deg, rgba(0,0,0,0.35) 0%, transparent 40%)",
+      }} />
+
+      {/* Top left — Step counter + Scene title + Description */}
+      <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500, pointerEvents: "none" }}>
+        <div style={{
+          display: "inline-block",
+          padding: "6px 16px",
           borderRadius: 20,
-          pointerEvents: "none",
-          zIndex: 5,
-        }}
-      />
+          background: "rgba(255,255,255,0.15)",
+          backdropFilter: "blur(8px)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          marginBottom: 20,
+        }}>
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: 2, color: "rgba(255,255,255,0.9)", textTransform: "uppercase" }}>
+            Étape {currentIndex + 1} sur {totalScenes}
+          </span>
+        </div>
 
-      {/* Titre en haut à gauche */}
-      <div
-        style={{
-          position: "absolute",
-          top: 24,
-          left: 24,
-          zIndex: 10,
-          pointerEvents: "none",
-        }}
-      >
-        <h1
-          style={{
-            margin: 0,
-            fontSize: 18,
-            fontWeight: 800,
-            color: "white",
-            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-            letterSpacing: 0.5,
-            fontFamily: "'Inter', sans-serif",
-          }}
-        >
-          Cathédrale St Godard
+        <h1 style={{
+          margin: 0, fontSize: 44, fontWeight: 700, color: "white",
+          fontFamily: "'Playfair Display', serif",
+          lineHeight: 1.1, textShadow: "0 2px 20px rgba(0,0,0,0.4)",
+        }}>
+          {currentScene?.data.title || ""}
         </h1>
-        <p
-          style={{
-            margin: "4px 0 0",
-            fontSize: 11,
-            color: "rgba(255,255,255,0.7)",
-            textShadow: "0 1px 4px rgba(0,0,0,0.4)",
-            letterSpacing: 2,
-            textTransform: "uppercase",
-            fontWeight: 500,
-          }}
-        >
-          Visite virtuelle 360°
-        </p>
+
+        {currentScene?.data.description?.[0]?.text && (
+          <p style={{
+            margin: "16px 0 0", fontSize: 15, lineHeight: 1.6,
+            color: "rgba(255,255,255,0.8)",
+            textShadow: "0 1px 8px rgba(0,0,0,0.3)",
+            maxWidth: 420,
+          }}>
+            {currentScene.data.description[0].text}
+          </p>
+        )}
       </div>
 
-      {/* Menu catégories à gauche */}
-      <div
-        style={{
-          position: "absolute",
-          left: 24,
-          top: "50%",
-          transform: "translateY(-50%)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 6,
-          zIndex: 10,
-        }}
-      >
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.id)}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 6,
-              padding: "14px 16px",
-              background:
-                activeCategory === cat.id
-                  ? "rgba(255,255,255,0.95)"
-                  : "rgba(255,255,255,0.75)",
-              color:
-                activeCategory === cat.id ? "#2d1810" : "#6b7b8a",
-              border: "none",
-              borderRadius: 16,
-              cursor: "pointer",
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: 1.5,
-              textTransform: "uppercase",
-              minWidth: 72,
-              boxShadow:
-                activeCategory === cat.id
-                  ? "0 4px 16px rgba(0,0,0,0.15)"
-                  : "0 2px 8px rgba(0,0,0,0.08)",
-              transition: "all 0.3s ease",
-              fontFamily: "'Inter', sans-serif",
-            }}
-          >
-            <span style={{ fontSize: 20, opacity: 0.7 }}>{cat.icon}</span>
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Bouton info en haut à droite */}
-      {!showFiche && (
+      {/* Top right — FR + Menu */}
+      <div style={{ position: "absolute", top: 32, right: 36, zIndex: 10, display: "flex", gap: 10, alignItems: "center" }}>
+        <button style={{
+          width: 42, height: 42, borderRadius: "50%",
+          background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          color: "white", fontSize: 13, fontWeight: 600,
+          cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Inter', sans-serif",
+        }}>
+          FR
+        </button>
         <button
-          onClick={() => setShowFiche(true)}
+          onClick={() => { setShowMenu(!showMenu); setShowHistoire(false); }}
           style={{
-            position: "absolute",
-            top: 24,
-            right: 24,
-            width: 48,
-            height: 48,
-            borderRadius: 16,
-            background: "rgba(255,255,255,0.9)",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-            backdropFilter: "blur(10px)",
-            zIndex: 10,
-            fontSize: 22,
-            color: "#8B4513",
-            fontWeight: 700,
-            fontFamily: "'Inter', sans-serif",
+            width: 42, height: 42, borderRadius: "50%",
+            background: showMenu ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            color: showMenu ? "#2D3E50" : "white",
+            fontSize: 20, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
             transition: "all 0.3s ease",
           }}
         >
-          i
+          {showMenu ? "✕" : "≡"}
         </button>
-      )}
+      </div>
 
-      {/* Fiche descriptive */}
-      {showFiche && currentScene && (
-        <div
-          style={{
-            position: "absolute",
-            right: 30,
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 380,
-            maxHeight: "80vh",
-            overflowY: "auto",
-            borderRadius: 24,
-            overflow: "hidden",
-            background: "rgba(255, 255, 255, 0.92)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.3)",
-            zIndex: 10,
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background:
-                "linear-gradient(180deg, rgba(139, 69, 19, 0.12) 0%, rgba(139, 69, 19, 0.04) 30%, rgba(255, 255, 255, 0.95) 50%)",
-              zIndex: 0,
-            }}
-          />
-
-          <div style={{ position: "relative", zIndex: 1, padding: "28px 24px 24px" }}>
-            <button
-              onClick={() => setShowFiche(false)}
-              style={{
-                position: "absolute",
-                top: 16,
-                right: 18,
-                background: "none",
-                border: "none",
-                fontSize: 18,
-                cursor: "pointer",
-                color: "#999",
-                lineHeight: 1,
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              ✕
-            </button>
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 16,
-              }}
-            >
-              {currentScene.data.categorie && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: 1.5,
-                    color: "#8B4513",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {currentScene.data.categorie}
-                </span>
-              )}
-              {currentScene.data.badge && (
-                <span
-                  style={{
-                    background: "#8B4513",
-                    color: "white",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    letterSpacing: 1,
-                    padding: "6px 14px",
-                    borderRadius: 20,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {currentScene.data.badge}
-                </span>
-              )}
-            </div>
-
-            <h2
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: "#1a2332",
-                marginBottom: 14,
-                lineHeight: 1.15,
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              {currentScene.data.title}
-            </h2>
-
-            {currentScene.data.description?.[0]?.text && (
-              <p
-                style={{
-                  fontSize: 13.5,
-                  lineHeight: 1.65,
-                  color: "#5a6577",
-                  marginBottom: 24,
-                }}
-              >
-                {currentScene.data.description[0].text}
-              </p>
-            )}
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 12,
-                marginBottom: 24,
-              }}
-            >
-              {currentScene.data.epoque && (
-                <InfoCard
-                  icon="🕰️"
-                  label="Époque"
-                  value={currentScene.data.epoque}
-                />
-              )}
-              {currentScene.data.style_architectural && (
-                <InfoCard
-                  icon="🏛️"
-                  label="Style"
-                  value={currentScene.data.style_architectural}
-                />
-              )}
-              {currentScene.data.element_remarquable && (
-                <InfoCard
-                  icon="✨"
-                  label="À voir"
-                  value={currentScene.data.element_remarquable}
-                />
-              )}
-              {currentScene.data.categorie && (
-                <InfoCard
-                  icon="📍"
-                  label="Zone"
-                  value={currentScene.data.categorie}
-                />
-              )}
-            </div>
-
-            <button
-              onClick={() => setShowFiche(false)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                width: "100%",
-                padding: 16,
-                border: "none",
-                borderRadius: 16,
-                background: "linear-gradient(135deg, #8B4513, #A0522D)",
-                color: "white",
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 13,
-                fontWeight: 700,
-                letterSpacing: 1.5,
-                textTransform: "uppercase",
-                cursor: "pointer",
-                boxShadow: "0 4px 15px rgba(139, 69, 19, 0.35)",
-              }}
-            >
-              Continuer la visite →
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Barre de navigation en bas */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 28,
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 10,
-          textAlign: "center",
-          maxWidth: "calc(100vw - 200px)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 12,
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              height: 1,
-              background: "rgba(255,255,255,0.4)",
-            }}
-          />
-          <p
-            style={{
-              color: "rgba(255,255,255,0.8)",
-              fontSize: 10,
-              letterSpacing: 4,
-              textTransform: "uppercase",
-              margin: 0,
-              textShadow: "0 1px 3px rgba(0,0,0,0.3)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Explorez à 360°
-          </p>
-          <div
-            style={{
-              flex: 1,
-              height: 1,
-              background: "rgba(255,255,255,0.4)",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            gap: 0,
-            background: "rgba(255,252,248,0.92)",
-            borderRadius: 16,
-            overflow: "hidden",
-            overflowX: "auto",
-            backdropFilter: "blur(12px)",
-            boxShadow: "0 6px 24px rgba(0,0,0,0.12)",
-            padding: "4px 8px",
-            maxWidth: "100%",
-          }}
-        >
-          {filteredScenes.map((scene) => (
+      {/* Menu overlay */}
+      {showMenu && (
+        <div style={{
+          position: "absolute", top: 86, right: 36, zIndex: 20,
+          width: 300, maxHeight: "70vh", overflowY: "auto",
+          borderRadius: 20,
+          background: "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(20px)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+          padding: "8px 0",
+        }}>
+          {sortedScenes.map((scene, i) => (
             <button
               key={scene.id}
               onClick={() => changeScene(scene.data.nom_scene_krpano!)}
               style={{
-                padding: "10px 20px",
-                border: "none",
-                background: "transparent",
-                color:
-                  activeScene === scene.data.nom_scene_krpano
-                    ? "#8B4513"
-                    : "#6b7580",
-                fontSize: 13,
-                fontWeight:
-                  activeScene === scene.data.nom_scene_krpano ? 700 : 500,
-                cursor: "pointer",
-                letterSpacing: 0.3,
-                transition: "all 0.3s ease",
-                whiteSpace: "nowrap",
-                borderBottom:
-                  activeScene === scene.data.nom_scene_krpano
-                    ? "2px solid #8B4513"
-                    : "2px solid transparent",
-                paddingBottom: 8,
+                display: "flex", alignItems: "center", gap: 12,
+                width: "100%", padding: "14px 20px",
+                border: "none", background: activeScene === scene.data.nom_scene_krpano ? "rgba(45,62,80,0.08)" : "transparent",
+                cursor: "pointer", textAlign: "left",
+                transition: "background 0.2s ease",
                 fontFamily: "'Inter', sans-serif",
-                flexShrink: 0,
               }}
             >
-              {scene.data.title}
+              <span style={{
+                width: 28, height: 28, borderRadius: "50%",
+                background: activeScene === scene.data.nom_scene_krpano ? "#2D3E50" : "rgba(45,62,80,0.1)",
+                color: activeScene === scene.data.nom_scene_krpano ? "white" : "#2D3E50",
+                fontSize: 11, fontWeight: 700,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                {i + 1}
+              </span>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: activeScene === scene.data.nom_scene_krpano ? 700 : 500, color: "#1a2332" }}>
+                  {scene.data.title}
+                </div>
+                {scene.data.categorie && (
+                  <div style={{ fontSize: 11, color: "#8a8a8a", marginTop: 2 }}>
+                    {scene.data.categorie}
+                  </div>
+                )}
+              </div>
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Histoire panel */}
+      {showHistoire && currentScene && (
+        <div style={{
+          position: "absolute", left: 36, bottom: 120, zIndex: 15,
+          width: 380, borderRadius: 24,
+          background: "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(20px)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+          padding: "28px 24px",
+        }}>
+          <button onClick={() => setShowHistoire(false)} style={{
+            position: "absolute", top: 14, right: 16,
+            background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#999",
+          }}>✕</button>
+
+          {currentScene.data.categorie && (
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#2D3E50", textTransform: "uppercase" }}>
+              {currentScene.data.categorie}
+            </span>
+          )}
+
+          <h2 style={{
+            fontSize: 26, fontWeight: 700, color: "#1a2332", margin: "8px 0 12px",
+            fontFamily: "'Playfair Display', serif", lineHeight: 1.15,
+          }}>
+            {currentScene.data.title}
+          </h2>
+
+          {currentScene.data.description?.[0]?.text && (
+            <p style={{ fontSize: 14, lineHeight: 1.65, color: "#5a6577", marginBottom: 20 }}>
+              {currentScene.data.description[0].text}
+            </p>
+          )}
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {currentScene.data.epoque && (
+              <InfoCard label="Époque" value={currentScene.data.epoque} />
+            )}
+            {currentScene.data.style_architectural && (
+              <InfoCard label="Style" value={currentScene.data.style_architectural} />
+            )}
+            {currentScene.data.element_remarquable && (
+              <InfoCard label="À voir" value={currentScene.data.element_remarquable} />
+            )}
+            {currentScene.data.categorie && (
+              <InfoCard label="Zone" value={currentScene.data.categorie} />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Bottom navigation bar */}
+      <div style={{
+        position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", zIndex: 10,
+      }}>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 0,
+          background: "rgba(255,252,248,0.88)",
+          backdropFilter: "blur(16px)",
+          borderRadius: 28,
+          padding: "6px 8px",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+        }}>
+          {/* Précédent */}
+          <NavButton icon="←" label="Précédent" onClick={goPrev} />
+
+          {/* Explorer */}
+          <button
+            onClick={() => { setShowHistoire(false); setShowMenu(false); }}
+            style={{
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+              padding: "14px 28px", border: "none", borderRadius: 22,
+              background: "#2D3E50", color: "white",
+              cursor: "pointer", fontFamily: "'Inter', sans-serif",
+              fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase",
+              boxShadow: "0 4px 16px rgba(45,62,80,0.4)",
+              transition: "all 0.3s ease",
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" />
+            </svg>
+            Explorer
+          </button>
+
+          {/* Histoire */}
+          <NavButton
+            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>}
+            label="Histoire"
+            onClick={() => { setShowHistoire(!showHistoire); setShowMenu(false); }}
+            active={showHistoire}
+          />
+
+          {/* Suivant */}
+          <NavButton icon="→" label="Suivant" onClick={goNext} />
         </div>
       </div>
     </div>
   );
 }
 
-function InfoCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: string;
-  label: string;
-  value: string;
+function NavButton({ icon, label, onClick, active }: {
+  icon: React.ReactNode; label: string; onClick: () => void; active?: boolean;
 }) {
   return (
-    <div
+    <button
+      onClick={onClick}
       style={{
-        background: "rgba(255, 255, 255, 0.85)",
-        border: "1px solid rgba(0, 0, 0, 0.06)",
-        borderRadius: 16,
-        padding: 16,
-        textAlign: "center",
-        backdropFilter: "blur(10px)",
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+        padding: "12px 20px", border: "none", borderRadius: 18,
+        background: active ? "rgba(45,62,80,0.1)" : "transparent",
+        color: active ? "#2D3E50" : "#6b7580",
+        cursor: "pointer", fontFamily: "'Inter', sans-serif",
+        fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase",
+        transition: "all 0.3s ease",
       }}
     >
-      <div style={{ fontSize: 20, marginBottom: 6 }}>{icon}</div>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 600,
-          letterSpacing: 0.8,
-          color: "#8B4513",
-          textTransform: "uppercase",
-          marginBottom: 4,
-        }}
-      >
+      <span style={{ fontSize: 18 }}>{icon}</span>
+      {label}
+    </button>
+  );
+}
+
+function InfoCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{
+      background: "rgba(45,62,80,0.04)", border: "1px solid rgba(45,62,80,0.08)",
+      borderRadius: 14, padding: 14, textAlign: "center",
+    }}>
+      <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.8, color: "#2D3E50", textTransform: "uppercase", marginBottom: 4 }}>
         {label}
       </div>
-      <div style={{ fontSize: 14, fontWeight: 700, color: "#1a2332" }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "#1a2332" }}>
         {value}
       </div>
     </div>
