@@ -1,13 +1,18 @@
-﻿<krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.5, hide_ui());">
+﻿<krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui());">
 
 	<include url="skin/vtourskin.xml" />
 
+	<events name="hide_on_scene" onscenechange="delayedcall(0.3, hide_ui());" keep="true" />
+
 	<action name="hide_ui">
 		set(layer[skin_control_bar].visible, false);
+		set(layer[skin_control_bar].y, 9999);
 		set(layer[skin_control_bar_bg].visible, false);
 		set(layer[skin_control_bar_buttons].visible, false);
 		set(layer[skin_splitter_bottom].visible, false);
+		set(layer[skin_splitter_bottom].y, 9999);
 		set(layer[skin_scroll_window].visible, false);
+		set(layer[skin_scroll_window].y, 9999);
 		set(layer[skin_scroll_layer].visible, false);
 		set(layer[skin_btn_prev].visible, false);
 		set(layer[skin_btn_next].visible, false);
@@ -19,7 +24,9 @@
 		set(layer[skin_btn_fs].visible, false);
 		set(layer[skin_btn_hide].visible, false);
 		set(layer[skin_btn_show].visible, false);
+		set(layer[skin_btn_show].y, 9999);
 		set(layer[skin_title].visible, false);
+		set(layer[skin_title].y, -9999);
 	</action>
 
 	<skin_settings maps="false"
