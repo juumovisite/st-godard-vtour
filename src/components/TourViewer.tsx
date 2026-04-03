@@ -95,13 +95,6 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         title="Visite virtuelle Cathédrale St Godard"
       />
 
-      {/* Top-left corner gradient for text readability */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, zIndex: 2, pointerEvents: "none",
-        width: "60%", height: "50%",
-        background: "linear-gradient(160deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 35%, transparent 65%)",
-      }} />
-
       {/* Top left — Step counter + Scene title + Description */}
       <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500, pointerEvents: "none" }}>
         <div style={{
