@@ -33,10 +33,10 @@
 	<style name="hotspot_nav" url="skin/hotspot_arrow.png" edge="center" distorted="true"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
-	       depth="1000" scale="0.45"
+	       depth="1000" scale="0.22"
 	       onloaded.addevent="hotspot_arrow_setup(); skin_hotspotstyle_setup();"
-	       onover.addevent="tween(scale,0.6,0.3,easeOutBack);"
-	       onout.addevent="tween(scale,0.45,0.3,easeOutQuad);"
+	       onover.addevent="tween(scale,0.35,0.3,easeOutBack);"
+	       onout.addevent="tween(scale,0.22,0.3,easeOutQuad);"
 	       />
 
 	<action name="hotspot_arrow_setup" scope="local">
