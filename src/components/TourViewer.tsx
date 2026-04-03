@@ -82,7 +82,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden", fontFamily: "'Inter', sans-serif" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
       {/* KRPano iframe */}
       <iframe
@@ -95,17 +95,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         title="Visite virtuelle Cathédrale St Godard"
       />
 
-      {/* Vignette overlay for text readability */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
-        background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.3) 100%)",
-      }} />
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none",
-        background: "linear-gradient(90deg, rgba(0,0,0,0.35) 0%, transparent 40%)",
-      }} />
-
-      {/* Top left — Step counter + Scene title + Description */}
+      {/* Top left — Step counter + Scene title */}
       <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500, pointerEvents: "none" }}>
         <div style={{
           display: "inline-block",
@@ -122,19 +112,37 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         </div>
 
         <h1 style={{
-          margin: 0, fontSize: 44, fontWeight: 700, color: "white",
-          fontFamily: "'Playfair Display', serif",
-          lineHeight: 1.1, textShadow: "0 2px 20px rgba(0,0,0,0.4)",
+          margin: 0, fontSize: 44, fontWeight: 600, color: "white",
+          fontFamily: "'Cormorant Garamond', serif",
+          lineHeight: 1.1, textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+          fontStyle: "italic",
         }}>
           {currentScene?.data.title || ""}
         </h1>
+      </div>
 
+      {/* Bottom left — Description with gradient */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 3, pointerEvents: "none",
+        background: "linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)",
+        padding: "100px 40px 120px 40px",
+      }}>
+        {currentScene?.data.categorie && (
+          <p style={{
+            margin: "0 0 6px", fontSize: 11, fontWeight: 700,
+            letterSpacing: 2, textTransform: "uppercase",
+            color: "rgba(255,255,255,0.6)",
+          }}>
+            {currentScene.data.categorie}
+          </p>
+        )}
         {currentScene?.data.description?.[0]?.text && (
           <p style={{
-            margin: "16px 0 0", fontSize: 15, lineHeight: 1.6,
-            color: "rgba(255,255,255,0.8)",
-            textShadow: "0 1px 8px rgba(0,0,0,0.3)",
-            maxWidth: 420,
+            margin: 0, fontSize: 14, lineHeight: 1.7,
+            color: "rgba(255,255,255,0.85)",
+            maxWidth: 400,
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
           }}>
             {currentScene.data.description[0].text}
           </p>
