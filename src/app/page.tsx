@@ -1,23 +1,13 @@
-import VirtualTourPage from "@/components/VirtualTourPage";
-import { client } from "@/prismicio";
-
-async function getPageData() {
-  try {
-    const page = await client.getSingle("virtual_tour");
-    return page;
-  } catch {
-    return null;
-  }
-}
+import { client } from "@/lib/prismic";
+import TourViewer from "@/components/TourViewer";
 
 export default async function Home() {
-  const page = await getPageData();
+  let scenes: unknown[] = [];
+  try {
+    scenes = await client.getAllByType("scene");
+  } catch {
+    // Prismic not configured yet — fallback to defaults
+  }
 
-  return (
-    <VirtualTourPage
-      title={(page?.data?.title as string) ?? undefined}
-      description={(page?.data?.description as string) ?? undefined}
-      startScene={(page?.data?.start_scene as string) ?? undefined}
-    />
-  );
+  return <TourViewer scenes={scenes as never[]} />;
 }

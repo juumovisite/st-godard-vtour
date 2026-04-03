@@ -1,0 +1,88 @@
+{
+  "id": "scene",
+  "label": "Scene",
+  "repeatable": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Titre",
+          "placeholder": "Entrée de la cathédrale"
+        }
+      },
+      "nom_scene_krpano": {
+        "type": "Text",
+        "config": {
+          "label": "Nom scène KRPano",
+          "placeholder": "scene_entree"
+        }
+      },
+      "description": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Description",
+          "placeholder": "Description de la scène...",
+          "multi": "paragraph,strong,em"
+        }
+      },
+      "categorie": {
+        "type": "Text",
+        "config": {
+          "label": "Catégorie",
+          "placeholder": "Intérieur / Extérieur / Crypte"
+        }
+      },
+      "image_apercu": {
+        "type": "Image",
+        "config": {
+          "label": "Image d'aperçu",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "epoque": {
+        "type": "Text",
+        "config": {
+          "label": "Époque",
+          "placeholder": "XIVe siècle"
+        }
+      },
+      "style_architectural": {
+        "type": "Text",
+        "config": {
+          "label": "Style architectural",
+          "placeholder": "Gothique flamboyant"
+        }
+      },
+      "element_remarquable": {
+        "type": "Text",
+        "config": {
+          "label": "Élément remarquable",
+          "placeholder": "Vitraux, sculptures..."
+        }
+      },
+      "badge": {
+        "type": "Text",
+        "config": {
+          "label": "Badge",
+          "placeholder": "Incontournable"
+        }
+      },
+      "ordre": {
+        "type": "Number",
+        "config": {
+          "label": "Ordre d'affichage",
+          "placeholder": "1"
+        }
+      }
+    }
+  },
+  "status": true
+}
