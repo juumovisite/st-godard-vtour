@@ -29,14 +29,14 @@
 		set(layer[skin_title].y, -9999);
 	</action>
 
-	<!-- Custom hotspot styles -->
+	<!-- Custom hotspot styles - navigation with circular preview -->
 	<style name="hotspot_nav" url="skin/hotspot_nav.svg" edge="center" distorted="true"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
-	       depth="1000" scale="0.65"
-	       onover.addevent="tween(scale,0.75);"
-	       onout.addevent="tween(scale,0.65);"
+	       depth="1000" scale="0.5"
 	       onloaded.addevent="skin_hotspotstyle_setup();"
+	       onover.addevent="tween(scale,0.85,0.35,easeOutBack);"
+	       onout.addevent="tween(scale,0.5,0.3,easeOutQuad);"
 	       />
 
 	<style name="hotspot_info" url="skin/hotspot_info.svg" edge="center" distorted="true"
@@ -88,10 +88,10 @@
 			<cube url="panos/Aile_nord_autel.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973947883" style="hotspot_nav" ath="41.827" atv="7.947" depth="1000.0" linkedscene="scene_choeur_autel" linkedscene_spot="spot1973948153" linkedscene_hoffset="82.49" use3dtransition="true" />
-		<hotspot name="spot1973948244" style="hotspot_nav" ath="-177.905" atv="3.027" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948397" linkedscene_hoffset="360.0" use3dtransition="true" />
-		<hotspot name="spot1973951892" style="hotspot_nav" ath="87.877" atv="9.972" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973952031" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974111368" style="hotspot_nav" ath="145.643" atv="14.015" depth="1000.0" linkedscene="scene_crypte" linkedscene_spot="spot1974111532" linkedscene_hoffset="120.11" use3dtransition="true" />
+		<hotspot name="spot1973947883" style="hotspot_nav" url="panos/Choeur_autel.tiles/thumb_circle.png" ath="41.827" atv="7.947" depth="1000.0" linkedscene="scene_choeur_autel" linkedscene_spot="spot1973948153" linkedscene_hoffset="82.49" use3dtransition="true" />
+		<hotspot name="spot1973948244" style="hotspot_nav" url="panos/Aile_nord_centre.tiles/thumb_circle.png" ath="-177.905" atv="3.027" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948397" linkedscene_hoffset="360.0" use3dtransition="true" />
+		<hotspot name="spot1973951892" style="hotspot_nav" url="panos/Choeur_autel1.tiles/thumb_circle.png" ath="87.877" atv="9.972" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973952031" linkedscene_hoffset="0.0" use3dtransition="true" />
+		<hotspot name="spot1974111368" style="hotspot_nav" url="panos/Crypte.tiles/thumb_circle.png" ath="145.643" atv="14.015" depth="1000.0" linkedscene="scene_crypte" linkedscene_spot="spot1974111532" linkedscene_hoffset="120.11" use3dtransition="true" />
 		<hotspot name="spot1974117582" style="hotspot_info" ath="7.104" atv="-1.252" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -108,9 +108,9 @@
 			<cube url="panos/Aile_nord_centre.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973948397" style="hotspot_nav" ath="2.095" atv="3.027" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1973948244" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1973948427" style="hotspot_nav" ath="-176.099" atv="-0.29" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1973948570" linkedscene_hoffset="424.7" use3dtransition="true" />
-		<hotspot name="spot1973948595" style="hotspot_nav" ath="86.249" atv="7.394" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973948801" linkedscene_hoffset="0.22" use3dtransition="true" />
+		<hotspot name="spot1973948397" style="hotspot_nav" url="panos/Aile_nord_autel.tiles/thumb_circle.png" ath="2.095" atv="3.027" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1973948244" linkedscene_hoffset="0.0" use3dtransition="true" />
+		<hotspot name="spot1973948427" style="hotspot_nav" url="panos/Aile_sud_baptistere.tiles/thumb_circle.png" ath="-176.099" atv="-0.29" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1973948570" linkedscene_hoffset="424.7" use3dtransition="true" />
+		<hotspot name="spot1973948595" style="hotspot_nav" url="panos/Autel.tiles/thumb_circle.png" ath="86.249" atv="7.394" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973948801" linkedscene_hoffset="0.22" use3dtransition="true" />
 
 	</scene>
 
@@ -126,9 +126,9 @@
 			<cube url="panos/Aile_sud_autel.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973952221" style="hotspot_nav" ath="-86.828" atv="3.231" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951367" linkedscene_hoffset="353.48" use3dtransition="true" />
-		<hotspot name="spot1973952955" style="hotspot_nav" ath="-3.069" atv="9.923" depth="1000.0" linkedscene="scene_aile_sud_autel2" linkedscene_spot="spot1973953082" linkedscene_hoffset="180.53" use3dtransition="true" />
-		<hotspot name="spot1974109174" style="hotspot_nav" ath="175.185" atv="8.659" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1974109368" linkedscene_hoffset="184.55" use3dtransition="true" />
+		<hotspot name="spot1973952221" style="hotspot_nav" url="panos/Choeur_autel1.tiles/thumb_circle.png" ath="-86.828" atv="3.231" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951367" linkedscene_hoffset="353.48" use3dtransition="true" />
+		<hotspot name="spot1973952955" style="hotspot_nav" url="panos/Aile_sud_autel2.tiles/thumb_circle.png" ath="-3.069" atv="9.923" depth="1000.0" linkedscene="scene_aile_sud_autel2" linkedscene_spot="spot1973953082" linkedscene_hoffset="180.53" use3dtransition="true" />
+		<hotspot name="spot1974109174" style="hotspot_nav" url="panos/Aile_sud_centre.tiles/thumb_circle.png" ath="175.185" atv="8.659" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1974109368" linkedscene_hoffset="184.55" use3dtransition="true" />
 
 	</scene>
 
@@ -144,8 +144,8 @@
 			<cube url="panos/Aile_sud_autel2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973953082" style="hotspot_nav" ath="-2.538" atv="26.311" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_spot="spot1973952955" linkedscene_hoffset="179.47" use3dtransition="true" />
-		<hotspot name="spot1973953117" style="hotspot_nav" ath="82.534" atv="8.865" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_hoffset="174.83" use3dtransition="true" />
+		<hotspot name="spot1973953082" style="hotspot_nav" url="panos/Aile_sud_autel.tiles/thumb_circle.png" ath="-2.538" atv="26.311" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_spot="spot1973952955" linkedscene_hoffset="179.47" use3dtransition="true" />
+		<hotspot name="spot1973953117" style="hotspot_nav" url="panos/Choeur_autel1.tiles/thumb_circle.png" ath="82.534" atv="8.865" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_hoffset="174.83" use3dtransition="true" />
 
 	</scene>
 
@@ -161,10 +161,10 @@
 			<cube url="panos/Aile_sud_baptistere.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973948570" style="hotspot_nav" ath="68.602" atv="5.768" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948427" linkedscene_hoffset="-64.7" use3dtransition="true" />
-		<hotspot name="spot1974110536" style="hotspot_nav" ath="168.568" atv="2.497" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974110034" linkedscene_hoffset="-93.31" use3dtransition="true" />
-		<hotspot name="spot1974111680" style="hotspot_nav" ath="-149.394" atv="5.435" depth="1000.0" linkedscene="scene_orgue" linkedscene_spot="spot1974111880" linkedscene_hoffset="237.84" use3dtransition="true" />
-		<hotspot name="spot1974112136" style="hotspot_nav" ath="-148.948" atv="-17.951" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_hoffset="0.0" use3dtransition="true" />
+		<hotspot name="spot1973948570" style="hotspot_nav" url="panos/Aile_nord_centre.tiles/thumb_circle.png" ath="68.602" atv="5.768" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948427" linkedscene_hoffset="-64.7" use3dtransition="true" />
+		<hotspot name="spot1974110536" style="hotspot_nav" url="panos/Entree.tiles/thumb_circle.png" ath="168.568" atv="2.497" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974110034" linkedscene_hoffset="-93.31" use3dtransition="true" />
+		<hotspot name="spot1974111680" style="hotspot_nav" url="panos/Orgue.tiles/thumb_circle.png" ath="-149.394" atv="5.435" depth="1000.0" linkedscene="scene_orgue" linkedscene_spot="spot1974111880" linkedscene_hoffset="237.84" use3dtransition="true" />
+		<hotspot name="spot1974112136" style="hotspot_nav" url="panos/Vue_cathedrale.tiles/thumb_circle.png" ath="-148.948" atv="-17.951" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974118028" style="hotspot_info" ath="-1.809" atv="13.073" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -181,10 +181,10 @@
 			<cube url="panos/Aile_sud_centre.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973949052" style="hotspot_nav" ath="88.354" atv="2.877" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973948841" linkedscene_hoffset="174.52" use3dtransition="true" />
-		<hotspot name="spot1974109368" style="hotspot_nav" ath="179.732" atv="5.753" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_spot="spot1974109174" linkedscene_hoffset="175.45" use3dtransition="true" />
-		<hotspot name="spot1974109516" style="hotspot_nav" ath="-2.546" atv="6.825" depth="1000.0" linkedscene="scene_aile_sud_fond" linkedscene_spot="spot1974109741" linkedscene_hoffset="175.84" use3dtransition="true" />
-		<hotspot name="spot1974114532" style="hotspot_nav" ath="-61.625" atv="5.911" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974114184" linkedscene_hoffset="247.48" use3dtransition="true" />
+		<hotspot name="spot1973949052" style="hotspot_nav" url="panos/Autel.tiles/thumb_circle.png" ath="88.354" atv="2.877" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973948841" linkedscene_hoffset="174.52" use3dtransition="true" />
+		<hotspot name="spot1974109368" style="hotspot_nav" url="panos/Aile_sud_autel.tiles/thumb_circle.png" ath="179.732" atv="5.753" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_spot="spot1974109174" linkedscene_hoffset="175.45" use3dtransition="true" />
+		<hotspot name="spot1974109516" style="hotspot_nav" url="panos/Aile_sud_fond.tiles/thumb_circle.png" ath="-2.546" atv="6.825" depth="1000.0" linkedscene="scene_aile_sud_fond" linkedscene_spot="spot1974109741" linkedscene_hoffset="175.84" use3dtransition="true" />
+		<hotspot name="spot1974114532" style="hotspot_nav" url="panos/Parvis_sud_proche.tiles/thumb_circle.png" ath="-61.625" atv="5.911" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974114184" linkedscene_hoffset="247.48" use3dtransition="true" />
 
 	</scene>
 
@@ -200,8 +200,8 @@
 			<cube url="panos/Aile_sud_fond.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974109741" style="hotspot_nav" ath="-6.701" atv="10.019" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1974109516" linkedscene_hoffset="184.16" use3dtransition="true" />
-		<hotspot name="spot1974109790" style="hotspot_nav" ath="-111.259" atv="4.391" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974109992" linkedscene_hoffset="366.73" use3dtransition="true" />
+		<hotspot name="spot1974109741" style="hotspot_nav" url="panos/Aile_sud_centre.tiles/thumb_circle.png" ath="-6.701" atv="10.019" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1974109516" linkedscene_hoffset="184.16" use3dtransition="true" />
+		<hotspot name="spot1974109790" style="hotspot_nav" url="panos/Entree.tiles/thumb_circle.png" ath="-111.259" atv="4.391" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974109992" linkedscene_hoffset="366.73" use3dtransition="true" />
 
 	</scene>
 
@@ -217,10 +217,10 @@
 			<cube url="panos/Autel.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973948801" style="hotspot_nav" ath="-93.533" atv="3.686" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948595" linkedscene_hoffset="359.78" use3dtransition="true" />
-		<hotspot name="spot1973948841" style="hotspot_nav" ath="82.872" atv="6.208" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1973949052" linkedscene_hoffset="185.48" use3dtransition="true" />
-		<hotspot name="spot1973949138" style="hotspot_nav" ath="-2.326" atv="-8.39" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1973949667" linkedscene_hoffset="356.64" use3dtransition="true" />
-		<hotspot name="spot1974110792" style="hotspot_nav" ath="176.66" atv="2.91" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974110616" linkedscene_hoffset="2.66" use3dtransition="true" />
+		<hotspot name="spot1973948801" style="hotspot_nav" url="panos/Aile_nord_centre.tiles/thumb_circle.png" ath="-93.533" atv="3.686" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948595" linkedscene_hoffset="359.78" use3dtransition="true" />
+		<hotspot name="spot1973948841" style="hotspot_nav" url="panos/Aile_sud_centre.tiles/thumb_circle.png" ath="82.872" atv="6.208" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1973949052" linkedscene_hoffset="185.48" use3dtransition="true" />
+		<hotspot name="spot1973949138" style="hotspot_nav" url="panos/Orgue_choeur.tiles/thumb_circle.png" ath="-2.326" atv="-8.39" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1973949667" linkedscene_hoffset="356.64" use3dtransition="true" />
+		<hotspot name="spot1974110792" style="hotspot_nav" url="panos/Entree.tiles/thumb_circle.png" ath="176.66" atv="2.91" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974110616" linkedscene_hoffset="2.66" use3dtransition="true" />
 		<hotspot name="spot1974118131" style="hotspot_info" ath="-3.098" atv="15.225" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974118218" style="hotspot_info" ath="175.514" atv="-28.991" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
@@ -238,7 +238,7 @@
 			<cube url="panos/Choeur_autel.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973948153" style="hotspot_nav" ath="-55.686" atv="4.837" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1973947883" linkedscene_hoffset="277.51" use3dtransition="true" />
+		<hotspot name="spot1973948153" style="hotspot_nav" url="panos/Aile_nord_autel.tiles/thumb_circle.png" ath="-55.686" atv="4.837" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1973947883" linkedscene_hoffset="277.51" use3dtransition="true" />
 
 	</scene>
 
@@ -254,11 +254,11 @@
 			<cube url="panos/Choeur_autel1.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973951095" style="hotspot_nav" ath="177.858" atv="20.007" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1973949738" linkedscene_hoffset="-0.69" use3dtransition="true" />
-		<hotspot name="spot1973951124" style="hotspot_nav" ath="-1.172" atv="-3.146" depth="1000.0" linkedscene="scene_choeur_autel2" linkedscene_spot="spot1973951315" linkedscene_hoffset="184.16" use3dtransition="true" />
-		<hotspot name="spot1973951367" style="hotspot_nav" ath="86.65" atv="8.208" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_hoffset="6.52" use3dtransition="true" />
-		<hotspot name="spot1973952031" style="hotspot_nav" ath="-92.123" atv="7.548" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1973951892" linkedscene_hoffset="360.0" use3dtransition="true" />
-		<hotspot name="spot1973953436" style="hotspot_nav" ath="77.365" atv="-0.108" depth="1000.0" linkedscene="scene_aile_sud_autel2" linkedscene_spot="spot1973953117" linkedscene_hoffset="185.17" use3dtransition="true" />
+		<hotspot name="spot1973951095" style="hotspot_nav" url="panos/Orgue_choeur.tiles/thumb_circle.png" ath="177.858" atv="20.007" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1973949738" linkedscene_hoffset="-0.69" use3dtransition="true" />
+		<hotspot name="spot1973951124" style="hotspot_nav" url="panos/Choeur_autel2.tiles/thumb_circle.png" ath="-1.172" atv="-3.146" depth="1000.0" linkedscene="scene_choeur_autel2" linkedscene_spot="spot1973951315" linkedscene_hoffset="184.16" use3dtransition="true" />
+		<hotspot name="spot1973951367" style="hotspot_nav" url="panos/Aile_sud_autel.tiles/thumb_circle.png" ath="86.65" atv="8.208" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_hoffset="6.52" use3dtransition="true" />
+		<hotspot name="spot1973952031" style="hotspot_nav" url="panos/Aile_nord_autel.tiles/thumb_circle.png" ath="-92.123" atv="7.548" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1973951892" linkedscene_hoffset="360.0" use3dtransition="true" />
+		<hotspot name="spot1973953436" style="hotspot_nav" url="panos/Aile_sud_autel2.tiles/thumb_circle.png" ath="77.365" atv="-0.108" depth="1000.0" linkedscene="scene_aile_sud_autel2" linkedscene_spot="spot1973953117" linkedscene_hoffset="185.17" use3dtransition="true" />
 
 	</scene>
 
@@ -274,10 +274,10 @@
 			<cube url="panos/Choeur_autel2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973951315" style="hotspot_nav" ath="2.991" atv="35.703" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951124" linkedscene_hoffset="175.84" use3dtransition="true" />
-		<hotspot name="spot1974110923" style="hotspot_nav" ath="5.485" atv="13.779" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974111098" style="hotspot_nav" ath="-53.391" atv="9.351" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974111223" style="hotspot_nav" ath="64.504" atv="8.321" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_hoffset="0.0" use3dtransition="true" />
+		<hotspot name="spot1973951315" style="hotspot_nav" url="panos/Choeur_autel1.tiles/thumb_circle.png" ath="2.991" atv="35.703" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951124" linkedscene_hoffset="175.84" use3dtransition="true" />
+		<hotspot name="spot1974110923" style="hotspot_nav" url="panos/Orgue_choeur.tiles/thumb_circle.png" ath="5.485" atv="13.779" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_hoffset="0.0" use3dtransition="true" />
+		<hotspot name="spot1974111098" style="hotspot_nav" url="panos/Aile_sud_autel.tiles/thumb_circle.png" ath="-53.391" atv="9.351" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_hoffset="0.0" use3dtransition="true" />
+		<hotspot name="spot1974111223" style="hotspot_nav" url="panos/Aile_nord_autel.tiles/thumb_circle.png" ath="64.504" atv="8.321" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974117705" style="hotspot_info" ath="-177.123" atv="14.329" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -294,7 +294,7 @@
 			<cube url="panos/Crypte.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974111532" style="hotspot_nav" ath="85.753" atv="4.247" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1974111368" linkedscene_hoffset="239.89" use3dtransition="true" />
+		<hotspot name="spot1974111532" style="hotspot_nav" url="panos/Aile_nord_autel.tiles/thumb_circle.png" ath="85.753" atv="4.247" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_spot="spot1974111368" linkedscene_hoffset="239.89" use3dtransition="true" />
 
 	</scene>
 
@@ -310,10 +310,10 @@
 			<cube url="panos/Entree.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974109992" style="hotspot_nav" ath="75.467" atv="5.578" depth="1000.0" linkedscene="scene_aile_sud_fond" linkedscene_spot="spot1974109790" linkedscene_hoffset="-6.73" use3dtransition="true" />
-		<hotspot name="spot1974110034" style="hotspot_nav" ath="-104.744" atv="3.067" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1974110536" linkedscene_hoffset="453.31" use3dtransition="true" />
-		<hotspot name="spot1974110616" style="hotspot_nav" ath="-0.682" atv="7.698" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1974110792" linkedscene_hoffset="357.34" use3dtransition="true" />
-		<hotspot name="spot1974113467" style="hotspot_nav" ath="179.164" atv="10.363" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113344" linkedscene_hoffset="0.68" use3dtransition="true" />
+		<hotspot name="spot1974109992" style="hotspot_nav" url="panos/Aile_sud_fond.tiles/thumb_circle.png" ath="75.467" atv="5.578" depth="1000.0" linkedscene="scene_aile_sud_fond" linkedscene_spot="spot1974109790" linkedscene_hoffset="-6.73" use3dtransition="true" />
+		<hotspot name="spot1974110034" style="hotspot_nav" url="panos/Aile_sud_baptistere.tiles/thumb_circle.png" ath="-104.744" atv="3.067" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1974110536" linkedscene_hoffset="453.31" use3dtransition="true" />
+		<hotspot name="spot1974110616" style="hotspot_nav" url="panos/Autel.tiles/thumb_circle.png" ath="-0.682" atv="7.698" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1974110792" linkedscene_hoffset="357.34" use3dtransition="true" />
+		<hotspot name="spot1974113467" style="hotspot_nav" url="panos/Parvis_entree.tiles/thumb_circle.png" ath="179.164" atv="10.363" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113344" linkedscene_hoffset="0.68" use3dtransition="true" />
 		<hotspot name="spot1974117948" style="hotspot_info" ath="0.087" atv="-30.141" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -330,8 +330,8 @@
 			<cube url="panos/Orgue.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974111880" style="hotspot_nav" ath="-91.555" atv="16.236" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1974111680" linkedscene_hoffset="122.16" use3dtransition="true" />
-		<hotspot name="spot1974111933" style="hotspot_nav" ath="0.092" atv="8.571" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1974112016" linkedscene_hoffset="353.79" use3dtransition="true" />
+		<hotspot name="spot1974111880" style="hotspot_nav" url="panos/Aile_sud_baptistere.tiles/thumb_circle.png" ath="-91.555" atv="16.236" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1974111680" linkedscene_hoffset="122.16" use3dtransition="true" />
+		<hotspot name="spot1974111933" style="hotspot_nav" url="panos/Orgue_choeur.tiles/thumb_circle.png" ath="0.092" atv="8.571" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1974112016" linkedscene_hoffset="353.79" use3dtransition="true" />
 		<hotspot name="spot1974118303" style="hotspot_info" ath="-39.222" atv="15.09" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -348,9 +348,9 @@
 			<cube url="panos/Orgue_choeur.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1973949667" style="hotspot_nav" ath="174.318" atv="-7.003" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973949138" linkedscene_hoffset="3.36" use3dtransition="true" />
-		<hotspot name="spot1973949738" style="hotspot_nav" ath="-2.832" atv="2.384" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951095" linkedscene_hoffset="360.69" use3dtransition="true" />
-		<hotspot name="spot1974112016" style="hotspot_nav" ath="173.886" atv="-17.185" depth="1000.0" linkedscene="scene_orgue" linkedscene_spot="spot1974111933" linkedscene_hoffset="6.21" use3dtransition="true" />
+		<hotspot name="spot1973949667" style="hotspot_nav" url="panos/Autel.tiles/thumb_circle.png" ath="174.318" atv="-7.003" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973949138" linkedscene_hoffset="3.36" use3dtransition="true" />
+		<hotspot name="spot1973949738" style="hotspot_nav" url="panos/Choeur_autel1.tiles/thumb_circle.png" ath="-2.832" atv="2.384" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951095" linkedscene_hoffset="360.69" use3dtransition="true" />
+		<hotspot name="spot1974112016" style="hotspot_nav" url="panos/Orgue.tiles/thumb_circle.png" ath="173.886" atv="-17.185" depth="1000.0" linkedscene="scene_orgue" linkedscene_spot="spot1974111933" linkedscene_hoffset="6.21" use3dtransition="true" />
 		<hotspot name="spot1974117798" style="hotspot_info" ath="-69.6" atv="4.7" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -367,9 +367,9 @@
 			<cube url="panos/Parvis_entree.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974113241" style="hotspot_nav" ath="-81.338" atv="-5.226" depth="1000.0" linkedscene="scene_parvis_nord" linkedscene_spot="spot1974113075" linkedscene_hoffset="309.05" use3dtransition="true" />
-		<hotspot name="spot1974113344" style="hotspot_nav" ath="-0.151" atv="-1.578" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974113467" linkedscene_hoffset="359.32" use3dtransition="true" />
-		<hotspot name="spot1974113505" style="hotspot_nav" ath="117.336" atv="4.094" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974113620" linkedscene_hoffset="39.75" use3dtransition="true" />
+		<hotspot name="spot1974113241" style="hotspot_nav" url="panos/Parvis_nord.tiles/thumb_circle.png" ath="-81.338" atv="-5.226" depth="1000.0" linkedscene="scene_parvis_nord" linkedscene_spot="spot1974113075" linkedscene_hoffset="309.05" use3dtransition="true" />
+		<hotspot name="spot1974113344" style="hotspot_nav" url="panos/Entree.tiles/thumb_circle.png" ath="-0.151" atv="-1.578" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974113467" linkedscene_hoffset="359.32" use3dtransition="true" />
+		<hotspot name="spot1974113505" style="hotspot_nav" url="panos/Parvis_entree_sud.tiles/thumb_circle.png" ath="117.336" atv="4.094" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974113620" linkedscene_hoffset="39.75" use3dtransition="true" />
 
 	</scene>
 
@@ -385,10 +385,10 @@
 			<cube url="panos/Parvis_entree_sud.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974112523" style="hotspot_nav" ath="-11.58" atv="-51.648" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_spot="spot1974112301" linkedscene_hoffset="215.61" use3dtransition="true" />
-		<hotspot name="spot1974113620" style="hotspot_nav" ath="-22.909" atv="2.388" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113505" linkedscene_hoffset="320.25" use3dtransition="true" />
-		<hotspot name="spot1974113707" style="hotspot_nav" ath="58.639" atv="-3.277" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974113832" linkedscene_hoffset="69.89" use3dtransition="true" />
-		<hotspot name="spot1974113863" style="hotspot_nav" ath="106.105" atv="-0.843" depth="1000.0" linkedscene="scene_parvis_sud_loin" linkedscene_spot="spot1974113967" linkedscene_hoffset="12.51" use3dtransition="true" />
+		<hotspot name="spot1974112523" style="hotspot_nav" url="panos/Vue_cathedrale.tiles/thumb_circle.png" ath="-11.58" atv="-51.648" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_spot="spot1974112301" linkedscene_hoffset="215.61" use3dtransition="true" />
+		<hotspot name="spot1974113620" style="hotspot_nav" url="panos/Parvis_entree.tiles/thumb_circle.png" ath="-22.909" atv="2.388" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113505" linkedscene_hoffset="320.25" use3dtransition="true" />
+		<hotspot name="spot1974113707" style="hotspot_nav" url="panos/Parvis_sud_proche.tiles/thumb_circle.png" ath="58.639" atv="-3.277" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974113832" linkedscene_hoffset="69.89" use3dtransition="true" />
+		<hotspot name="spot1974113863" style="hotspot_nav" url="panos/Parvis_sud_loin.tiles/thumb_circle.png" ath="106.105" atv="-0.843" depth="1000.0" linkedscene="scene_parvis_sud_loin" linkedscene_spot="spot1974113967" linkedscene_hoffset="12.51" use3dtransition="true" />
 		<hotspot name="spot1974118524" style="hotspot_info" ath="11.985" atv="-13.243" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
@@ -405,8 +405,8 @@
 			<cube url="panos/Parvis_nord.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974113000" style="hotspot_nav" ath="35.177" atv="-51.585" depth="1000.0" linkedscene="scene_vue_donjon" linkedscene_spot="spot1974112743" linkedscene_hoffset="196.52" use3dtransition="true" />
-		<hotspot name="spot1974113075" style="hotspot_nav" ath="47.715" atv="0.85" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113241" linkedscene_hoffset="50.95" use3dtransition="true" />
+		<hotspot name="spot1974113000" style="hotspot_nav" url="panos/Vue_donjon.tiles/thumb_circle.png" ath="35.177" atv="-51.585" depth="1000.0" linkedscene="scene_vue_donjon" linkedscene_spot="spot1974112743" linkedscene_hoffset="196.52" use3dtransition="true" />
+		<hotspot name="spot1974113075" style="hotspot_nav" url="panos/Parvis_entree.tiles/thumb_circle.png" ath="47.715" atv="0.85" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113241" linkedscene_hoffset="50.95" use3dtransition="true" />
 
 	</scene>
 
@@ -422,8 +422,8 @@
 			<cube url="panos/Parvis_sud_loin.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974113967" style="hotspot_nav" ath="-61.384" atv="-0.18" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974113863" linkedscene_hoffset="347.49" use3dtransition="true" />
-		<hotspot name="spot1974114045" style="hotspot_nav" ath="11.63" atv="2.166" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974114152" linkedscene_hoffset="52.87" use3dtransition="true" />
+		<hotspot name="spot1974113967" style="hotspot_nav" url="panos/Parvis_entree_sud.tiles/thumb_circle.png" ath="-61.384" atv="-0.18" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974113863" linkedscene_hoffset="347.49" use3dtransition="true" />
+		<hotspot name="spot1974114045" style="hotspot_nav" url="panos/Parvis_sud_proche.tiles/thumb_circle.png" ath="11.63" atv="2.166" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974114152" linkedscene_hoffset="52.87" use3dtransition="true" />
 
 	</scene>
 
@@ -439,9 +439,9 @@
 			<cube url="panos/Parvis_sud_proche.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974113832" style="hotspot_nav" ath="-51.472" atv="1.679" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974113707" linkedscene_hoffset="290.11" use3dtransition="true" />
-		<hotspot name="spot1974114152" style="hotspot_nav" ath="-115.505" atv="4.55" depth="1000.0" linkedscene="scene_parvis_sud_loin" linkedscene_spot="spot1974114045" linkedscene_hoffset="307.13" use3dtransition="true" />
-		<hotspot name="spot1974114184" style="hotspot_nav" ath="5.857" atv="2.096" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1974114532" linkedscene_hoffset="112.52" use3dtransition="true" />
+		<hotspot name="spot1974113832" style="hotspot_nav" url="panos/Parvis_entree_sud.tiles/thumb_circle.png" ath="-51.472" atv="1.679" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974113707" linkedscene_hoffset="290.11" use3dtransition="true" />
+		<hotspot name="spot1974114152" style="hotspot_nav" url="panos/Parvis_sud_loin.tiles/thumb_circle.png" ath="-115.505" atv="4.55" depth="1000.0" linkedscene="scene_parvis_sud_loin" linkedscene_spot="spot1974114045" linkedscene_hoffset="307.13" use3dtransition="true" />
+		<hotspot name="spot1974114184" style="hotspot_nav" url="panos/Aile_sud_centre.tiles/thumb_circle.png" ath="5.857" atv="2.096" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1974114532" linkedscene_hoffset="112.52" use3dtransition="true" />
 
 	</scene>
 
@@ -457,8 +457,8 @@
 			<cube url="panos/Vue_cathedrale.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974112301" style="hotspot_nav" ath="24.033" atv="42.864" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974112523" linkedscene_hoffset="144.39" use3dtransition="true" />
-		<hotspot name="spot1974112552" style="hotspot_nav" ath="151.56" atv="7.508" depth="1000.0" linkedscene="scene_vue_donjon" linkedscene_spot="spot1974112672" linkedscene_hoffset="201.37" use3dtransition="true" />
+		<hotspot name="spot1974112301" style="hotspot_nav" url="panos/Parvis_entree_sud.tiles/thumb_circle.png" ath="24.033" atv="42.864" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974112523" linkedscene_hoffset="144.39" use3dtransition="true" />
+		<hotspot name="spot1974112552" style="hotspot_nav" url="panos/Vue_donjon.tiles/thumb_circle.png" ath="151.56" atv="7.508" depth="1000.0" linkedscene="scene_vue_donjon" linkedscene_spot="spot1974112672" linkedscene_hoffset="201.37" use3dtransition="true" />
 		<hotspot name="spot1974118624" style="hotspot_info" ath="-52.298" atv="-2.467" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974118685" style="hotspot_info" ath="9.234" atv="-2.18" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
@@ -476,8 +476,8 @@
 			<cube url="panos/Vue_donjon.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
-		<hotspot name="spot1974112672" style="hotspot_nav" ath="172.929" atv="7.343" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_spot="spot1974112552" linkedscene_hoffset="158.63" use3dtransition="true" />
-		<hotspot name="spot1974112743" style="hotspot_nav" ath="51.699" atv="43.86" depth="1000.0" linkedscene="scene_parvis_nord" linkedscene_spot="spot1974113000" linkedscene_hoffset="163.48" use3dtransition="true" />
+		<hotspot name="spot1974112672" style="hotspot_nav" url="panos/Vue_cathedrale.tiles/thumb_circle.png" ath="172.929" atv="7.343" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_spot="spot1974112552" linkedscene_hoffset="158.63" use3dtransition="true" />
+		<hotspot name="spot1974112743" style="hotspot_nav" url="panos/Parvis_nord.tiles/thumb_circle.png" ath="51.699" atv="43.86" depth="1000.0" linkedscene="scene_parvis_nord" linkedscene_spot="spot1974113000" linkedscene_hoffset="163.48" use3dtransition="true" />
 		<hotspot name="spot1974118763" style="hotspot_info" ath="1.137" atv="-2.324" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
