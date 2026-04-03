@@ -59,7 +59,7 @@
 	               webvr="false"
 	               autotour="false"
 	               littleplanetintro="false"
-	               followmousecontrol="false"
+	               followmousecontrol="true"
 	               title="false"
 	               thumbs="false"
 	               thumbs_opened="false"
