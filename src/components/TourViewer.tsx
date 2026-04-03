@@ -95,7 +95,14 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         title="Visite virtuelle Cathédrale St Godard"
       />
 
-      {/* Top left — Step counter + Scene title */}
+      {/* Top-left corner gradient for text readability */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, zIndex: 2, pointerEvents: "none",
+        width: "60%", height: "50%",
+        background: "linear-gradient(160deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 35%, transparent 65%)",
+      }} />
+
+      {/* Top left — Step counter + Scene title + Description */}
       <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500, pointerEvents: "none" }}>
         <div style={{
           display: "inline-block",
@@ -119,27 +126,11 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         }}>
           {currentScene?.data.title || ""}
         </h1>
-      </div>
 
-      {/* Bottom left — Description with gradient */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 3, pointerEvents: "none",
-        background: "linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)",
-        padding: "100px 40px 120px 40px",
-      }}>
-        {currentScene?.data.categorie && (
-          <p style={{
-            margin: "0 0 6px", fontSize: 11, fontWeight: 700,
-            letterSpacing: 2, textTransform: "uppercase",
-            color: "rgba(255,255,255,0.6)",
-          }}>
-            {currentScene.data.categorie}
-          </p>
-        )}
         {currentScene?.data.description?.[0]?.text && (
           <p style={{
-            margin: 0, fontSize: 14, lineHeight: 1.7,
-            color: "rgba(255,255,255,0.85)",
+            margin: "16px 0 0", fontSize: 14, lineHeight: 1.7,
+            color: "rgba(255,255,255,0.8)",
             maxWidth: 400,
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
