@@ -90,11 +90,11 @@
           "multi": "paragraph,strong,em,hyperlink,list-item"
         }
       },
-      "audio_url": {
-        "type": "Text",
+      "audio_file": {
+        "type": "Link",
         "config": {
-          "label": "URL Audio",
-          "placeholder": "https://example.com/audio.mp3"
+          "label": "Fichier Audio (MP3)",
+          "select": "media"
         }
       },
       "video_url": {

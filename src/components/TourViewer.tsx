@@ -14,7 +14,7 @@ interface SceneData {
     element_remarquable?: string;
     ordre?: number;
     description_longue?: { text: string }[];
-    audio_url?: string;
+    audio_file?: { url?: string };
     video_url?: string;
   };
 }
@@ -273,9 +273,9 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           )}
 
           {/* Audio player expanded */}
-          {showAudio && currentScene.data.audio_url && (
+          {showAudio && currentScene.data.audio_file?.url && (
             <div style={{ marginBottom: 20 }}>
-              <audio ref={audioRef} controls autoPlay style={{ width: "100%", borderRadius: 12 }} src={currentScene.data.audio_url} />
+              <audio ref={audioRef} controls autoPlay style={{ width: "100%", borderRadius: 12 }} src={currentScene.data.audio_file?.url} />
             </div>
           )}
 
@@ -293,7 +293,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
               label="Découvrir l'audio"
               onClick={() => { setShowAudio(!showAudio); if (showAudio && audioRef.current) audioRef.current.pause(); }}
               active={showAudio}
-              visible={!!currentScene.data.audio_url}
+              visible={!!currentScene.data.audio_file?.url}
             />
             <ActionButton
               icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>}
