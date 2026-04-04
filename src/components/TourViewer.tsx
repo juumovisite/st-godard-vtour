@@ -110,8 +110,11 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         title="Visite virtuelle Cathédrale St Godard"
       />
 
-      {/* Top left — Step counter + Scene title + Description */}
-      <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500 }}>
+      {/* Top left — Step counter + menu zone */}
+      <div
+        style={{ position: "absolute", top: 32, left: 36, zIndex: 20 }}
+        onMouseLeave={() => setShowMenu(false)}
+      >
         <div
           style={{
             display: "inline-block",
@@ -120,7 +123,6 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             background: "rgba(255,255,255,0.15)",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.2)",
-            marginBottom: 20,
             cursor: "pointer",
             transition: "all 0.25s ease",
           }}
@@ -131,6 +133,59 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             Étape {currentIndex + 1} sur {totalScenes}
           </span>
         </div>
+
+        {/* Menu dropdown */}
+        {showMenu && (
+          <div style={{
+            marginTop: 8,
+            width: 300, maxHeight: "55vh", overflowY: "auto",
+            borderRadius: 20,
+            background: "rgba(255,255,255,0.95)",
+            backdropFilter: "blur(20px)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+            padding: "8px 0",
+          }}>
+            {sortedScenes.map((scene, i) => (
+              <button
+                key={scene.id}
+                onClick={() => changeScene(scene.data.nom_scene_krpano!)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12,
+                  width: "100%", padding: "14px 20px",
+                  border: "none", background: activeScene === scene.data.nom_scene_krpano ? "rgba(45,62,80,0.08)" : "transparent",
+                  cursor: "pointer", textAlign: "left",
+                  transition: "background 0.2s ease",
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                <span style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: activeScene === scene.data.nom_scene_krpano ? "#2D3E50" : "rgba(45,62,80,0.1)",
+                  color: activeScene === scene.data.nom_scene_krpano ? "white" : "#2D3E50",
+                  fontSize: 11, fontWeight: 700,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0,
+                }}>
+                  {i + 1}
+                </span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: activeScene === scene.data.nom_scene_krpano ? 700 : 500, color: "#1a2332" }}>
+                    {scene.data.title}
+                  </div>
+                  {scene.data.categorie && (
+                    <div style={{ fontSize: 11, color: "#8a8a8a", marginTop: 2 }}>
+                      {scene.data.categorie}
+                    </div>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Title + Description */}
+      <div style={{ position: "absolute", top: 76, left: 36, zIndex: 10, maxWidth: 500, pointerEvents: "none" }}>
 
         <h1 style={{
           margin: 0, fontSize: 44, fontWeight: 600, color: "white",
@@ -182,55 +237,6 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           {showMenu ? "✕" : "≡"}
         </button>
       </div>
-
-      {/* Menu overlay — positioned under step counter */}
-      {showMenu && (
-        <div style={{
-          position: "absolute", top: 76, left: 36, zIndex: 20,
-          width: 300, maxHeight: "60vh", overflowY: "auto",
-          borderRadius: 20,
-          background: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(20px)",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
-          padding: "8px 0",
-        }}>
-          {sortedScenes.map((scene, i) => (
-            <button
-              key={scene.id}
-              onClick={() => changeScene(scene.data.nom_scene_krpano!)}
-              style={{
-                display: "flex", alignItems: "center", gap: 12,
-                width: "100%", padding: "14px 20px",
-                border: "none", background: activeScene === scene.data.nom_scene_krpano ? "rgba(45,62,80,0.08)" : "transparent",
-                cursor: "pointer", textAlign: "left",
-                transition: "background 0.2s ease",
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              <span style={{
-                width: 28, height: 28, borderRadius: "50%",
-                background: activeScene === scene.data.nom_scene_krpano ? "#2D3E50" : "rgba(45,62,80,0.1)",
-                color: activeScene === scene.data.nom_scene_krpano ? "white" : "#2D3E50",
-                fontSize: 11, fontWeight: 700,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                flexShrink: 0,
-              }}>
-                {i + 1}
-              </span>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: activeScene === scene.data.nom_scene_krpano ? 700 : 500, color: "#1a2332" }}>
-                  {scene.data.title}
-                </div>
-                {scene.data.categorie && (
-                  <div style={{ fontSize: 11, color: "#8a8a8a", marginTop: 2 }}>
-                    {scene.data.categorie}
-                  </div>
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* Histoire panel */}
       {showHistoire && currentScene && (
