@@ -111,16 +111,22 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       />
 
       {/* Top left — Step counter + Scene title + Description */}
-      <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500, pointerEvents: "none" }}>
-        <div style={{
-          display: "inline-block",
-          padding: "6px 16px",
-          borderRadius: 20,
-          background: "rgba(255,255,255,0.15)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          marginBottom: 20,
-        }}>
+      <div style={{ position: "absolute", top: 32, left: 36, zIndex: 10, maxWidth: 500 }}>
+        <div
+          style={{
+            display: "inline-block",
+            padding: "6px 16px",
+            borderRadius: 20,
+            background: "rgba(255,255,255,0.15)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            marginBottom: 20,
+            cursor: "pointer",
+            transition: "all 0.25s ease",
+          }}
+          onMouseEnter={() => { setShowMenu(true); setShowHistoire(false); }}
+          onClick={() => { setShowMenu(!showMenu); setShowHistoire(false); }}
+        >
           <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: 2, color: "rgba(255,255,255,0.9)", textTransform: "uppercase" }}>
             Étape {currentIndex + 1} sur {totalScenes}
           </span>
@@ -130,7 +136,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           margin: 0, fontSize: 44, fontWeight: 600, color: "white",
           fontFamily: "'Cormorant Garamond', serif",
           lineHeight: 1.1, textShadow: "0 2px 20px rgba(0,0,0,0.5)",
-          fontStyle: "italic",
+          fontStyle: "italic", pointerEvents: "none",
         }}>
           {currentScene?.data.title || ""}
         </h1>
@@ -141,7 +147,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             color: "rgba(255,255,255,0.8)",
             maxWidth: 400,
             fontFamily: "'Inter', sans-serif",
-            fontWeight: 400,
+            fontWeight: 400, pointerEvents: "none",
           }}>
             {currentScene.data.description[0].text}
           </p>
