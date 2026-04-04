@@ -44,6 +44,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   );
   const [showHistoire, setShowHistoire] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showFullMenu, setShowFullMenu] = useState(false);
   const [showDetailedInfo, setShowDetailedInfo] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -222,19 +223,19 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           FR
         </button>
         <button
-          onClick={() => { setShowMenu(!showMenu); setShowHistoire(false); }}
+          onClick={() => { setShowFullMenu(!showFullMenu); setShowHistoire(false); setShowMenu(false); }}
           style={{
             width: 42, height: 42, borderRadius: "50%",
-            background: showMenu ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
+            background: showFullMenu ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.2)",
-            color: showMenu ? "#2D3E50" : "white",
+            color: showFullMenu ? "#2D3E50" : "white",
             fontSize: 20, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             transition: "all 0.3s ease",
           }}
         >
-          {showMenu ? "✕" : "≡"}
+          {showFullMenu ? "✕" : "≡"}
         </button>
       </div>
 
@@ -320,6 +321,173 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
               background: "none", border: "none", color: "white",
               fontSize: 28, cursor: "pointer",
             }}>✕</button>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen menu overlay */}
+      {showFullMenu && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 25,
+          background: "#fafafa",
+          overflowY: "auto",
+          padding: "0 24px 40px",
+        }}>
+          {/* Close button */}
+          <div style={{ display: "flex", justifyContent: "flex-end", padding: "24px 0 0" }}>
+            <button onClick={() => setShowFullMenu(false)} style={{
+              width: 42, height: 42, borderRadius: "50%",
+              background: "rgba(0,0,0,0.06)", border: "none",
+              fontSize: 18, cursor: "pointer", color: "#333",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>✕</button>
+          </div>
+
+          {/* Header */}
+          <div style={{ maxWidth: 700, margin: "0 auto", padding: "10px 0 30px" }}>
+            <p style={{ fontSize: 13, color: "#888", margin: "0 0 4px", fontFamily: "'Inter', sans-serif", fontWeight: 500 }}>
+              Visite virtuelle 360°
+            </p>
+            <h2 style={{ fontSize: 36, fontWeight: 800, color: "#111", margin: 0, fontFamily: "'Inter', sans-serif", lineHeight: 1.15 }}>
+              Cathédrale Saint-Godard
+            </h2>
+          </div>
+
+          <div style={{ maxWidth: 700, margin: "0 auto", display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Main card — Start tour */}
+            <button
+              onClick={() => setShowFullMenu(false)}
+              style={{
+                position: "relative", width: "100%", height: 320, borderRadius: 26,
+                overflow: "hidden", border: "none", cursor: "pointer", textAlign: "left",
+                background: "#222",
+                boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+              }}
+            >
+              <div style={{
+                position: "absolute", inset: 0,
+                backgroundImage: "url(/vtour/panos/Entree.tiles/preview.jpg)",
+                backgroundSize: "cover", backgroundPosition: "center",
+              }} />
+              <div style={{
+                position: "absolute", inset: 0,
+                background: "linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)",
+              }} />
+              <span style={{
+                position: "absolute", top: 16, left: 18,
+                background: "rgba(139,69,19,0.85)", color: "white",
+                fontSize: 11, fontWeight: 600, padding: "5px 14px", borderRadius: 20,
+                letterSpacing: 0.5,
+              }}>
+                Visite guidée interactive
+              </span>
+              <div style={{ position: "absolute", bottom: 20, left: 22, right: 70 }}>
+                <p style={{ fontSize: 20, fontWeight: 700, color: "white", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>
+                  Découvrir la visite virtuelle
+                </p>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: 0 }}>
+                  Cathédrale Saint-Godard
+                </p>
+              </div>
+              <div style={{
+                position: "absolute", bottom: 18, right: 18,
+                width: 40, height: 40, borderRadius: "50%",
+                background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "white", fontSize: 18,
+              }}>↗</div>
+            </button>
+
+            {/* Two cards row */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {/* Faire un Don */}
+              <a href="https://visite.juumo.fr/fr/tour/z9y4gdmj" target="_blank" rel="noopener noreferrer" style={{
+                position: "relative", height: 160, borderRadius: 22, overflow: "hidden",
+                textDecoration: "none", display: "block",
+                background: "#222",
+                boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+              }}>
+                <div style={{
+                  position: "absolute", inset: 0,
+                  backgroundImage: "url(/vtour/panos/Autel.tiles/preview.jpg)",
+                  backgroundSize: "cover", backgroundPosition: "center",
+                }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%)" }} />
+                <span style={{
+                  position: "absolute", top: 14, left: 14,
+                  background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
+                  color: "white", fontSize: 10, fontWeight: 600, padding: "4px 12px", borderRadius: 16,
+                }}>
+                  Soutien
+                </span>
+                <p style={{ position: "absolute", bottom: 16, left: 16, fontSize: 18, fontWeight: 700, color: "white", margin: 0 }}>
+                  Faire un Don
+                </p>
+                <div style={{
+                  position: "absolute", bottom: 14, right: 14,
+                  width: 34, height: 34, borderRadius: "50%",
+                  background: "rgba(255,255,255,0.2)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "white", fontSize: 14,
+                }}>↗</div>
+              </a>
+
+              {/* Informations */}
+              <a href="https://visite.juumo.fr/fr/tour/z9y4gdmj" target="_blank" rel="noopener noreferrer" style={{
+                position: "relative", height: 160, borderRadius: 22, overflow: "hidden",
+                textDecoration: "none", display: "block",
+                background: "#222",
+                boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+              }}>
+                <div style={{
+                  position: "absolute", inset: 0,
+                  backgroundImage: "url(/vtour/panos/Parvis_entree.tiles/preview.jpg)",
+                  backgroundSize: "cover", backgroundPosition: "center",
+                }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%)" }} />
+                <span style={{
+                  position: "absolute", top: 14, left: 14,
+                  background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
+                  color: "white", fontSize: 10, fontWeight: 600, padding: "4px 12px", borderRadius: 16,
+                }}>
+                  Horaires & Accès
+                </span>
+                <p style={{ position: "absolute", bottom: 16, left: 16, fontSize: 18, fontWeight: 700, color: "white", margin: 0 }}>
+                  Informations
+                </p>
+                <div style={{
+                  position: "absolute", bottom: 14, right: 14,
+                  width: 34, height: 34, borderRadius: "50%",
+                  background: "rgba(255,255,255,0.2)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "white", fontSize: 14,
+                }}>↗</div>
+              </a>
+            </div>
+
+            {/* Visit other churches */}
+            <a href="https://visite.juumo.fr" target="_blank" rel="noopener noreferrer" style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "20px 24px", borderRadius: 22,
+              background: "linear-gradient(135deg, #5a8fa8, #7ab5c9)",
+              textDecoration: "none",
+              boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+            }}>
+              <p style={{ fontSize: 18, fontWeight: 700, color: "white", margin: 0 }}>
+                Visitez d&apos;autres églises
+              </p>
+              <div style={{
+                width: 36, height: 36, borderRadius: "50%",
+                background: "rgba(255,255,255,0.25)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "white", fontSize: 16,
+              }}>→</div>
+            </a>
+
+            {/* Footer */}
+            <p style={{ textAlign: "center", fontSize: 12, color: "#999", margin: "10px 0 0", fontFamily: "'Inter', sans-serif" }}>
+              Une réalisation de Juumo
+            </p>
           </div>
         </div>
       )}
