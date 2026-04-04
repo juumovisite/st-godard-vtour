@@ -48,9 +48,7 @@
 	<style name="hotspot_info" url="skin/hotspot_info.svg?v=2" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
-	       depth="1000" scale="0.55"
-	       onover.addevent="tween(scale,0.65);"
-	       onout.addevent="tween(scale,0.55);"
+	       depth="1000" scale="0" visible="false"
 	       onloaded.addevent="skin_hotspotstyle_setup();"
 	       />
 
