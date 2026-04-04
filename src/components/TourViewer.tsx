@@ -332,8 +332,8 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           display: "flex", alignItems: "center", gap: 0,
           background: "rgba(255,252,248,0.88)",
           backdropFilter: "blur(16px)",
-          borderRadius: 28,
-          padding: "6px 8px",
+          borderRadius: 22,
+          padding: "4px 6px",
           boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
         }}>
           {/* Précédent */}
@@ -344,15 +344,15 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             onClick={() => { setShowHistoire(false); setShowMenu(false); }}
             style={{
               display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-              padding: "14px 28px", border: "none", borderRadius: 22,
+              padding: "12px 20px", border: "none", borderRadius: 18,
               background: "#2D3E50", color: "white",
               cursor: "pointer", fontFamily: "'Inter', sans-serif",
-              fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase",
+              fontSize: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase",
               boxShadow: "0 4px 16px rgba(45,62,80,0.4)",
               transition: "all 0.3s ease",
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" />
             </svg>
@@ -401,16 +401,16 @@ function NavButton({ icon, label, onClick, active }: {
     <button
       onClick={onClick}
       style={{
-        display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-        padding: "12px 20px", border: "none", borderRadius: 18,
+        display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+        padding: "10px 12px", border: "none", borderRadius: 14,
         background: active ? "rgba(45,62,80,0.1)" : "transparent",
         color: active ? "#2D3E50" : "#6b7580",
         cursor: "pointer", fontFamily: "'Inter', sans-serif",
-        fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase",
+        fontSize: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase",
         transition: "all 0.3s ease",
       }}
     >
-      <span style={{ fontSize: 18 }}>{icon}</span>
+      <span style={{ fontSize: 15 }}>{icon}</span>
       {label}
     </button>
   );
