@@ -397,17 +397,21 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
 function NavButton({ icon, label, onClick, active }: {
   icon: React.ReactNode; label: string; onClick: () => void; active?: boolean;
 }) {
+  const [hovered, setHovered] = useState(false);
   return (
     <button
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
         padding: "10px 12px", border: "none", borderRadius: 14,
-        background: active ? "rgba(45,62,80,0.1)" : "transparent",
-        color: active ? "#2D3E50" : "#6b7580",
+        background: active ? "rgba(45,62,80,0.12)" : hovered ? "rgba(45,62,80,0.06)" : "transparent",
+        color: active ? "#2D3E50" : hovered ? "#3d5060" : "#6b7580",
         cursor: "pointer", fontFamily: "'Inter', sans-serif",
         fontSize: 8, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase",
-        transition: "all 0.3s ease",
+        transition: "all 0.25s ease",
+        transform: hovered && !active ? "translateY(-1px)" : "none",
       }}
     >
       <span style={{ fontSize: 15 }}>{icon}</span>
