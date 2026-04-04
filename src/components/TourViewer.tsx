@@ -183,11 +183,11 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         </button>
       </div>
 
-      {/* Menu overlay */}
+      {/* Menu overlay — positioned under step counter */}
       {showMenu && (
         <div style={{
-          position: "absolute", top: 86, right: 36, zIndex: 20,
-          width: 300, maxHeight: "70vh", overflowY: "auto",
+          position: "absolute", top: 76, left: 36, zIndex: 20,
+          width: 300, maxHeight: "60vh", overflowY: "auto",
           borderRadius: 20,
           background: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(20px)",
