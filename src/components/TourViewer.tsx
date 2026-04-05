@@ -295,8 +295,8 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       {/* Histoire panel */}
       {showHistoire && currentScene && (
         <div style={{
-          position: "absolute", left: 36, top: 76, zIndex: 15,
-          width: 380, maxHeight: "calc(100vh - 250px)", overflowY: "auto",
+          position: "absolute", left: 36, bottom: 36, zIndex: 15,
+          width: 380, maxHeight: "calc(100vh - 120px)", overflowY: "auto",
           borderRadius: 24,
           background: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(20px)",
