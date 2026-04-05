@@ -65,7 +65,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#2D3E50;font-weight:500">$1</a>')
       .replace(/^[\-\*]\s+(.+)/gm, "<li>$1</li>")
-      .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
+      .replace(/(<li>[\s\S]*<\/li>)/, "<ul>$1</ul>")
       .replace(/\n/g, "<br>");
   }
 
