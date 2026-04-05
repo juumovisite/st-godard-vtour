@@ -51,8 +51,73 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   const [showDetailedInfo, setShowDetailedInfo] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [chatAnswer, setChatAnswer] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+
+  function renderSimpleMarkdown(text: string) {
+    return text
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:#2D3E50;font-weight:500">$1</a>')
+      .replace(/^[\-\*]\s+(.+)/gm, "<li>$1</li>")
+      .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
+      .replace(/\n/g, "<br>");
+  }
+
+  async function sendChatMessage() {
+    const text = chatInput.trim();
+    if (!text || chatLoading) return;
+    setChatInput("");
+    setChatLoading(true);
+    setChatAnswer("");
+
+    try {
+      const response = await fetch("https://juumo-widget.vercel.app/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [{ role: "user", content: text }] }),
+      });
+
+      if (!response.ok) throw new Error("Erreur");
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n");
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") break;
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.text) {
+                fullText += parsed.text;
+                const clean = fullText.replace(/\[SUGGESTIONS\].*?(\[\/SUGGESTIONS\]|$)/g, "").trim();
+                setChatAnswer(clean);
+              }
+            } catch {}
+          }
+        }
+      }
+
+      const clean = fullText.replace(/\[SUGGESTIONS\].*?(\[\/SUGGESTIONS\]|$)/g, "").trim();
+      setChatAnswer(clean);
+    } catch {
+      setChatAnswer("Désolé, une erreur est survenue. Veuillez réessayer.");
+    }
+
+    setChatLoading(false);
+  }
 
   const currentIndex = sortedScenes.findIndex(
     (s) => s.data.nom_scene_krpano === activeScene
@@ -539,46 +604,167 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         </div>
       )}
 
+      {/* Chat answer card — above input bar */}
+      {(chatAnswer || chatLoading) && (
+        <div style={{
+          position: "absolute", bottom: 148, left: "50%", transform: "translateX(-50%)",
+          zIndex: 11, width: 460, maxWidth: "calc(100vw - 32px)",
+          animation: "chat-fade-in 0.3s ease-out both",
+        }}>
+          <div style={{
+            background: "rgba(255,252,248,0.92)", backdropFilter: "blur(20px)",
+            borderRadius: 18, padding: "16px 20px",
+            boxShadow: "0 12px 48px rgba(0,0,0,0.2)",
+            border: "1px solid rgba(255,255,255,0.3)",
+            maxHeight: 260, overflowY: "auto",
+            position: "relative",
+          }} ref={chatScrollRef}>
+            {/* Close button */}
+            <button
+              onClick={() => { setChatAnswer(""); setChatLoading(false); }}
+              style={{
+                position: "absolute", top: 10, right: 10,
+                width: 24, height: 24, borderRadius: "50%",
+                background: "rgba(45,62,80,0.1)", border: "none",
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 12, color: "#6b7d8e",
+              }}
+            >
+              ✕
+            </button>
+            {chatLoading && !chatAnswer ? (
+              <div style={{
+                display: "flex", gap: 6, padding: "8px 0",
+                alignItems: "center",
+              }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%",
+                  background: "#2D3E50", color: "white",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 10, fontWeight: 700, flexShrink: 0,
+                }}>J</div>
+                <span style={{ color: "#6b7d8e", fontSize: 14, fontFamily: "'Inter', sans-serif" }}>
+                  Réflexion en cours
+                  <span style={{ animation: "jw-bounce 1.2s infinite", display: "inline-block" }}>.</span>
+                  <span style={{ animation: "jw-bounce 1.2s infinite 0.2s", display: "inline-block" }}>.</span>
+                  <span style={{ animation: "jw-bounce 1.2s infinite 0.4s", display: "inline-block" }}>.</span>
+                </span>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 10 }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%",
+                  background: "#2D3E50", color: "white",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 10, fontWeight: 700, flexShrink: 0, marginTop: 2,
+                }}>J</div>
+                <div
+                  style={{
+                    fontSize: 13, lineHeight: 1.7, color: "#2D3E50",
+                    fontFamily: "'Inter', sans-serif", flex: 1, paddingRight: 20,
+                  }}
+                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(chatAnswer) }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Juumo chat bar — above nav */}
-      <div
-        onClick={() => {
-          const toggle = document.getElementById("jw-toggle");
-          if (toggle) toggle.click();
-        }}
-        style={{
+      {!chatOpen ? (
+        <div
+          onClick={() => {
+            setChatOpen(true);
+            setTimeout(() => chatInputRef.current?.focus(), 50);
+          }}
+          style={{
+            position: "absolute", bottom: 102, left: "50%", transform: "translateX(-50%)", zIndex: 10,
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+            background: "rgba(255,252,248,0.88)",
+            backdropFilter: "blur(16px)",
+            borderRadius: 22,
+            padding: "10px 20px",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            whiteSpace: "nowrap",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(45,62,80,0.95)";
+            e.currentTarget.style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255,252,248,0.88)";
+            e.currentTarget.style.color = "#2D3E50";
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <span style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: 0.5,
+            textTransform: "uppercase",
+          }}>
+            Vous avez une question sur Saint-Godard ?
+          </span>
+        </div>
+      ) : (
+        <div style={{
           position: "absolute", bottom: 102, left: "50%", transform: "translateX(-50%)", zIndex: 10,
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-          background: "rgba(255,252,248,0.88)",
+          display: "flex", alignItems: "center", gap: 0,
+          background: "rgba(255,252,248,0.92)",
           backdropFilter: "blur(16px)",
           borderRadius: 22,
-          padding: "10px 20px",
+          padding: "4px 4px 4px 16px",
           boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-          cursor: "pointer",
+          width: 460, maxWidth: "calc(100vw - 32px)",
+          border: "1.5px solid rgba(45,62,80,0.15)",
           transition: "all 0.3s ease",
-          whiteSpace: "nowrap",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(45,62,80,0.95)";
-          e.currentTarget.style.color = "white";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(255,252,248,0.88)";
-          e.currentTarget.style.color = "#2D3E50";
-        }}
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-        <span style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 10,
-          fontWeight: 600,
-          letterSpacing: 0.5,
-          textTransform: "uppercase",
         }}>
-          Vous avez une question sur Saint-Godard ?
-        </span>
-      </div>
+          <input
+            ref={chatInputRef}
+            type="text"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") sendChatMessage(); }}
+            placeholder="Posez votre question sur Saint-Godard..."
+            style={{
+              flex: 1, border: "none", outline: "none",
+              background: "transparent", fontSize: 13,
+              fontFamily: "'Inter', sans-serif", color: "#2D3E50",
+              padding: "8px 0",
+            }}
+          />
+          {/* Close */}
+          <button
+            onClick={() => { setChatOpen(false); setChatAnswer(""); setChatInput(""); }}
+            style={{
+              width: 32, height: 32, borderRadius: "50%",
+              background: "rgba(45,62,80,0.08)", border: "none",
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, color: "#6b7d8e", flexShrink: 0, marginRight: 4,
+            }}
+          >✕</button>
+          {/* Send */}
+          <button
+            onClick={sendChatMessage}
+            disabled={!chatInput.trim() || chatLoading}
+            style={{
+              width: 34, height: 34, borderRadius: "50%",
+              background: chatInput.trim() && !chatLoading ? "#2D3E50" : "rgba(45,62,80,0.2)",
+              border: "none", cursor: chatInput.trim() && !chatLoading ? "pointer" : "default",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0, transition: "background 0.2s",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      )}
 
       {/* Bottom navigation bar */}
       <div style={{

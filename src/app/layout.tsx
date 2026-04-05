@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,10 +21,6 @@ export default function RootLayout({
     <html lang="fr" className="h-full">
       <body className="h-full bg-black m-0 p-0 overflow-hidden">
         {children}
-        <Script
-          src="https://juumo-widget.vercel.app/widget.js"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
