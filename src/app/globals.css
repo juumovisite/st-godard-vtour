@@ -24,3 +24,137 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide default Juumo floating toggle button — replaced by custom bar */
+#jw-toggle {
+  display: none !important;
+}
+
+/* ---- Restyle Juumo popup to match St Godard tour design ---- */
+#jw-popup {
+  background: rgba(255, 252, 248, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+#jw-header {
+  background: #2D3E50 !important;
+  border-bottom: none !important;
+  border-radius: 22px 22px 0 0 !important;
+  padding: 14px 20px !important;
+  justify-content: flex-end !important;
+}
+
+#jw-header-logo {
+  display: none !important;
+}
+
+#jw-close {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+#jw-close:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+#jw-close svg {
+  fill: white !important;
+}
+
+#jw-welcome-title {
+  color: #2D3E50 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+#jw-welcome-sub {
+  color: #6b7d8e !important;
+}
+
+.jw-starter {
+  border-color: #2D3E50 !important;
+  color: #2D3E50 !important;
+  border-radius: 22px !important;
+  font-weight: 500 !important;
+}
+.jw-starter:hover {
+  background: #2D3E50 !important;
+  color: white !important;
+  border-color: #2D3E50 !important;
+  box-shadow: 0 4px 16px rgba(45, 62, 80, 0.3) !important;
+}
+
+#jw-input-area {
+  background: rgba(255, 252, 248, 0.95) !important;
+  border-top: 1px solid rgba(45, 62, 80, 0.1) !important;
+  border-radius: 0 0 22px 22px !important;
+}
+
+#jw-input-bar {
+  background: rgba(45, 62, 80, 0.06) !important;
+  border: 1.5px solid rgba(45, 62, 80, 0.15) !important;
+  border-radius: 22px !important;
+}
+#jw-input-bar:focus-within {
+  border-color: #2D3E50 !important;
+}
+
+#jw-input {
+  color: #2D3E50 !important;
+}
+#jw-input::placeholder {
+  color: #9aabba !important;
+}
+
+#jw-send {
+  background: #2D3E50 !important;
+  border-radius: 50% !important;
+}
+#jw-send svg {
+  fill: white !important;
+}
+
+.jw-avatar.bot {
+  background: #2D3E50 !important;
+  color: white !important;
+}
+
+.jw-msg-content a {
+  color: #2D3E50 !important;
+}
+
+button.jw-follow-up {
+  border-color: #2D3E50 !important;
+  color: #2D3E50 !important;
+  border-radius: 22px !important;
+}
+button.jw-follow-up:hover {
+  background: #2D3E50 !important;
+  color: white !important;
+  border-color: #2D3E50 !important;
+  box-shadow: 0 4px 16px rgba(45, 62, 80, 0.3) !important;
+}
+
+#jw-powered {
+  color: #9aabba !important;
+  background: rgba(255, 252, 248, 0.95) !important;
+  border-radius: 0 0 22px 22px !important;
+}
+
+#jw-overlay {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+.jw-contact-card {
+  background: rgba(45, 62, 80, 0.06) !important;
+  border-color: rgba(45, 62, 80, 0.15) !important;
+  border-radius: 18px !important;
+}
+
+.jw-contact-submit {
+  background: #2D3E50 !important;
+  color: white !important;
+  border-radius: 22px !important;
+}
