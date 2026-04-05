@@ -77,7 +77,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
     setChatAnswer("");
 
     try {
-      const response = await fetch("https://juumo-widget.vercel.app/api/chat", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: [{ role: "user", content: text }] }),
