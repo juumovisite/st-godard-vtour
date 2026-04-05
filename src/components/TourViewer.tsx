@@ -584,7 +584,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       {/* Audio player floating above nav bar */}
       {showAudio && currentScene?.data.audio_file?.url && (
         <div style={{
-          position: "absolute", bottom: 160, left: "50%", transform: "translateX(-50%)", zIndex: 12,
+          position: "absolute", bottom: 172, left: "50%", transform: "translateX(-50%)", zIndex: 12,
           background: "rgba(255,255,255,0.95)", backdropFilter: "blur(16px)",
           borderRadius: 16, padding: "12px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
           minWidth: 300,
