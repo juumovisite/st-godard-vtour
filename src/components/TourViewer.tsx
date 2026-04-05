@@ -215,31 +215,13 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
 
       {/* Top right — FR + Menu */}
       <div style={{ position: "absolute", top: 32, right: 36, zIndex: 10, display: "flex", gap: 10, alignItems: "center" }}>
-        <button style={{
-          width: 42, height: 42, borderRadius: "50%",
-          background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          color: "white", fontSize: 13, fontWeight: 600,
-          cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "'Inter', sans-serif",
-        }}>
-          FR
-        </button>
-        <button
+        <HeaderButton>FR</HeaderButton>
+        <HeaderButton
           onClick={() => { setShowFullMenu(!showFullMenu); setShowHistoire(false); setShowMenu(false); }}
-          style={{
-            width: 42, height: 42, borderRadius: "50%",
-            background: showFullMenu ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.15)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255,255,255,0.2)",
-            color: showFullMenu ? "#2D3E50" : "white",
-            fontSize: 20, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            transition: "all 0.3s ease",
-          }}
+          active={showFullMenu}
         >
           {showFullMenu ? "✕" : "≡"}
-        </button>
+        </HeaderButton>
       </div>
 
       {/* Histoire panel */}
@@ -673,6 +655,33 @@ function ActionButton({ icon, label, onClick, active, visible }: {
     >
       <span style={{ flexShrink: 0, opacity: 0.8 }}>{icon}</span>
       {label}
+    </button>
+  );
+}
+
+function HeaderButton({ children, onClick, active }: {
+  children: React.ReactNode; onClick?: () => void; active?: boolean;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: 42, height: 42, borderRadius: "50%",
+        background: active ? "rgba(255,255,255,0.9)" : hovered ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.15)",
+        backdropFilter: "blur(8px)",
+        border: "1px solid rgba(255,255,255,0.2)",
+        color: active ? "#2D3E50" : "white",
+        fontSize: 13, fontWeight: 600,
+        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+        fontFamily: "'Inter', sans-serif",
+        transition: "all 0.25s ease",
+        transform: hovered && !active ? "scale(1.08)" : "scale(1)",
+      }}
+    >
+      {children}
     </button>
   );
 }
