@@ -59,6 +59,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  const initialLoadRef = useRef(true);
 
   function renderSimpleMarkdown(text: string) {
     return text
@@ -128,6 +129,19 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.action === "scenechanged" && event.data.scene) {
+        if (initialLoadRef.current) {
+          // Ignore KRpano's default scene — force scene 1
+          initialLoadRef.current = false;
+          const startScene = sortedScenes[0]?.data?.nom_scene_krpano;
+          if (startScene && event.data.scene !== startScene) {
+            iframeRef.current?.contentWindow?.postMessage(
+              { action: "loadscene", scene: startScene },
+              "*"
+            );
+            setActiveScene(startScene);
+            return;
+          }
+        }
         setActiveScene(event.data.scene);
         setShowHistoire(false);
         setShowDetailedInfo(false);
@@ -138,7 +152,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [sortedScenes]);
 
   const changeScene = (sceneName: string) => {
     setActiveScene(sceneName);
