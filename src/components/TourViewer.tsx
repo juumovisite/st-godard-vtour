@@ -265,17 +265,6 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           {currentScene?.data.title || ""}
         </h1>
 
-        {currentScene?.data.description?.[0]?.text && (
-          <p style={{
-            margin: "16px 0 0", fontSize: 14, lineHeight: 1.7,
-            color: "rgba(255,255,255,0.8)",
-            maxWidth: 400,
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 400, pointerEvents: "none",
-          }}>
-            {currentScene.data.description[0].text}
-          </p>
-        )}
       </div>
 
       {/* Top right — FR + Menu */}
