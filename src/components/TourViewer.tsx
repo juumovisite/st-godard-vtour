@@ -737,7 +737,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             placeholder="Posez votre question sur Saint-Godard..."
             style={{
               flex: 1, border: "none", outline: "none",
-              background: "transparent", fontSize: 13,
+              background: "transparent", fontSize: 16,
               fontFamily: "'Inter', sans-serif", color: "#2D3E50",
               padding: "8px 0",
             }}
