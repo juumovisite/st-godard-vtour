@@ -611,7 +611,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       {(chatAnswer || chatLoading) && (
         <div style={{
           position: "absolute", bottom: 148, left: "50%", transform: "translateX(-50%)",
-          zIndex: 11, width: 460, maxWidth: "calc(100vw - 32px)",
+          zIndex: 11, width: "min(460px, calc(100vw - 32px))",
           animation: "chat-fade-in 0.3s ease-out both",
         }}>
           <div style={{
@@ -724,7 +724,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           borderRadius: 22,
           padding: "4px 4px 4px 16px",
           boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-          width: 460, maxWidth: "calc(100vw - 32px)",
+          width: "min(460px, calc(100vw - 32px))",
           border: "1.5px solid rgba(45,62,80,0.15)",
           transition: "all 0.3s ease",
         }}>
