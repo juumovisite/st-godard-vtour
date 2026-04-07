@@ -698,6 +698,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             fontWeight: 600,
             letterSpacing: 0.5,
             textTransform: "uppercase",
+            color: "inherit",
           }}>
             Vous avez une question sur Saint-Godard ?
           </span>
