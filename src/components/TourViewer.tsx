@@ -675,6 +675,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             borderRadius: 22,
             padding: "10px 20px",
             boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+            color: "#2D3E50",
             cursor: "pointer",
             transition: "all 0.3s ease",
             whiteSpace: "nowrap",
