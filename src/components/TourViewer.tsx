@@ -199,7 +199,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           onClick={() => { setShowMenu(!showMenu); setShowHistoire(false); }}
         >
           <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: 2, color: "rgba(255,255,255,0.9)", textTransform: "uppercase" }}>
-            Étape {currentIndex + 1} sur {totalScenes}
+            Chapitre {currentIndex + 1} sur {totalScenes}
           </span>
         </div>
 
@@ -768,7 +768,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
         }}>
           {/* Précédent */}
-          <NavButton icon="←" label="Précédent" onClick={goPrev} />
+          <NavButton icon="←" label="Chap. précédent" onClick={goPrev} />
 
           {/* Explorer */}
           <button
@@ -818,7 +818,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           )}
 
           {/* Suivant */}
-          <NavButton icon="→" label="Suivant" onClick={goNext} />
+          <NavButton icon="→" label="Chap. suivant" onClick={goNext} />
         </div>
       </div>
     </div>
