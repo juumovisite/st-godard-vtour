@@ -55,6 +55,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   const [chatInput, setChatInput] = useState("");
   const [chatAnswer, setChatAnswer] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
+  const [iframeReady, setIframeReady] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
@@ -130,10 +131,10 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.action === "scenechanged" && event.data.scene) {
         if (initialLoadRef.current) {
-          // Ignore KRpano's default scene — force scene 1
-          initialLoadRef.current = false;
           const startScene = sortedScenes[0]?.data?.nom_scene_krpano;
           if (startScene && event.data.scene !== startScene) {
+            // KRpano loaded its default scene — force scene 1
+            initialLoadRef.current = false;
             iframeRef.current?.contentWindow?.postMessage(
               { action: "loadscene", scene: startScene },
               "*"
@@ -141,7 +142,11 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
             setActiveScene(startScene);
             return;
           }
+          // Scene 1 is loaded — reveal iframe
+          initialLoadRef.current = false;
+          setIframeReady(true);
         }
+        if (!iframeReady) setIframeReady(true);
         setActiveScene(event.data.scene);
         setShowHistoire(false);
         setShowDetailedInfo(false);
@@ -152,7 +157,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [sortedScenes]);
+  }, [sortedScenes, iframeReady]);
 
   const changeScene = (sceneName: string) => {
     setActiveScene(sceneName);
@@ -188,7 +193,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         src="/vtour/tour.html"
         width="100%"
         height="100%"
-        style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+        style={{ border: "none", position: "absolute", top: 0, left: 0, opacity: iframeReady ? 1 : 0, transition: "opacity 0.3s ease" }}
         allowFullScreen
         title="Visite virtuelle Cathédrale St Godard"
       />
