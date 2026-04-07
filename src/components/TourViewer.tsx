@@ -40,7 +40,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   );
 
   const [activeScene, setActiveScene] = useState(
-    sortedScenes[0]?.data?.nom_scene_krpano || "scene_parvis_entree"
+    sortedScenes[1]?.data?.nom_scene_krpano || "scene_entree"
   );
   const [showHistoire, setShowHistoire] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -171,7 +171,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
       {/* KRPano iframe */}
       <iframe
         ref={iframeRef}
-        src={`/vtour/tour.html?startscene=${sortedScenes[0]?.data?.nom_scene_krpano || "scene_parvis_entree"}`}
+        src={`/vtour/tour.html?startscene=${sortedScenes[1]?.data?.nom_scene_krpano || "scene_entree"}`}
         width="100%"
         height="100%"
         style={{ border: "none", position: "absolute", top: 0, left: 0 }}
