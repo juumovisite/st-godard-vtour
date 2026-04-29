@@ -1,4 +1,4 @@
-﻿<krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui());">
+<krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui());">
 
 	<include url="skin/vtourskin.xml?v=2" />
 
