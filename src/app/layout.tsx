@@ -4,6 +4,7 @@ import "./globals.css";
 import type { Viewport } from "next";
 
 import { PostHogProvider } from "@/components/PostHogProvider";
+import { Analytics } from "@vercel/analytics/next";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -31,6 +32,7 @@ export default function RootLayout({
     <html lang="fr" className="h-full">
       <body className="h-full bg-black m-0 p-0 overflow-hidden">
         <PostHogProvider>{children}</PostHogProvider>
+        <Analytics />
       </body>
     </html>
   );
