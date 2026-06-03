@@ -19,3 +19,4 @@ export async function trackScene(sceneName: string, opts?: { title?: string; cat
     });
   } catch {}
 }
+// PostHog tracking enabled 2026-06-03
