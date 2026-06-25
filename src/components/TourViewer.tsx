@@ -1,7 +1,5 @@
 "use client";
 import { useState, useRef, useEffect, useMemo } from "react";
-
-import { trackScene } from "@/lib/posthog-track";
 interface SceneData {
   id: string;
   data: {
@@ -129,7 +127,6 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.action === "scenechanged" && event.data.scene) {
-        trackScene(event.data.scene, { source: "krpano_hotspot" });
         setActiveScene(event.data.scene);
         setShowHistoire(false);
         setShowDetailedInfo(false);
@@ -143,7 +140,6 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   }, []);
 
   const changeScene = (sceneName: string) => {
-    trackScene(sceneName, { source: "menu" });
     setActiveScene(sceneName);
     setShowHistoire(false);
     setShowDetailedInfo(false);

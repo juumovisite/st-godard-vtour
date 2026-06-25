@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import type { Viewport } from "next";
-
-import { PostHogProvider } from "@/components/PostHogProvider";
 import { Analytics } from "@vercel/analytics/next";
 export const viewport: Viewport = {
   width: "device-width",
@@ -31,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className="h-full">
       <body className="h-full bg-black m-0 p-0 overflow-hidden">
-        <PostHogProvider>{children}</PostHogProvider>
+        {children}
         <Analytics />
       </body>
     </html>
