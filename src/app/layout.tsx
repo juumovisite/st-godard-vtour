@@ -3,6 +3,7 @@ import "./globals.css";
 
 import type { Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { JsonLd } from "@/components/JsonLd";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -28,6 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className="h-full">
+      <head>
+        <JsonLd />
+      </head>
       <body className="h-full bg-black m-0 p-0 overflow-hidden">
         {children}
         <Analytics />
