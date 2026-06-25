@@ -25,6 +25,9 @@ export function JsonLd() {
         "latitude": 49.4449564,
         "longitude": 1.095441
       },
+      "sameAs": [
+        "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Godard_de_Rouen"
+      ],
       "amenityFeature": [
         {
           "@type": "LocationFeatureSpecification",
