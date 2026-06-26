@@ -65,6 +65,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "messages array required" }, { status: 400 });
   }
 
+  const lastUser = [...messages].reverse().find((m: { role: string; content: string }) => m.role === "user");
+  const chatlogQuestion = typeof lastUser?.content === "string" ? lastUser.content : "";
+  const chatlogSite = request.headers.get("host") ?? "";
+
   const recentMessages = messages.slice(-20);
 
   const client = new Anthropic();
@@ -77,6 +81,7 @@ export async function POST(request: Request) {
   });
 
   const encoder = new TextEncoder();
+  let chatlogAnswer = "";
   const readable = new ReadableStream({
     async start(controller) {
       for await (const event of stream) {
@@ -84,12 +89,18 @@ export async function POST(request: Request) {
           event.type === "content_block_delta" &&
           event.delta.type === "text_delta"
         ) {
+          chatlogAnswer += event.delta.text;
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`)
           );
         }
       }
       controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+      void fetch("https://espace.juumo.fr/api/chatbot-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ site: chatlogSite, question: chatlogQuestion, answer: chatlogAnswer }),
+      }).catch(() => {});
       controller.close();
     },
   });
