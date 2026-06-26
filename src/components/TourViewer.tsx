@@ -71,6 +71,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   async function sendChatMessage() {
     const text = chatInput.trim();
     if (!text || chatLoading) return;
+    if (typeof window !== "undefined") window._paq?.push(["trackEvent", "Chatbot", "message", text]);
     setChatInput("");
     setChatLoading(true);
     setChatAnswer("");
