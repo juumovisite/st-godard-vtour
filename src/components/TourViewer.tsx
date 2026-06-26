@@ -1,5 +1,12 @@
 "use client";
 import { useState, useRef, useEffect, useMemo } from "react";
+
+declare global {
+  interface Window {
+    _paq?: unknown[][];
+  }
+}
+
 interface SceneData {
   id: string;
   data: {
@@ -665,6 +672,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
         <div
           onClick={() => {
             setChatOpen(true);
+            if (typeof window !== "undefined") window._paq?.push(["trackEvent", "Chatbot", "open"]);
             setTimeout(() => chatInputRef.current?.focus(), 50);
           }}
           style={{
