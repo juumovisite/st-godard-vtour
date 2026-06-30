@@ -4,6 +4,7 @@ import "./globals.css";
 import type { Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { JsonLd } from "@/components/JsonLd";
+import { MatomoProvider } from "@/components/MatomoProvider";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className="h-full bg-black m-0 p-0 overflow-hidden">
         {children}
         <Analytics />
+        <MatomoProvider />
       </body>
     </html>
   );
