@@ -6,8 +6,8 @@ declare global {
   interface Window { _paq?: unknown[][]; }
 }
 
-// Matomo Cloud (juumo.matomo.cloud) — site 21. Pageviews + scènes + chatbot.
-const MATOMO_SITE_ID = "21";
+// Matomo Cloud (matomo.juumo.fr) — site 21. Pageviews + scènes + chatbot.
+const MATOMO_SITE_ID = "20";
 
 export function MatomoProvider() {
   useEffect(() => {
@@ -16,11 +16,11 @@ export function MatomoProvider() {
     _paq.push(["trackPageView"]);
     _paq.push(["enableLinkTracking"]);
     _paq.push(["enableHeartBeatTimer"]);
-    _paq.push(["setTrackerUrl", "https://juumo.matomo.cloud/matomo.php"]);
+    _paq.push(["setTrackerUrl", "https://matomo.juumo.fr/matomo.php"]);
     _paq.push(["setSiteId", MATOMO_SITE_ID]);
     const g = document.createElement("script");
     g.async = true;
-    g.src = "https://cdn.matomo.cloud/juumo.matomo.cloud/matomo.js";
+    g.src = "https://matomo.juumo.fr/matomo.js";
     document.head.appendChild(g);
     // Scene tracking Matomo — virtual pageview a chaque changement de scene KRpano (topScenes espace client)
     const onMatomoScene = (e: MessageEvent) => {
