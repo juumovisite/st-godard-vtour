@@ -58,6 +58,15 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   const [showAudio, setShowAudio] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  // Statut central du chatbot (fin d'essai) — fail-open : inactif UNIQUEMENT
+  // si l'espace client répond explicitement active:false
+  const [juumiStatus, setJuumiStatus] = useState<{ active: boolean; message?: string }>({ active: true });
+  useEffect(() => {
+    fetch(`https://espace.juumo.fr/api/juumi-status?site=${window.location.hostname}`)
+      .then((r) => r.json())
+      .then((st) => { if (st && st.active === false) setJuumiStatus(st); })
+      .catch(() => {});
+  }, []);
   const [chatInput, setChatInput] = useState("");
   const [chatAnswer, setChatAnswer] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
@@ -78,6 +87,11 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   async function sendChatMessage() {
     const text = chatInput.trim();
     if (!text || chatLoading) return;
+    if (!juumiStatus.active) {
+      setChatInput("");
+      setChatAnswer(juumiStatus.message ?? "L'essai gratuit de l'assistant est terminé — contactez l'établissement pour toute question.");
+      return;
+    }
     if (typeof window !== "undefined") window._paq?.push(["trackEvent", "Chatbot", "message", text]);
     setChatInput("");
     setChatLoading(true);
@@ -831,6 +845,16 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
           <NavButton icon="→" label="Chap. suivant" onClick={goNext} />
         </div>
       </div>
+
+      {/* Badge JUUMO — lien marketing discret, UTM propre au site */}
+      <a
+        href="https://juumo.fr/?utm_source=visite360&utm_medium=badge&utm_campaign=saint-godard"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-2 right-2 z-20 px-2.5 py-1 rounded-full bg-black/30 hover:bg-black/55 backdrop-blur-sm text-white/75 hover:text-white text-[10px] tracking-wide transition-colors"
+      >
+        Propulsé par <span className="font-bold">JUUMO</span>
+      </a>
     </div>
   );
 }
