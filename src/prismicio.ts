@@ -7,6 +7,6 @@ export const client = prismic.createClient(repositoryName, {
   accessToken: process.env.PRISMIC_ACCESS_TOKEN,
   fetchOptions:
     process.env.NODE_ENV === "production"
-      ? { next: { tags: ["prismic"] }, cache: "force-cache" }
+      ? { next: { tags: ["prismic"], revalidate: 60 } }
       : { next: { revalidate: 5 } },
 });
