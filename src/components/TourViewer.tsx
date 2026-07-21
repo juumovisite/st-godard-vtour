@@ -38,7 +38,7 @@ const DEFAULT_SCENES: SceneData[] = [
   { id: "10", data: { title: "Vue Donjon", nom_scene_krpano: "scene_vue_donjon", categorie: "Extérieur", ordre: 10 } },
 ];
 
-export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
+export default function TourViewer({ scenes, initialScene }: { scenes: SceneData[]; initialScene?: string }) {
   const allScenes = scenes.length > 0 ? scenes : DEFAULT_SCENES;
   const sortedScenes = useMemo(
     () => [...allScenes].sort((a, b) => (a.data.ordre || 99) - (b.data.ordre || 99)),
@@ -46,7 +46,7 @@ export default function TourViewer({ scenes }: { scenes: SceneData[] }) {
   );
 
   const [activeScene, setActiveScene] = useState(
-    sortedScenes[1]?.data?.nom_scene_krpano || "scene_entree"
+    initialScene || sortedScenes[1]?.data?.nom_scene_krpano || "scene_entree"
   );
   const [showHistoire, setShowHistoire] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
