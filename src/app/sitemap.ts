@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 
 import { client } from "@/lib/prismic";
 
+export const revalidate = 3600;
+
 const BASE_URL = "https://st-godard-vtour.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

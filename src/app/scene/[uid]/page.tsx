@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { client } from "@/lib/prismic";
 import TourViewer from "@/components/TourViewer";
 
+export const revalidate = 3600;
+export const dynamicParams = true;
+
 const BASE_URL = "https://st-godard-vtour.vercel.app";
 
 type SceneDoc = {
