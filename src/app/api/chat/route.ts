@@ -58,6 +58,32 @@ Attestations d'un orgue dès 1531. Première composition connue en 1632, puis 17
 ### Conclusion
 Saint-Godard est une église moins démonstrative que d'autres monuments rouennais, mais d'une densité patrimoniale impressionnante. Son architecture garde la sobriété du gothique tardif, sa crypte entretient la mémoire des saints évêques de Rouen, ses verrières comptent parmi les plus belles de la ville, et ses orgues en font un lieu majeur pour la musique sacrée. C'est un lieu où Rouen a déposé une part de sa mémoire : sa foi, ses crises, ses restaurations, ses légendes, son art du vitrail et sa culture musicale.`;
 
+/**
+ * Réponses officielles ajoutées par le client depuis son espace JUUMO
+ * (boutons « Donner la réponse » / « Améliorer cette réponse »). Best-effort,
+ * caché 5 min, jamais bloquant : un échec laisse le prompt de base intact.
+ */
+async function fetchJuumiKnowledge(host: string): Promise<string> {
+  if (!host) return "";
+  try {
+    const res = await fetch(
+      `https://espace.juumo.fr/api/juumi-knowledge?site=${encodeURIComponent(host)}`,
+      { next: { revalidate: 300 }, signal: AbortSignal.timeout(2500) }
+    );
+    if (!res.ok) return "";
+    const { items } = (await res.json()) as {
+      items?: { q: string; a: string }[];
+    };
+    if (!items?.length) return "";
+    const lines = items
+      .map((it) => `- Question : ${it.q}\n  Réponse officielle : ${it.a}`)
+      .join("\n");
+    return `\n\n## Réponses officielles validées par l'établissement (PRIORITAIRES sur le reste)\nSi une question correspond à l'une de celles-ci, réponds avec la réponse officielle (reformulée naturellement, mêmes règles de style) :\n${lines}`;
+  } catch {
+    return "";
+  }
+}
+
 export async function POST(request: Request) {
   const { messages } = await request.json();
 
@@ -73,10 +99,13 @@ export async function POST(request: Request) {
 
   const client = new Anthropic();
 
+  const juumiKnowledge = await fetchJuumiKnowledge(
+    request.headers.get("host") ?? ""
+  );
   const stream = await client.messages.stream({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 400,
-    system: SYSTEM_PROMPT,
+    system: SYSTEM_PROMPT + juumiKnowledge,
     messages: recentMessages,
   });
 
