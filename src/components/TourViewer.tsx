@@ -59,7 +59,8 @@ export default function TourViewer({ scenes, initialScene }: { scenes: SceneData
   const [showVideo, setShowVideo] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   // Statut central du chatbot (fin d'essai) — fail-open : inactif UNIQUEMENT
-  // si l'espace client répond explicitement active:false
+  // si l'espace client répond explicitement active:false. Inactif = le chat
+  // est entièrement MASQUÉ (aucun message « essai terminé » côté visiteur).
   const [juumiStatus, setJuumiStatus] = useState<{ active: boolean; message?: string }>({ active: true });
   useEffect(() => {
     fetch(`https://espace.juumo.fr/api/juumi-status?site=${window.location.hostname}`)
@@ -87,11 +88,7 @@ export default function TourViewer({ scenes, initialScene }: { scenes: SceneData
   async function sendChatMessage() {
     const text = chatInput.trim();
     if (!text || chatLoading) return;
-    if (!juumiStatus.active) {
-      setChatInput("");
-      setChatAnswer(juumiStatus.message ?? "L'essai gratuit de l'assistant est terminé — contactez l'établissement pour toute question.");
-      return;
-    }
+    if (!juumiStatus.active) return;
     if (typeof window !== "undefined") window._paq?.push(["trackEvent", "Chatbot", "message", text]);
     setChatInput("");
     setChatLoading(true);
@@ -614,8 +611,8 @@ export default function TourViewer({ scenes, initialScene }: { scenes: SceneData
         </div>
       )}
 
-      {/* Chat answer card — above input bar */}
-      {(chatAnswer || chatLoading) && (
+      {/* Chat answer card — above input bar (non rendu si chatbot inactif) */}
+      {juumiStatus.active && (chatAnswer || chatLoading) && (
         <div style={{
           position: "absolute", bottom: 148, left: "50%", transform: "translateX(-50%)",
           zIndex: 11, width: "min(460px, calc(100vw - 32px))",
@@ -681,8 +678,8 @@ export default function TourViewer({ scenes, initialScene }: { scenes: SceneData
         </div>
       )}
 
-      {/* Juumo chat bar — above nav */}
-      {!chatOpen ? (
+      {/* Juumo chat bar — above nav (non rendu si chatbot inactif) */}
+      {juumiStatus.active && (!chatOpen ? (
         <div
           onClick={() => {
             setChatOpen(true);
@@ -777,7 +774,7 @@ export default function TourViewer({ scenes, initialScene }: { scenes: SceneData
             <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
-      )}
+      ))}
 
       {/* Bottom navigation bar */}
       <div style={{
