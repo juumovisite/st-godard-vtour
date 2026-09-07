@@ -1,6 +1,8 @@
 <krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui());">
 
 	<include url="skin/vtourskin.xml?v=2" />
+	<!-- Pas de menu contextuel KRpano (règle JUUMO) -->
+	<contextmenu enabled="false" versioninfo="false" fullscreen="false" />
 
 	<events name="hide_on_scene" onscenechange="delayedcall(0.3, hide_ui());" keep="true" />
 
