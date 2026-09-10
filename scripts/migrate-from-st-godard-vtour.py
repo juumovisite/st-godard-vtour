@@ -79,9 +79,8 @@ def clean_data(d: dict, uid: str, lang: str = "fr") -> dict:
     if d.get("video_url"):
         out["video_url"] = d["video_url"]
     # Médias : la Migration API accepte une URL externe pour les fichiers → réimport dans le nouveau repo
-    af = d.get("audio_file") or {}
-    if af.get("url"):
-        out["audio_file"] = {"link_type": "Media", "url": af["url"]}
+    # audio_file : la Migration API exige un asset du repo (asset API), pas une URL externe.
+    # L'audio existant (orgue-choeur) est à réuploader depuis l'espace client.
     img = d.get("image_apercu") or {}
     if img.get("url"):
         out["image_apercu"] = {"url": img["url"]}
@@ -95,6 +94,17 @@ def en_data(d: dict, uid: str, ordre: int) -> dict:
 
 
 def call(method: str, path: str, body, tok: str):
+    for attempt in range(6):
+        status, res = _call_once(method, path, body, tok)
+        if status != 429:
+            return status, res
+        wait = 5 * (attempt + 1)
+        print(f"  … 429 rate limit, pause {wait}s")
+        time.sleep(wait)
+    return status, res
+
+
+def _call_once(method: str, path: str, body, tok: str):
     req = urllib.request.Request(
         f"https://migration.prismic.io{path}",
         data=json.dumps(body).encode() if body is not None else None,
@@ -133,21 +143,36 @@ def main():
         return
 
     tok = token()
-    created = {}
+    state_path = pathlib.Path(__file__).with_name(".migration-state.json")
+    state = json.loads(state_path.read_text()) if state_path.exists() else {"fr": {}, "en": {}}
+    created = dict(state["fr"])
     for uid, fr, en in plan:
+        if uid in created:
+            print(f"  fr déjà créé {uid} → {created[uid]}")
+            continue
         status, res = call("POST", "/documents", {"type": "scene", "uid": uid, "lang": "fr-fr", "title": fr["title"], "data": fr}, tok)
+        if status not in (200, 201) and "audio_file" in fr:
+            # L'import d'un média par URL n'est pas garanti : on réessaie sans l'audio (à réuploader dans l'espace client)
+            print(f"  !! {uid} refusé avec audio ({status} {str(res)[:120]}) → nouvel essai sans audio_file")
+            fr.pop("audio_file"); en.pop("audio_file", None)
+            status, res = call("POST", "/documents", {"type": "scene", "uid": uid, "lang": "fr-fr", "title": fr["title"], "data": fr}, tok)
         if status not in (200, 201):
             sys.exit(f"Échec création fr {uid} : {status} {res}")
         created[uid] = res.get("id")
+        state["fr"][uid] = created[uid]; state_path.write_text(json.dumps(state, indent=1))
         print(f"  fr ok {uid} → {created[uid]}")
-        time.sleep(0.4)
+        time.sleep(1.5)
     for uid, fr, en in plan:
+        if uid in state["en"]:
+            print(f"  en déjà créé {uid} → {state['en'][uid]}")
+            continue
         body = {"type": "scene", "uid": uid, "lang": "en-us", "title": en["title"], "data": en, "alternate_language_id": created[uid]}
         status, res = call("POST", "/documents", body, tok)
         if status not in (200, 201):
             sys.exit(f"Échec création en {uid} : {status} {res}")
+        state["en"][uid] = res.get("id"); state_path.write_text(json.dumps(state, indent=1))
         print(f"  en ok {uid} → {res.get('id')}")
-        time.sleep(0.4)
+        time.sleep(1.5)
 
     if PUBLISH:
         status, res = call("POST", "/migration-release/publish", {}, tok)
