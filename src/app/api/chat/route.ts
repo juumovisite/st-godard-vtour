@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { buildPlatformContext, describeCurrentScene } from "@/lib/chat-context";
 
 const SYSTEM_PROMPT = `Tu es le guide virtuel de l'église Saint-Godard de Rouen, intégré dans la visite virtuelle 360° du lieu.
 
@@ -16,6 +17,7 @@ const SYSTEM_PROMPT = `Tu es le guide virtuel de l'église Saint-Godard de Rouen
 8. À LA FIN de chaque réponse, ajoute TOUJOURS un bloc de suggestions sur une nouvelle ligne avec ce format exact (3 suggestions courtes et pertinentes liées au sujet abordé) :
 [SUGGESTIONS]Suggestion 1|Suggestion 2|Suggestion 3[/SUGGESTIONS]
 9. EXCEPTION à la règle « uniquement le lieu » — la visite virtuelle elle-même. Si la question porte sur la réalisation de ce que le visiteur a sous les yeux — qui a fait cette visite virtuelle, ce site web, cette plateforme, ces images 360, comment c'est fabriqué, quelle technologie, combien ça coûte, « je voudrais la même pour mon lieu / mon entreprise / ma commune » — réponds, et parle de JUUMO : cette visite virtuelle a été conçue et réalisée par **JUUMO**, studio spécialisé dans les visites virtuelles 360° immersives (prises de vue, interface, guide conversationnel). Donne toujours le site **juumo.fr**, le contact **contact@juumo.fr** et le téléphone **06 69 73 99 40**, en 2-3 phrases, puis propose de reprendre la visite. Ne donne aucun tarif ni délai : renvoie vers le contact.
+10. NAVIGATION DANS LA VISITE. Tu es DANS la visite virtuelle : tu peux emmener le visiteur directement dans une scène. Quand tu mentionnes un endroit visitable (ou que le visiteur veut le voir, demande où il est, comment y aller), transforme sa mention en lien de scène avec ce format exact : [GOTO:id_scene]Texte affiché[/GOTO]. Exemple : « L'Arbre de Jessé se trouve dans [GOTO:scene_aile_nord_centre]le collatéral nord[/GOTO]. » Les ids valides sont UNIQUEMENT ceux de la section « Contenu de la visite virtuelle » ci-dessous : n'en invente jamais d'autres. Si le visiteur est déjà sur cette scène, dis-le sans lien.
 
 ## Base de connaissances – Église Saint-Godard de Rouen
 
@@ -87,7 +89,7 @@ async function fetchJuumiKnowledge(host: string): Promise<string> {
 }
 
 export async function POST(request: Request) {
-  const { messages } = await request.json();
+  const { messages, scene } = await request.json();
 
   if (!messages || !Array.isArray(messages)) {
     return Response.json({ error: "messages array required" }, { status: 400 });
@@ -96,25 +98,31 @@ export async function POST(request: Request) {
   const lastUser = [...messages].reverse().find((m: { role: string; content: string }) => m.role === "user");
   const chatlogQuestion = typeof lastUser?.content === "string" ? lastUser.content : "";
   const chatlogSite = request.headers.get("host") ?? "";
+  const currentScene = typeof scene === "string" ? scene : "";
 
   const recentMessages = messages.slice(-20);
 
   const client = new Anthropic();
 
-  const juumiKnowledge = await fetchJuumiKnowledge(
-    request.headers.get("host") ?? ""
-  );
+  // Prompt = règles + base en dur, puis contenu de la visite (Prismic, édité
+  // dans l'espace client), scène courante, puis réponses officielles du client
+  // (prioritaires sur tout). Chaque bloc est best-effort.
+  const [platformContext, sceneContext, juumiKnowledge] = await Promise.all([
+    buildPlatformContext(),
+    describeCurrentScene(currentScene),
+    fetchJuumiKnowledge(request.headers.get("host") ?? ""),
+  ]);
   const stream = await client.messages.stream({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 400,
-    system: SYSTEM_PROMPT + juumiKnowledge,
+    system: SYSTEM_PROMPT + platformContext + sceneContext + juumiKnowledge,
     messages: recentMessages,
   });
 
   const encoder = new TextEncoder();
-  let chatlogAnswer = "";
   const readable = new ReadableStream({
     async start(controller) {
+      let chatlogAnswer = "";
       for await (const event of stream) {
         if (
           event.type === "content_block_delta" &&
@@ -127,10 +135,11 @@ export async function POST(request: Request) {
         }
       }
       controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-      void fetch("https://espace.juumo.fr/api/chatbot-log", {
+      // AWAIT obligatoire : Vercel serverless tue les fetch non-awaités au return
+      await fetch("https://espace.juumo.fr/api/chatbot-log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ site: chatlogSite, question: chatlogQuestion, answer: chatlogAnswer }),
+        body: JSON.stringify({ site: chatlogSite, question: chatlogQuestion, answer: chatlogAnswer, scene: currentScene }),
       }).catch(() => {});
       controller.close();
     },

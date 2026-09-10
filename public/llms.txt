@@ -1,0 +1,35 @@
+# Église Saint-Godard de Rouen — Visite virtuelle 360°
+
+> Visite virtuelle immersive 360° de l'église Saint-Godard, 76000 Rouen, Normandie. Réalisée par JUUMO (juumo.fr), studio spécialisé en visites virtuelles. Un chatbot guide (Juumi) répond aux questions des visiteurs directement dans la visite.
+
+## Le lieu
+
+- Édifice discret en apparence mais majeur dans le patrimoine rouennais. Site lié à un culte ancien ; église détruite par un incendie en 1248, reconstruite par grandes campagnes entre la fin du XVe siècle et le XVIIe siècle. Protégée au titre des Monuments historiques.
+- Étapes : nef de la seconde moitié du XVe siècle ; collatéral nord achevé en 1527, collatéral sud en 1534 ; escaliers de la crypte et porte sur la rue du Beffroi en 1537 ; tour en 1612 ; sacristie agrandie en 1654 ; toitures latérales modifiées au XVIIIe siècle. Dévastée par les calvinistes en 1562, fermée pendant la Révolution, rouverte en 1806.
+- Intérieur clair et léger : trois vaisseaux, longue perspective (71 mètres selon la paroisse), arcades sobres à moulures prismatiques, voûtes en bois en forme de carène renversée, vingt-quatre baies.
+- Saint patron : saint Godard (Gildard), évêque de Rouen du VIe siècle, présent au concile d'Orléans de 511, inhumé ici selon la tradition. Forte mémoire de saint Romain, grand évêque de Rouen.
+- Crypte gothique flamboyant derrière l'orgue de chœur : croisée d'ogives, pilier central, escaliers de 1537.
+
+## Les vitraux (XVIe et XVIIIe siècles)
+
+- Vie de saint Romain : plus grande verrière de la nef nord, offerte en 1540 par Richard Le Caron, sieur du Fossé ; cinq lancettes sur quatre registres ; déposée en 1802, restituée en partie, nombreuses têtes refaites.
+- Vie de la Vierge (baie 6) : vers 1506, atelier rouennais d'après des cartons d'un peintre parisien ; recomposée par l'atelier Laurent Gsell vers 1860-1865.
+- Arbre de Jessé (baie 18) : généalogie du Christ, largement attribué à Arnoult de Nimègue autour de 1506, l'un des sommets du vitrail rouennais de la Renaissance ; déposé en 1920 pour protection.
+- Après la Révolution, seules la Vie de saint Romain et les Apparitions du Christ ressuscité avaient survécu dans la nef nord ; nombreux vitraux du XIXe siècle (maison Gsell).
+
+## Mobilier et orgues
+
+- Chapelle des fonts baptismaux sous le clocher : ensemble du XVIIIe siècle (lambris, bancs, cuve, couvercle). Ex-voto de la nef nord : 1871 (Vierge), juin 1940 (saint Antoine de Padoue), Occupation (saint Joseph).
+- Orgue attesté dès 1531 ; compositions connues en 1632 et 1778. Grand orgue Aristide Cavaillé-Coll en 1884, orgue de chœur en 1885 et 1889 ; les deux classés Monuments historiques en 1999. Concerts programmés par la Métropole.
+
+## La visite virtuelle
+
+- URL : https://saintgodard.juumo.fr
+- 22 scènes 360° : le parvis et l'extérieur (7), la nef, les orgues, l'autel et le chœur, les collatéraux nord et sud et leurs vitraux, le baptistère, la crypte.
+- Chaque scène a sa page dédiée : https://saintgodard.juumo.fr/scene/<uid> (ex. /scene/aile-nord-centre, /scene/crypte, /scene/orgue).
+- Accès libre et gratuit, compatible mobile et desktop. Versions française et anglaise.
+
+## Éditeur
+
+- Visite produite par JUUMO — visites virtuelles 360° : https://juumo.fr
+- Toutes les églises de Rouen en 360° : https://eglises-rouen.juumo.fr

@@ -1,8 +1,20 @@
-<krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui());">
+﻿<krpano version="1.22" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui()); set(hs_hover_active,false); set(hs_hover_title,''); set(hs_hover_thumb,''); set(hs_hover_ath,''); set(hs_hover_atv,''); set(hs_hover_scene,'');">
 
 	<include url="skin/vtourskin.xml?v=2" />
 	<!-- Pas de menu contextuel KRpano (règle JUUMO) -->
 	<contextmenu enabled="false" versioninfo="false" fullscreen="false" />
+
+	<!-- Rotation d'accueil : dérive très douce vers la droite sur la 1re scène
+	     uniquement, pour faire comprendre que c'est du 360. La 1re interaction
+	     l'arrête (waittime énorme = ne reprend jamais) et le 1er changement de
+	     scène la coupe définitivement. -->
+	<!-- tofov/horizon off : le skin met tofov=80 (zoom progressif) — on veut une
+	     dérive horizontale pure, sans zoom ni recentrage vertical -->
+	<autorotate enabled="true" speed="2.0" accel="0.3" waittime="1.5" tofov="off" horizon="off" devices="mobile" />
+	<events name="welcome_autorotate_once" keep="true"
+	        onmousedown="set(autorotate.enabled,false);"
+	        onnewscene="if(welcome_rotate_done, set(autorotate.enabled,false), set(welcome_rotate_done,true));" />
+
 
 	<events name="hide_on_scene" onscenechange="delayedcall(0.3, hide_ui());" keep="true" />
 
@@ -31,21 +43,77 @@
 		set(layer[skin_title].y, -9999);
 	</action>
 
-	<!-- Custom hotspot styles - arrow navigation with tooltip -->
-	<style name="hotspot_nav" url="skin/hotspot_arrow.png?v=2" edge="center" distorted="false"
+	<!-- Hotspot : anneau fin extérieur + anneau gras intérieur -->
+	<!-- Hover : +25% scale + aperçu de la scène dans le cercle + titre dessous -->
+	<style name="hotspot_nav" url="skin/hotspot_nav_custom.svg" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
-	       depth="1000" scale="0.22"
-	       onloaded.addevent="hotspot_arrow_setup(); skin_hotspotstyle_setup();"
-	       onover.addevent="tween(scale,0.35,0.3,easeOutBack);"
-	       onout.addevent="tween(scale,0.22,0.3,easeOutQuad);"
+	       depth="1000" scale="0.312"
+	       alpha="1.0"
+	       onloaded.addevent="hotspot_arrow_setup(); skin_hotspotstyle_setup(); hs_pulse_up();"
+	       onover.addevent="tween(scale,0.487,0.28,easeOutBack); hs_set_hover();"
+	       onout.addevent="tween(scale,0.312,0.35,easeOutQuad,hs_pulse_up()); hs_clear_hover();"
 	       />
 
 	<action name="hotspot_arrow_setup" scope="local">
-		if(isvalue(caller.linkedscene) AND caller.linkedscene != 'scene_taginfo',
+		if(isvalue(caller.linkedscene),
 			copy(caller.tooltip, scene[get(caller.linkedscene)].title);
 		);
 	</action>
+
+	<!-- Calque preview hotspot — centré sur le hotspot via spheretoscreen -->
+	<layer name="hs_preview" keep="true" visible="false" zorder="250"
+	       type="text" html=""
+	       width="200" height="0"
+	       align="lefttop"
+	       ox="-65" oy="-65"
+	       bgalpha="0"
+	       handcursor="false" capture="false" />
+
+	<action name="hs_show_preview" scope="local"><![CDATA[
+		if(isvalue(caller.linkedscene) AND caller.linkedscene != '',
+			copy(hs_url, scene[get(caller.linkedscene)].thumburl);
+			copy(hs_lbl, caller.tooltip);
+			concat(layer[hs_preview].html,
+				'<div style="display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none">',
+				'<div style="width:130px;height:130px;border-radius:65px;border:3px solid rgba(255,255,255,0.95);background:url(', get(hs_url), ') center/cover;box-shadow:0 4px 20px rgba(0,0,0,0.6)"></div>',
+				'<span style="color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;text-shadow:0 2px 6px rgba(0,0,0,0.9);white-space:nowrap;background:rgba(0,0,0,0.42);border-radius:16px;padding:3px 10px">', get(hs_lbl), '</span>',
+				'</div>');
+			copy(layer[hs_preview].x, mouse.x);
+			copy(layer[hs_preview].y, mouse.y);
+			set(layer[hs_preview].visible, true);
+		);
+	]]></action>
+
+	<action name="hs_hide_preview"><![CDATA[
+		set(layer[hs_preview].visible, false);
+	]]></action>
+
+	<!-- Preview hotspot : set variables → poll depuis tour.html → postMessage → React -->
+	<!-- scope="local" requis pour accéder à caller (le hotspot) -->
+	<!-- Variables pré-déclarées globalement au onstart → copy() les met à jour même en scope local -->
+	<!-- On lit scene[...].title directement (caller.tooltip ne persiste pas, set par copy en scope local dans hotspot_arrow_setup) -->
+	<action name="hs_set_hover" scope="local"><![CDATA[
+		set(hs_hover_active, true);
+		copy(hs_hover_title, scene[get(caller.linkedscene)].title);
+		copy(hs_hover_thumb, scene[get(caller.linkedscene)].thumburl);
+		copy(hs_hover_ath, caller.ath);
+		copy(hs_hover_atv, caller.atv);
+		copy(hs_hover_scene, caller.linkedscene);
+	]]></action>
+	<action name="hs_clear_hover"><![CDATA[
+		set(hs_hover_active, false);
+		set(hs_hover_title, '');
+		set(hs_hover_thumb, '');
+	]]></action>
+
+	<!-- Pulse loop : scale 0.312↔0.352 en boucle (alpha fixe à 1.0) -->
+	<action name="hs_pulse_up"><![CDATA[
+		tween(scale, 0.352, 0.75, easeInOutSine, hs_pulse_down());
+	]]></action>
+	<action name="hs_pulse_down"><![CDATA[
+		tween(scale, 0.312, 0.75, easeInOutSine, hs_pulse_up());
+	]]></action>
 
 	<style name="hotspot_info" url="skin/hotspot_info.svg?v=2" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
@@ -65,7 +133,7 @@
 	               thumbs_opened="false"
 	               tooltips_buttons="false"
 	               tooltips_thumbs="false"
-	               tooltips_hotspots="true"
+	               tooltips_hotspots="false"
 	               tooltips_mapspots="false"
 	               deeplinking="false"
 	               loadscene_flags="MERGE"
@@ -79,6 +147,17 @@
 	               controlbar_offset="-9999"
 	               controlbar_offset_closed="-9999"
 	               />
+
+	<!--
+	    For an alternative skin design either change the <skin_settings> values 
+	    from above or optionally include one of the predefined designs from below.
+	-->
+	<!-- <include url="skin/vtourskin_design_flat_light.xml"  /> -->
+	<!-- <include url="skin/vtourskin_design_glass.xml"       /> -->
+	<!-- <include url="skin/vtourskin_design_ultra_light.xml" /> -->
+	<!-- <include url="skin/vtourskin_design_117.xml"         /> -->
+	<!-- <include url="skin/vtourskin_design_117round.xml"    /> -->
+	<!-- <include url="skin/vtourskin_design_black.xml"       /> -->
 	
 
 	
@@ -98,7 +177,6 @@
 		<hotspot name="spot1973948244" style="hotspot_nav" ath="-177.905" atv="3.027" depth="1000.0" linkedscene="scene_aile_nord_centre" linkedscene_spot="spot1973948397" linkedscene_hoffset="360.0" use3dtransition="true" />
 		<hotspot name="spot1973951892" style="hotspot_nav" ath="87.877" atv="9.972" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973952031" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974111368" style="hotspot_nav" ath="145.643" atv="14.015" depth="1000.0" linkedscene="scene_crypte" linkedscene_spot="spot1974111532" linkedscene_hoffset="120.11" use3dtransition="true" />
-		<hotspot name="spot1974117582" style="hotspot_info" ath="7.104" atv="-1.252" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -171,7 +249,6 @@
 		<hotspot name="spot1974110536" style="hotspot_nav" ath="168.568" atv="2.497" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974110034" linkedscene_hoffset="-93.31" use3dtransition="true" />
 		<hotspot name="spot1974111680" style="hotspot_nav" ath="-149.394" atv="5.435" depth="1000.0" linkedscene="scene_orgue" linkedscene_spot="spot1974111880" linkedscene_hoffset="237.84" use3dtransition="true" />
 		<hotspot name="spot1974112136" style="hotspot_nav" ath="-148.948" atv="-17.951" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974118028" style="hotspot_info" ath="-1.809" atv="13.073" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -227,8 +304,6 @@
 		<hotspot name="spot1973948841" style="hotspot_nav" ath="82.872" atv="6.208" depth="1000.0" linkedscene="scene_aile_sud_centre" linkedscene_spot="spot1973949052" linkedscene_hoffset="185.48" use3dtransition="true" />
 		<hotspot name="spot1973949138" style="hotspot_nav" ath="-2.326" atv="-8.39" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1973949667" linkedscene_hoffset="356.64" use3dtransition="true" />
 		<hotspot name="spot1974110792" style="hotspot_nav" ath="176.66" atv="2.91" depth="1000.0" linkedscene="scene_entree" linkedscene_spot="spot1974110616" linkedscene_hoffset="2.66" use3dtransition="true" />
-		<hotspot name="spot1974118131" style="hotspot_info" ath="-3.098" atv="15.225" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974118218" style="hotspot_info" ath="175.514" atv="-28.991" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -284,7 +359,6 @@
 		<hotspot name="spot1974110923" style="hotspot_nav" ath="5.485" atv="13.779" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974111098" style="hotspot_nav" ath="-53.391" atv="9.351" depth="1000.0" linkedscene="scene_aile_sud_autel" linkedscene_hoffset="0.0" use3dtransition="true" />
 		<hotspot name="spot1974111223" style="hotspot_nav" ath="64.504" atv="8.321" depth="1000.0" linkedscene="scene_aile_nord_autel" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974117705" style="hotspot_info" ath="-177.123" atv="14.329" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -320,7 +394,6 @@
 		<hotspot name="spot1974110034" style="hotspot_nav" ath="-104.744" atv="3.067" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1974110536" linkedscene_hoffset="453.31" use3dtransition="true" />
 		<hotspot name="spot1974110616" style="hotspot_nav" ath="-0.682" atv="7.698" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1974110792" linkedscene_hoffset="357.34" use3dtransition="true" />
 		<hotspot name="spot1974113467" style="hotspot_nav" ath="179.164" atv="10.363" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113344" linkedscene_hoffset="0.68" use3dtransition="true" />
-		<hotspot name="spot1974117948" style="hotspot_info" ath="0.087" atv="-30.141" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -338,7 +411,6 @@
 
 		<hotspot name="spot1974111880" style="hotspot_nav" ath="-91.555" atv="16.236" depth="1000.0" linkedscene="scene_aile_sud_baptistere" linkedscene_spot="spot1974111680" linkedscene_hoffset="122.16" use3dtransition="true" />
 		<hotspot name="spot1974111933" style="hotspot_nav" ath="0.092" atv="8.571" depth="1000.0" linkedscene="scene_orgue_choeur" linkedscene_spot="spot1974112016" linkedscene_hoffset="353.79" use3dtransition="true" />
-		<hotspot name="spot1974118303" style="hotspot_info" ath="-39.222" atv="15.09" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -357,7 +429,6 @@
 		<hotspot name="spot1973949667" style="hotspot_nav" ath="174.318" atv="-7.003" depth="1000.0" linkedscene="scene_autel" linkedscene_spot="spot1973949138" linkedscene_hoffset="3.36" use3dtransition="true" />
 		<hotspot name="spot1973949738" style="hotspot_nav" ath="-2.832" atv="2.384" depth="1000.0" linkedscene="scene_choeur_autel1" linkedscene_spot="spot1973951095" linkedscene_hoffset="360.69" use3dtransition="true" />
 		<hotspot name="spot1974112016" style="hotspot_nav" ath="173.886" atv="-17.185" depth="1000.0" linkedscene="scene_orgue" linkedscene_spot="spot1974111933" linkedscene_hoffset="6.21" use3dtransition="true" />
-		<hotspot name="spot1974117798" style="hotspot_info" ath="-69.6" atv="4.7" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -395,7 +466,6 @@
 		<hotspot name="spot1974113620" style="hotspot_nav" ath="-22.909" atv="2.388" depth="1000.0" linkedscene="scene_parvis_entree" linkedscene_spot="spot1974113505" linkedscene_hoffset="320.25" use3dtransition="true" />
 		<hotspot name="spot1974113707" style="hotspot_nav" ath="58.639" atv="-3.277" depth="1000.0" linkedscene="scene_parvis_sud_proche" linkedscene_spot="spot1974113832" linkedscene_hoffset="69.89" use3dtransition="true" />
 		<hotspot name="spot1974113863" style="hotspot_nav" ath="106.105" atv="-0.843" depth="1000.0" linkedscene="scene_parvis_sud_loin" linkedscene_spot="spot1974113967" linkedscene_hoffset="12.51" use3dtransition="true" />
-		<hotspot name="spot1974118524" style="hotspot_info" ath="11.985" atv="-13.243" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -465,8 +535,6 @@
 
 		<hotspot name="spot1974112301" style="hotspot_nav" ath="24.033" atv="42.864" depth="1000.0" linkedscene="scene_parvis_entree_sud" linkedscene_spot="spot1974112523" linkedscene_hoffset="144.39" use3dtransition="true" />
 		<hotspot name="spot1974112552" style="hotspot_nav" ath="151.56" atv="7.508" depth="1000.0" linkedscene="scene_vue_donjon" linkedscene_spot="spot1974112672" linkedscene_hoffset="201.37" use3dtransition="true" />
-		<hotspot name="spot1974118624" style="hotspot_info" ath="-52.298" atv="-2.467" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
-		<hotspot name="spot1974118685" style="hotspot_info" ath="9.234" atv="-2.18" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
 
 	</scene>
 
@@ -484,20 +552,6 @@
 
 		<hotspot name="spot1974112672" style="hotspot_nav" ath="172.929" atv="7.343" depth="1000.0" linkedscene="scene_vue_cathedrale" linkedscene_spot="spot1974112552" linkedscene_hoffset="158.63" use3dtransition="true" />
 		<hotspot name="spot1974112743" style="hotspot_nav" ath="51.699" atv="43.86" depth="1000.0" linkedscene="scene_parvis_nord" linkedscene_spot="spot1974113000" linkedscene_hoffset="163.48" use3dtransition="true" />
-		<hotspot name="spot1974118763" style="hotspot_info" ath="1.137" atv="-2.324" depth="1000.0" linkedscene="scene_taginfo" linkedscene_hoffset="0.0" use3dtransition="true" />
-
-	</scene>
-<scene name="scene_taginfo" title="taginfo" onstart="" thumburl="panos/taginfo.tiles/thumb.jpg" lat="49.43986111" lng="1.09773611" alt="12.29" heading="91.2">
-		
-		<control bouncinglimits="calc:image.cube ? true : false" />
-
-		<view hlookat="91.2" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
-
-		<preview url="panos/taginfo.tiles/preview.jpg" />
-
-		<image hfov="1.00" vfov="1.485675" voffset="0.00">
-			<flat url="panos/taginfo.tiles/l%l/%0v/l%l_%0v_%0h.jpg" multires="512,512x762,1024x1522,1792x2664,3648x5420" />
-		</image>
 
 	</scene>
 

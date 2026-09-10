@@ -103,6 +103,24 @@
           "label": "URL Vidéo (Vimeo/YouTube)",
           "placeholder": "https://vimeo.com/123456789"
         }
+      },
+      "vue_arrivee_ath": {
+        "type": "Number",
+        "config": {
+          "label": "Vue d'arrivée — ath (hlookat)"
+        }
+      },
+      "vue_arrivee_atv": {
+        "type": "Number",
+        "config": {
+          "label": "Vue d'arrivée — atv (vlookat)"
+        }
+      },
+      "vue_arrivee_fov": {
+        "type": "Number",
+        "config": {
+          "label": "Vue d'arrivée — fov"
+        }
       }
     }
   },

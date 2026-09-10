@@ -1,13 +1,19 @@
-import { client } from "@/lib/prismic";
 import TourViewer from "@/components/TourViewer";
+import { SeoContent } from "@/components/SeoContent";
+import { buildScenesByLang } from "@/lib/scenes-data";
+
+// Prismic : revalidation 60 s + tag `prismic` (webhook /api/revalidate)
+export const revalidate = 60;
 
 export default async function Home() {
-  let scenes: unknown[] = [];
-  try {
-    scenes = await client.getAllByType("scene");
-  } catch {
-    // Prismic not configured yet — fallback to defaults
-  }
-
-  return <TourViewer scenes={scenes as never[]} />;
+  const scenesByLang = await buildScenesByLang();
+  return (
+    <>
+      {/* Contenu SSR sr-only : SEO/AEO + maillage vers les pages /scene/… */}
+      <SeoContent />
+      <TourViewer
+        scenesByLang={{ fr: scenesByLang.fr as never[], en: scenesByLang.en as never[] }}
+      />
+    </>
+  );
 }
