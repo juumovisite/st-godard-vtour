@@ -721,7 +721,8 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
           }}
         >
           <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: 2, color: "rgba(255,255,255,0.9)", textTransform: "uppercase" }}>
-            {t("chapters_and_videos")}
+            {/* Libellé selon le contenu : « Chapitres & vidéos » seulement si au moins une scène a une vidéo */}
+            {sortedScenes.some((sc) => sc.data.video_file?.url || sc.data.video_url) ? t("chapters_and_videos") : t("chapters_section")}
           </span>
         </div>
       </div>
