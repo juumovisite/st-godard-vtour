@@ -55,19 +55,19 @@ export async function POST(request: Request) {
       <p>${bonjour}</p>
       <p>Merci de tout cœur pour votre geste. 🕯️</p>
       <p><strong>Votre cierge sera déposé et allumé pour vous dans l'Église
-      Sainte Jeanne d'Arc par un membre de la Catho de Rouen</strong>, dès
+      Saint-Godard par un membre de la Catho de Rouen</strong>, dès
       réception de votre don.</p>
       ${intention ? `<p>Votre intention de prière :</p><blockquote style="margin: 0 0 0 12px; padding-left: 12px; border-left: 3px solid #D97706; color: #5a6577;">${esc(intention)}</blockquote>` : ""}
       <p>Si vous n'avez pas encore finalisé votre don, vous pouvez le faire ici :
       <a href="https://pay.sumup.com/b2c/QCSIXK2K">pay.sumup.com/b2c/QCSIXK2K</a></p>
       <p style="color: #5a6577;">Avec toute notre gratitude,<br/>
-      La Catho de Rouen — Église Sainte Jeanne d'Arc</p>
+      La Catho de Rouen — Église Saint-Godard</p>
     </div>`;
 
   const parishHtml = `
     <div style="font-family: Arial, sans-serif; color: #1a2332; line-height: 1.6; max-width: 560px;">
       <p><strong>Nouvelle demande de cierge</strong> via la visite virtuelle
-      de l'Église Sainte Jeanne d'Arc (saintejeannedarc.juumo.fr).</p>
+      de l'église Saint-Godard (saintgodard.juumo.fr).</p>
       <ul>
         <li>Prénom : ${firstname ? esc(firstname) : "—"}</li>
         <li>E-mail : ${esc(email)}</li>
@@ -80,8 +80,8 @@ export async function POST(request: Request) {
 
   try {
     const [donor, parish] = await Promise.all([
-      sendEmail(email, "Votre cierge à l'Église Sainte Jeanne d'Arc 🕯️", donorHtml),
-      sendEmail(PARISH_EMAIL, "Nouveau cierge demandé — visite virtuelle Sainte Jeanne d'Arc", parishHtml),
+      sendEmail(email, "Votre cierge à l'église Saint-Godard 🕯️", donorHtml),
+      sendEmail(PARISH_EMAIL, "Nouveau cierge demandé — visite virtuelle Saint-Godard", parishHtml),
     ]);
     return Response.json({ ok: true, demo: !!(donor as { demo?: boolean }).demo });
   } catch (e) {
