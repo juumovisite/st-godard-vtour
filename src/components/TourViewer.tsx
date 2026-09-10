@@ -689,7 +689,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
         height="100%"
         style={{ border: "none", position: "absolute", top: 0, left: 0 }}
         allowFullScreen
-        title="Visite virtuelle Cathédrale St Godard"
+        title="Visite virtuelle de l’église Saint-Godard"
         onLoad={appliquerInsetBas}
       />
 
