@@ -7,8 +7,8 @@ import { buildScenesByLang } from "@/lib/scenes-data";
 import TourViewer from "@/components/TourViewer";
 import { SCENES_SEO } from "@/config/seo-scenes";
 
-const BASE_URL = "https://saintejeannedarc.juumo.fr";
-const SITE = "Église Sainte-Jeanne-d'Arc de Rouen";
+const BASE_URL = "https://saintgodard.juumo.fr";
+const SITE = "Église Saint-Godard de Rouen";
 
 type SceneDoc = {
   uid: string;
@@ -52,7 +52,7 @@ export async function generateMetadata({
   const title = seo?.title ?? `${name} — ${SITE} en visite virtuelle 360°`;
   const description =
     seo?.description ??
-    `Découvrez ${name} en visite virtuelle 360° — ${SITE}, chef-d'œuvre d'architecture moderne sur la place du Vieux-Marché, vitraux Renaissance classés.`;
+    `Découvrez ${name} en visite virtuelle 360° — ${SITE}, église gothique classée Monument historique, célèbre pour ses vitraux du XVIe siècle et ses orgues Cavaillé-Coll.`;
   return {
     title,
     description,
@@ -117,7 +117,7 @@ export default async function ScenePage({
             <p>
               <Link prefetch={false} href="/">
                 Retour à la visite virtuelle complète de l&apos;église
-                Sainte-Jeanne-d&apos;Arc de Rouen
+                Saint-Godard de Rouen
               </Link>{" "}
               — <a href="https://eglises-rouen.juumo.fr">toutes les églises de
               Rouen en 360°</a>.
@@ -125,9 +125,9 @@ export default async function ScenePage({
           </>
         ) : (
           <p>
-            Visite virtuelle 360° de l&apos;église Sainte-Jeanne-d&apos;Arc,
-            place du Vieux-Marché à Rouen : architecture de Louis Arretche,
-            vitraux Renaissance de Saint-Vincent.
+            Visite virtuelle 360° de l&apos;église Saint-Godard de Rouen :
+            gothique tardif, crypte flamboyante, vitraux du XVIe siècle et
+            orgues Cavaillé-Coll classés.
           </p>
         )}
       </div>

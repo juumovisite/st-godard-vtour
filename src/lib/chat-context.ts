@@ -10,6 +10,9 @@ import { client } from "@/lib/prismic";
  * copie figée dans le code. Il connaît aussi l'id de chaque scène pour y
  * emmener le visiteur ([GOTO:id]…[/GOTO], convention de L'Entrepôt).
  *
+ * Points d'information = type Prismic `infospot` (norme 09/09/2026), rattachés
+ * à leur scène par `nom_scene_krpano` ; les tags masqués sont ignorés.
+ *
  * Lecture Prismic à chaque appel, cache mémoire 5 min, best-effort : si
  * Prismic ne répond pas, on renvoie "" et le prompt de base reste intact.
  * Référence : juumo-espace-client/integration-kit/CHATBOT-CONTENU.md
@@ -47,56 +50,44 @@ export interface ChatScene {
   infos: { label: string; text: string }[];
 }
 
-/** Lit scènes + informations Prismic (fr-fr) et les structure pour le prompt. */
+/** Lit scènes + infospots Prismic (fr-fr) et les structure pour le prompt. */
 export async function fetchChatScenes(): Promise<ChatScene[]> {
-  const [rawScenes, rawInfos] = await Promise.all([
+  const [rawScenes, rawSpots] = await Promise.all([
     client.getAllByType("scene", { lang: "fr-fr" }),
-    client.getAllByType("informations", { lang: "fr-fr" }).catch(() => []),
+    client.getAllByType("infospot", { lang: "fr-fr" }).catch(() => []),
   ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validScenes = (rawScenes as any[]).filter(
-    (s) => s.uid && (s.data?.krpano_id || s.data?.nom_scene_krpano)
+    (s) => s.uid && (s.data?.nom_scene_krpano || s.data?.krpano_id)
   );
   const krpanoIdOf = (s: { data: { krpano_id?: string; nom_scene_krpano?: string } }) =>
-    (s.data.krpano_id || s.data.nom_scene_krpano) as string;
+    (s.data.nom_scene_krpano || s.data.krpano_id) as string;
 
-  // Même règle que scenes-data.ts : une information appartient à la scène dont
-  // le krpano_id préfixe son uid — le préfixe le plus long gagne (scene_nef vs
-  // scene_nef_vue_sud), et chaque info n'est rattachée qu'à une seule scène.
-  const infoOwner = new Map<string, string>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const i of rawInfos as any[]) {
-    if (!i.uid) continue;
-    let best = "";
-    for (const s of validScenes) {
-      const k = krpanoIdOf(s);
-      if (i.uid.startsWith(k) && k.length > best.length) best = k;
-    }
-    if (best) infoOwner.set(i.uid, best);
-  }
+  const scenes = validScenes.map((s) => {
+    const krpanoId = krpanoIdOf(s);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const infos = (rawSpots as any[])
+      .filter((i) => i.data?.nom_scene_krpano === krpanoId && !i.data?.masque)
+      .map((i) => ({
+        label: clip(toText(i.data?.titre), 120),
+        text: clip(toText(i.data?.description)),
+      }))
+      .filter((i) => i.label);
 
-  const scenes = validScenes
-    .map((s) => {
-      const krpanoId = krpanoIdOf(s);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const infos = (rawInfos as any[])
-        .filter((i) => i.uid && infoOwner.get(i.uid) === krpanoId)
-        .map((i) => ({
-          label: clip(toText(i.data?.audio_name), 120),
-          text: clip(toText(i.data?.txt)),
-        }))
-        .filter((i) => i.label && !i.label.toLowerCase().startsWith("bienvenu"));
-
-      return {
-        uid: s.uid as string,
-        krpanoId,
-        name: toText(s.data.name) || toText(s.data.title) || s.uid,
-        category: toText(s.data.category?.uid),
-        description: clip(toText(s.data.description)),
-        infos,
-      } satisfies ChatScene;
-    });
+    return {
+      uid: s.uid as string,
+      krpanoId,
+      name: toText(s.data.title) || toText(s.data.name) || s.uid,
+      category: toText(s.data.categorie) || toText(s.data.category?.uid),
+      description: clip(
+        [toText(s.data.description), toText(s.data.description_longue)]
+          .filter(Boolean)
+          .join(" ")
+      ),
+      infos,
+    } satisfies ChatScene;
+  });
 
   // Ordre stable : champ ordre si présent, sinon ordre Prismic.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

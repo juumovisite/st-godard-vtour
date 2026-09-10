@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { client } from "@/lib/prismic";
 
-const BASE_URL = "https://saintejeannedarc.juumo.fr";
+const BASE_URL = "https://saintgodard.juumo.fr";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let scenes: { uid: string }[] = [];

@@ -10,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/vtour/panos/"],
       },
     ],
-    sitemap: "https://saintejeannedarc.juumo.fr/sitemap.xml",
+    sitemap: "https://saintgodard.juumo.fr/sitemap.xml",
   };
 }

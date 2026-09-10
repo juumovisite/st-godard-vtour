@@ -13,10 +13,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const SITE_URL = "https://saintejeannedarc.juumo.fr";
-const TITLE = "Visite Virtuelle 360° — Église Sainte-Jeanne-d'Arc de Rouen";
+const SITE_URL = "https://saintgodard.juumo.fr";
+const TITLE = "Visite Virtuelle 360° — Église Saint-Godard de Rouen";
 const DESCRIPTION =
-  "Explorez l'église Sainte-Jeanne-d'Arc de Rouen en visite virtuelle 360° : la nef, les célèbres vitraux Renaissance et la place du Vieux-Marché, lieu du martyre de Jeanne d'Arc.";
+  "Explorez l'église Saint-Godard de Rouen en visite virtuelle 360° : la nef gothique et ses voûtes en carène, la crypte flamboyante, les vitraux du XVIe siècle et les orgues Cavaillé-Coll classés.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -24,11 +24,12 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   keywords: [
     "visite virtuelle",
-    "église Sainte-Jeanne-d'Arc",
+    "église Saint-Godard",
     "Rouen",
-    "Jeanne d'Arc",
-    "vitraux Renaissance",
-    "place du Vieux-Marché",
+    "vitraux",
+    "Arbre de Jessé",
+    "orgue Cavaillé-Coll",
+    "crypte",
     "visite 360",
     "Normandie",
     "patrimoine",
@@ -43,15 +44,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     url: SITE_URL,
-    siteName: "Église Sainte-Jeanne-d'Arc de Rouen — Visite virtuelle",
+    siteName: "Église Saint-Godard de Rouen — Visite virtuelle",
     title: TITLE,
     description: DESCRIPTION,
     images: [
       {
-        url: "/images/menu/Vitraux.jpg",
-        width: 2048,
-        height: 1365,
-        alt: "Vitraux Renaissance de l'église Sainte-Jeanne-d'Arc de Rouen",
+        url: "/images/menu/Orgue_choeur.jpg",
+        width: 1600,
+        height: 1067,
+        alt: "Le chœur et les vitraux de l'église Saint-Godard de Rouen",
       },
     ],
   },
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/images/menu/Vitraux.jpg"],
+    images: ["/images/menu/Orgue_choeur.jpg"],
   },
   robots: {
     index: true,
@@ -94,7 +95,7 @@ export default function RootLayout({
       <body className="h-full bg-black m-0 p-0 overflow-hidden">
         {children}
         <Analytics />
-              <MatomoProvider />
+        <MatomoProvider />
       </body>
     </html>
   );

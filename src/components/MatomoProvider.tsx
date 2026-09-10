@@ -6,8 +6,8 @@ declare global {
   interface Window { _paq?: unknown[][]; }
 }
 
-// Matomo Cloud (matomo.juumo.fr) — site 19. Pageviews + heatmaps + session recording.
-const MATOMO_SITE_ID = "18";
+// Matomo self-hosted (matomo.juumo.fr) — site 20 (Saint-Godard). Pageviews + scènes + chatbot.
+const MATOMO_SITE_ID = "20";
 
 export function MatomoProvider() {
   useEffect(() => {

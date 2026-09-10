@@ -1,7 +1,8 @@
 /**
  * Contenu SEO/AEO par scène (SSR, sr-only) — source : base de connaissances
- * du chatbot Juumi (src/app/api/chat/route.ts) et documents « informations »
- * Prismic de la visite. Aucun fait inventé.
+ * du guide Juumi (src/app/api/chat/route.ts). Aucun fait inventé : quand la
+ * base ne dit rien de précis sur un point de vue, le texte reste descriptif
+ * (ce que la scène montre) et renvoie aux faits documentés de l'édifice.
  * Clé = uid Prismic fr-fr de la scène (= segment /scene/<uid>).
  * `related` = maillage interne entre pages de scènes.
  */
@@ -17,188 +18,318 @@ export interface SceneSeo {
   related: { uid: string; label: string }[];
 }
 
+const EGLISE = "Église Saint-Godard de Rouen en 360°";
+
+const HISTOIRE =
+  "Le site de Saint-Godard est lié à un culte très ancien. Détruite par un incendie en 1248, l'église a été reconstruite par grandes campagnes entre la fin du XVe siècle et le XVIIe siècle : nef de la seconde moitié du XVe siècle, collatéral nord achevé en 1527, collatéral sud en 1534, tour en 1612, sacristie agrandie en 1654. Elle est protégée au titre des Monuments historiques.";
+
+const INTERIEUR =
+  "L'intérieur donne une impression de clarté et de légèreté : trois vaisseaux, une longue perspective de 71 mètres selon la paroisse, des arcades sobres à moulures prismatiques et des voûtes en bois en forme de carène renversée, éclairées par vingt-quatre baies.";
+
+const ORGUES =
+  "Un orgue est attesté à Saint-Godard dès 1531, avec des compositions connues en 1632 puis 1778. Le grand tournant arrive au XIXe siècle : Aristide Cavaillé-Coll construit le grand orgue en 1884, puis l'orgue de chœur en 1885 et 1889. Les deux instruments sont classés Monuments historiques depuis 1999, et la Métropole continue d'y programmer des concerts.";
+
+const VITRAUX_NORD =
+  "La nef nord abrite les verrières les plus célèbres de l'église. La Vie de saint Romain, plus grande verrière de la nef nord, fut offerte en 1540 par Richard Le Caron, sieur du Fossé : cinq lancettes sur quatre registres montrent saint Romain capturant la gargouille, le miracle des saintes huiles, l'arrêt de la crue de la Seine ou la levée de la Fierte. L'Arbre de Jessé (baie 18), largement attribué à Arnoult de Nimègue autour de 1506, est souvent présenté comme l'un des sommets du vitrail rouennais de la Renaissance. La Vie de la Vierge (baie 6), réalisée vers 1506, a été recomposée par l'atelier de Laurent Gsell vers 1860-1865.";
+
 export const SCENES_SEO: Record<string, SceneSeo> = {
-  "nef-centre": {
-    title: "La nef — Église Sainte-Jeanne-d'Arc de Rouen en 360°",
+  "parvis-entree": {
+    title: `Le parvis et l'entrée — ${EGLISE}`,
     description:
-      "La nef de l'église Sainte-Jeanne-d'Arc de Rouen en 360° : autel central, fenêtres en forme de poisson, place du Vieux-Marché où Jeanne d'Arc fut brûlée en 1431.",
+      "Le parvis et la façade de l'église Saint-Godard de Rouen en 360° : point de départ de la visite virtuelle d'une église gothique reconstruite du XVe au XVIIe siècle.",
     body: [
-      "Bienvenue dans la nef de l'église Sainte-Jeanne-d'Arc, au cœur de la place du Vieux-Marché à Rouen. C'est ici, au pied de la grande croix qui s'élève sur la place, que Jeanne d'Arc fut brûlée vive le 30 mai 1431, à l'âge de 19 ans. La croix rend hommage à l'un de ses derniers souhaits : voir une croix dans ses derniers instants.",
-      "L'intérieur, conçu par l'architecte Louis Arretche et inauguré en 1979, est épuré et lumineux : l'autel est placé au centre, une seule colonne interne se dresse près du chœur, et les fenêtres latérales adoptent la forme d'un poisson, symbole des premiers chrétiens. Des silex incrustés dans le ciment rappellent les falaises de la côte d'Albâtre.",
+      "Bienvenue devant l'église Saint-Godard de Rouen. Cette scène 360° montre le parvis et l'entrée de l'édifice, point de départ de la visite virtuelle.",
+      HISTOIRE,
     ],
     related: [
-      { uid: "nef-voute", label: "la charpente en bois vue de la nef" },
-      { uid: "vitraux-1-2-3", label: "les premières verrières Renaissance" },
-      { uid: "statue-jeanne-darc", label: "la statue de Jeanne d'Arc par Michel Coste" },
+      { uid: "entree", label: "entrer dans la nef" },
+      { uid: "parvis-entree-sud", label: "le parvis côté sud" },
+      { uid: "parvis-nord", label: "le parvis côté nord" },
     ],
   },
-  "nef-vue-sud": {
-    title: "La nef côté sud et l'orgue de tribune — Sainte-Jeanne-d'Arc Rouen 360°",
+  "parvis-entree-sud": {
+    title: `Le parvis côté sud — ${EGLISE}`,
     description:
-      "La nef vue du sud en 360° : l'orgue de tribune au-dessus de l'entrée, la statue de Jeanne d'Arc et la ligne des 13 vitraux Renaissance de l'église de Rouen.",
+      "La façade latérale sud de l'église Saint-Godard de Rouen en 360° : le collatéral sud achevé en 1534 et les toitures modifiées au XVIIIe siècle.",
     body: [
-      "Depuis le côté sud de la nef, le regard embrasse l'ensemble de l'église Sainte-Jeanne-d'Arc : la ligne des vitraux Renaissance au nord, la statue de Jeanne d'Arc et, au-dessus de l'entrée, l'orgue de tribune. Cet instrument modeste, au buffet simple et fonctionnel, s'intègre discrètement à l'architecture et accompagne les offices.",
-      "Les vitraux sont volontairement placés au nord, à l'abri du soleil direct, et protégés par une double verrière : ils s'admirent ainsi toute la journée.",
+      "Vue depuis le côté sud du parvis sur la façade latérale de Saint-Godard. Le collatéral sud a été achevé en 1534 ; au XVIIIe siècle, les toitures latérales ont été modifiées pour harmoniser les volumes de l'édifice.",
+      HISTOIRE,
     ],
     related: [
-      { uid: "nef-centre", label: "le centre de la nef" },
-      { uid: "statue-jeanne-darc", label: "la statue de Jeanne d'Arc" },
-      { uid: "vitraux-9-10-11", label: "les vitraux de la Passion et de la Crucifixion" },
+      { uid: "parvis-sud-proche", label: "la façade sud de près" },
+      { uid: "parvis-sud-loin", label: "la façade sud vue de loin" },
+      { uid: "parvis-entree", label: "retour au parvis principal" },
     ],
   },
-  "nef-voute": {
-    title: "La charpente en bois vue de la nef — Sainte-Jeanne-d'Arc Rouen 360°",
+  "parvis-nord": {
+    title: `Le parvis côté nord — ${EGLISE}`,
     description:
-      "La charpente de l'église Sainte-Jeanne-d'Arc en 360° : toit en lamelles de sapin inspiré de la construction navale, paraboles de bois sur portique métallique.",
+      "Le côté nord de l'église Saint-Godard de Rouen en 360° : le collatéral nord achevé en 1527, derrière lequel se trouvent les grandes verrières du XVIe siècle.",
     body: [
-      "En levant les yeux depuis la nef, on découvre le toit en lamelles de sapin de l'église Sainte-Jeanne-d'Arc : ses techniques sont reprises de la construction navale, comme une coque de bateau renversée. Les grandes paraboles en bois reposent sur un portique tubulaire en métal, et un seul pilier interne soutient toute l'armature métallique.",
-      "Cette charpente enveloppe l'église comme un abri protecteur, presque un refuge — une image qui fait écho au destin de Jeanne d'Arc, guidant la France à travers les tempêtes de l'Histoire.",
+      "Le côté nord de Saint-Godard correspond au collatéral nord, achevé en 1527. C'est derrière ces murs que se trouvent la Vie de saint Romain (1540) et l'Arbre de Jessé, les verrières les plus célèbres de l'église.",
+      HISTOIRE,
     ],
     related: [
-      { uid: "voute", label: "la voûte vue de plus près" },
-      { uid: "nef-centre", label: "la nef et son autel central" },
-      { uid: "vitraux-4-5-6", label: "les verrières de l'atelier Le Prince" },
+      { uid: "aile-nord-centre", label: "le collatéral nord et ses vitraux" },
+      { uid: "parvis-entree", label: "retour au parvis principal" },
+      { uid: "vue-cathedrale", label: "la vue vers la cathédrale" },
     ],
   },
-  "voute": {
-    title: "La voûte, coque de bateau renversée — Sainte-Jeanne-d'Arc Rouen 360°",
+  "parvis-sud-loin": {
+    title: `La façade sud vue de loin — ${EGLISE}`,
     description:
-      "La voûte en bois de l'église Sainte-Jeanne-d'Arc de Rouen en 360° : une coque de bateau renversée, symbole voulu par l'architecte Louis Arretche.",
+      "L'église Saint-Godard de Rouen dans son quartier, vue éloignée du côté sud en 360° : la silhouette gothique et la tour construite en 1612.",
     body: [
-      "L'architecture de cette église est profondément symbolique : la charpente en bois évoque immédiatement la coque d'un bateau, inspirée des techniques de construction navale. Vue de l'extérieur, la forme laisse place à l'imaginaire — Louis Arretche n'a jamais expliqué la forme voulue : certains y voient le heaume d'un chevalier, d'autres des flammes rappelant le bûcher, des vagues, un dragon ou des écailles, tant la toiture d'ardoise taillée en écailles semble vivante.",
+      "Cette perspective éloignée depuis le sud permet d'apprécier l'ensemble de Saint-Godard dans son environnement urbain, avec sa tour construite en 1612. L'église est discrète en apparence, mais majeure dans le patrimoine rouennais.",
+      HISTOIRE,
     ],
     related: [
-      { uid: "nef-voute", label: "la charpente vue de la nef" },
-      { uid: "chapelle-saint-sacrement", label: "la chapelle du Saint-Sacrement" },
-      { uid: "vitraux-12-13", label: "les dernières verrières du cycle" },
+      { uid: "parvis-sud-proche", label: "la façade sud de près" },
+      { uid: "vue-donjon", label: "la vue vers le donjon" },
+      { uid: "parvis-entree", label: "retour au parvis principal" },
     ],
   },
-  "chapelle-de-la-vierge": {
-    title: "La chapelle de la Vierge — Église Sainte-Jeanne-d'Arc de Rouen 360°",
+  "parvis-sud-proche": {
+    title: `La façade sud de près — ${EGLISE}`,
     description:
-      "La chapelle de la Vierge de l'église Sainte-Jeanne-d'Arc de Rouen en visite virtuelle 360° : un espace de recueillement dans l'édifice de Louis Arretche.",
+      "Vue rapprochée de la façade sud de l'église Saint-Godard de Rouen en 360° : les détails de l'architecture du gothique tardif.",
     body: [
-      "La chapelle de la Vierge est l'un des espaces de recueillement de l'église Sainte-Jeanne-d'Arc. Comme tout l'intérieur voulu par Louis Arretche, elle cultive une atmosphère volontairement simple et lumineuse, pensée pour mettre en valeur les vitraux Renaissance et le recueillement.",
+      "Vue rapprochée de la façade sud de Saint-Godard, dont l'architecture garde la sobriété du gothique tardif. Le collatéral sud a été achevé en 1534.",
+      HISTOIRE,
     ],
     related: [
-      { uid: "chapelle-saint-sacrement", label: "la chapelle du Saint-Sacrement" },
-      { uid: "fonts-baptismaux", label: "la chapelle des fonts baptismaux" },
-      { uid: "nef-centre", label: "la nef" },
+      { uid: "parvis-sud-loin", label: "la façade sud vue de loin" },
+      { uid: "aile-sud-centre", label: "le collatéral sud, à l'intérieur" },
+      { uid: "parvis-entree", label: "retour au parvis principal" },
     ],
   },
-  "chapelle-saint-sacrement": {
-    title: "Chapelle du Saint-Sacrement et boiseries Renaissance — Rouen 360°",
+  "vue-cathedrale": {
+    title: `La vue vers la cathédrale — ${EGLISE}`,
     description:
-      "La chapelle du Saint-Sacrement en 360° : boiseries Renaissance de l'ancienne église Saint-Vincent et silex évoquant la pierre de Caumont normande.",
+      "Point de vue extérieur en 360° depuis les abords de l'église Saint-Godard, vers la cathédrale de Rouen et le centre historique.",
     body: [
-      "La chapelle du Saint-Sacrement abrite de remarquables boiseries Renaissance du XVIe siècle, finement sculptées, provenant de la chapelle Sainte-Anne de l'ancienne église Saint-Vincent, détruite par les bombardements de 1944. Leur présence perpétue la mémoire de l'édifice disparu.",
-      "Dans les murs, de petites taches noires incrustées dans le ciment ne sont pas des défauts : ce sont des silex, intégrés volontairement en hommage à la pierre de Caumont, cette « craie blanche à silex » typique de Normandie, extraite depuis l'Antiquité et présente dans la plupart des églises anciennes de la région.",
+      "Depuis les abords de Saint-Godard, ce panorama s'ouvre vers la cathédrale de Rouen et le centre historique. Saint-Godard porte le nom d'un évêque de Rouen du VIe siècle, saint Godard ou Gildard, et reste fortement marquée par le souvenir de saint Romain, autre grand évêque de la ville.",
     ],
     related: [
-      { uid: "chapelle-de-la-vierge", label: "la chapelle de la Vierge" },
-      { uid: "vitraux-1-2-3", label: "les vitraux venus de Saint-Vincent" },
-      { uid: "voute", label: "la voûte en bois" },
+      { uid: "vue-donjon", label: "la vue vers le donjon" },
+      { uid: "parvis-nord", label: "le parvis côté nord" },
+      { uid: "parvis-entree", label: "retour au parvis principal" },
     ],
   },
-  "fonts-baptismaux": {
-    title: "La chapelle des fonts baptismaux — Sainte-Jeanne-d'Arc Rouen 360°",
+  "vue-donjon": {
+    title: `La vue vers le donjon — ${EGLISE}`,
     description:
-      "La chapelle des fonts baptismaux en 360° : une ambiance de grotte, des parois striées et un faisceau de lumière naturelle tombé d'une ouverture de la voûte.",
+      "Point de vue extérieur en 360° depuis les abords de l'église Saint-Godard de Rouen, vers le donjon et les toits du quartier.",
     body: [
-      "Légèrement en retrait du reste de l'église, la chapelle des fonts baptismaux contraste avec la nef : une ambiance intime, presque secrète, comme une grotte. Les parois striées donnent une texture organique, minérale, comme si l'espace avait été creusé dans la roche — un retour à l'essentiel : l'eau, la terre, les origines. Une ouverture circulaire dans la voûte laisse passer un faisceau de lumière naturelle.",
-      "Petit rappel étymologique : « font » vient de « fontaine », en lien avec l'eau — et non de « fond ».",
+      "Ce panorama extérieur, pris depuis un point de vue élevé aux abords de Saint-Godard, s'ouvre vers le donjon et les toits du quartier. L'église elle-même se distingue par sa tour de 1612 et ses toitures latérales remaniées au XVIIIe siècle.",
     ],
     related: [
-      { uid: "chapelle-de-la-vierge", label: "la chapelle de la Vierge" },
-      { uid: "nef-centre", label: "la nef" },
-      { uid: "statue-jeanne-darc", label: "la statue de Jeanne d'Arc" },
+      { uid: "vue-cathedrale", label: "la vue vers la cathédrale" },
+      { uid: "parvis-sud-loin", label: "la façade sud vue de loin" },
+      { uid: "entree", label: "entrer dans la nef" },
     ],
   },
-  "vitraux-1-2-3": {
-    title: "Vitraux 1 à 3 : saint Pierre, sainte Anne, vitrail des Chars — Rouen 360°",
+  entree: {
+    title: `L'entrée de la nef — ${EGLISE}`,
     description:
-      "Trois verrières Renaissance en 360° : Vie de saint Pierre (don des Boyvin), Sainte Anne signée Jean Le Vieil, et le vitrail des Chars des frères Le Prince.",
+      "La nef de l'église Saint-Godard de Rouen en 360° : trois vaisseaux, 71 mètres de perspective et des voûtes en bois en carène renversée, seconde moitié du XVe siècle.",
     body: [
-      "Cette scène réunit trois des treize verrières Renaissance (1520-1530) sauvées du chœur de l'église Saint-Vincent. La Vie de saint Pierre (don de la famille Boyvin, atelier rouennais vers 1530) déroule la vocation des apôtres, la pêche miraculeuse, l'affrontement avec Simon le Magicien et la remise des clés.",
-      "La verrière de Sainte Anne est signée Jean Le Vieil — signature discrète sur un manteau et une coiffe — pour la confrérie de Compostelle : Apparition de l'ange à Joachim, Rencontre à la Porte dorée, Naissance de la Vierge, Présentation au Temple.",
-      "Le Triomphe de la Vierge, dit vitrail des Chars (Jean et Engrand Le Prince), est un chef-d'œuvre de la Renaissance verrière en Normandie : chars tirés par vertus ou vices, triomphe d'Adam et Ève au paradis, chute avec le char de Satan, triomphe de la Vierge soutenue par David et Isaïe.",
+      "Depuis l'entrée, la nef de Saint-Godard, attribuée à la seconde moitié du XVe siècle, se découvre dans toute sa longueur. " + INTERIEUR,
+      "Sa force réside dans la pureté de son volume, dans sa mémoire religieuse et dans le dialogue constant entre la pierre et la lumière colorée des verrières.",
     ],
     related: [
-      { uid: "vitraux-4-5-6", label: "les vitraux suivants (4 à 6)" },
-      { uid: "vitraux-12-13", label: "le martyre de saint Vincent" },
-      { uid: "nef-centre", label: "la nef" },
+      { uid: "orgue-choeur", label: "l'orgue et le chœur" },
+      { uid: "aile-nord-centre", label: "le collatéral nord et ses vitraux" },
+      { uid: "aile-sud-centre", label: "le collatéral sud" },
     ],
   },
-  "vitraux-4-5-6": {
-    title: "Vitraux 4 à 6 : arbre de sainte Anne, saint Jean-Baptiste, Miséricorde",
+  orgue: {
+    title: `Le grand orgue Cavaillé-Coll — ${EGLISE}`,
     description:
-      "Trois verrières Renaissance en 360° : l'Arbre de sainte Anne, la Vie de saint Jean-Baptiste d'Engrand Le Prince et les Œuvres de Miséricorde.",
+      "Le grand orgue de l'église Saint-Godard de Rouen en 360°, construit par Aristide Cavaillé-Coll en 1884 et classé Monument historique en 1999.",
     body: [
-      "L'Arbre de sainte Anne déploie une généalogie inspirée de la Légende dorée de Jacques de Voragine : sainte Anne instruit la Vierge, entourée de Marie Cléophas et Marie Salomé ; au registre supérieur, la Vierge à l'Enfant est entourée de ses neveux, dont cinq deviendront apôtres.",
-      "La Vie de saint Jean-Baptiste, chef-d'œuvre d'Engrand Le Prince, enchaîne l'Annonce à Zacharie, la Visitation, la prédication, le baptême du Christ et la décollation — un modèle régional copié dès 1535 par Mausse Heurtault à Pont-Audemer.",
-      "Les Œuvres de Miséricorde (Jean et Engrand Le Prince) forment une allégorie de la charité et de l'ingratitude : le Mauvais riche rejetant Lazare, la Charité secourant les démunis, l'Aumône éteignant le feu du Péché, le Christ nourrissant ceux qui viennent à lui.",
+      "Le grand orgue de Saint-Godard domine la tribune. " + ORGUES,
     ],
     related: [
-      { uid: "vitraux-7-8", label: "saint Antoine de Padoue et divers saints" },
-      { uid: "vitraux-1-2-3", label: "le vitrail des Chars" },
-      { uid: "nef-voute", label: "la charpente en bois" },
+      { uid: "orgue-choeur", label: "l'orgue et le chœur" },
+      { uid: "choeur-autel2", label: "l'orgue de chœur, vue arrière" },
+      { uid: "entree", label: "l'entrée de la nef" },
     ],
   },
-  "vitraux-7-8": {
-    title: "Vitraux 7 et 8 : saint Antoine de Padoue et divers saints — Rouen 360°",
+  "orgue-choeur": {
+    title: `L'orgue et le chœur — ${EGLISE}`,
     description:
-      "Deux verrières Renaissance en 360° : saint Antoine de Padoue, unique verrière en grisaille et sanguine du cycle, et la verrière des divers saints.",
+      "De l'orgue au chœur : toute la profondeur de la nef de l'église Saint-Godard de Rouen en 360°, avec ses voûtes en carène et ses vingt-quatre baies.",
     body: [
-      "La verrière de saint Antoine de Padoue est l'unique verrière en grisaille et sanguine du cycle : miracle de la mule agenouillée devant l'hostie, funérailles de l'usurier au cœur retrouvé dans sa cassette d'or, miracle du pied coupé rattaché, mort du saint.",
-      "La verrière des divers saints réunit sainte Anne instruisant la Vierge, saint Jean-Baptiste, un saint archevêque (sans doute saint Claude), saint Nicolas, saint Vincent et saint Jacques le Majeur sous un arc triomphal Renaissance.",
+      "Cette scène relie le grand orgue au chœur et montre toute la profondeur de la nef centrale. " + INTERIEUR,
+      ORGUES,
     ],
     related: [
-      { uid: "vitraux-9-10-11", label: "l'Enfance du Christ, la Passion et la Crucifixion" },
-      { uid: "vitraux-4-5-6", label: "les Œuvres de Miséricorde" },
-      { uid: "chapelle-saint-sacrement", label: "les boiseries Renaissance" },
+      { uid: "orgue", label: "le grand orgue" },
+      { uid: "choeur-autel", label: "le chœur et l'autel" },
+      { uid: "crypte", label: "descendre dans la crypte" },
     ],
   },
-  "vitraux-9-10-11": {
-    title: "Vitraux 9 à 11 : Enfance du Christ, Passion, Crucifixion — Rouen 360°",
+  autel: {
+    title: `L'autel — ${EGLISE}`,
     description:
-      "Trois verrières Renaissance en 360° : l'Enfance du Christ (don des Le Roux de Bourgtheroulde), la Passion aux influences de Dürer et la Crucifixion.",
+      "L'autel de l'église Saint-Godard de Rouen en 360°, au cœur d'un vaisseau central dont le mobilier a été renouvelé après la Révolution.",
     body: [
-      "L'Enfance et la Vie publique du Christ (don des Le Roux de Bourgtheroulde) déroule l'Annonciation, la Nativité, l'Adoration des Mages, la Fuite en Égypte, Jésus parmi les Docteurs et la Multiplication des pains — avec des détails réalistes charmants : un chien, une cage à tourterelles.",
-      "La Passion du Christ (vers 1520-1530, influences de Dürer) va de l'Entrée à Jérusalem au Portement de croix : le Christ en violet contraste avec les habits élaborés des soldats.",
-      "La Crucifixion, ancienne verrière axiale de Saint-Vincent, touche par la douceur du visage de la Vierge et son célèbre soldat chamarré au visage bleu pâle, peint sur la même pièce de verre que son casque, accompagné d'un chien.",
+      "L'autel occupe le centre de la liturgie à Saint-Godard. On chercherait presque en vain un mobilier antérieur à la Révolution dans le vaisseau central : l'église, dévastée par les calvinistes en 1562, fermée pendant la Révolution puis rouverte en 1806, a vu son mobilier largement renouvelé.",
     ],
     related: [
-      { uid: "vitraux-12-13", label: "la Vie glorieuse du Christ et saint Vincent" },
-      { uid: "vitraux-7-8", label: "saint Antoine de Padoue" },
-      { uid: "nef-vue-sud", label: "la nef côté sud" },
+      { uid: "choeur-autel", label: "le chœur" },
+      { uid: "choeur-autel1", label: "le chœur, vue latérale" },
+      { uid: "orgue-choeur", label: "l'orgue et le chœur" },
     ],
   },
-  "vitraux-12-13": {
-    title: "Vitraux 12 et 13 : Vie glorieuse du Christ, martyre de saint Vincent",
+  "choeur-autel": {
+    title: `Le chœur — ${EGLISE}`,
     description:
-      "Les deux dernières verrières Renaissance en 360° : la Vie glorieuse du Christ en grisaille et le Martyre de saint Vincent, don des Le Roux de l'Esprevier.",
+      "Le chœur de l'église Saint-Godard de Rouen en 360° : l'espace liturgique, ses verrières et l'orgue de chœur Cavaillé-Coll de 1885-1889.",
     body: [
-      "La Vie glorieuse du Christ adopte une tonalité austère en grisaille, avec une représentation saisissante du donateur mort rongé par les vers — vanité du monde — puis la Descente de croix, la Résurrection, le repas d'Emmaüs et l'Incrédulité de Thomas.",
-      "Le Martyre de saint Vincent (don des Le Roux de l'Esprevier) joue d'un contraste dramatique entre le bleu-blanc du tympan et les tons brun-orangé : mort sous la vis d'un pressoir, corps jeté à la mer, exposition aux bêtes. Son maître verrier fut surnommé par Jean Lafond « le maître du martyre de saint Vincent ».",
+      "Le chœur de Saint-Godard concentre l'espace liturgique de l'église, éclairé par ses verrières. C'est ici que se trouve l'orgue de chœur construit par Aristide Cavaillé-Coll en 1885 et 1889, classé Monument historique en 1999 comme le grand orgue.",
+      "Derrière l'orgue de chœur s'ouvre l'escalier menant à la crypte gothique flamboyante, dont les escaliers datent de 1537.",
     ],
     related: [
-      { uid: "vitraux-1-2-3", label: "le début du cycle des vitraux" },
-      { uid: "vitraux-9-10-11", label: "la Passion et la Crucifixion" },
-      { uid: "voute", label: "la voûte en bois" },
+      { uid: "choeur-autel1", label: "le chœur, vue latérale" },
+      { uid: "choeur-autel2", label: "le chœur, vue arrière" },
+      { uid: "crypte", label: "la crypte" },
     ],
   },
-  "statue-jeanne-darc": {
-    title: "La statue de Jeanne d'Arc par Michel Coste (1999) — Rouen 360°",
+  "choeur-autel1": {
+    title: `Le chœur, vue latérale — ${EGLISE}`,
     description:
-      "La statue de Jeanne d'Arc de Michel Coste (1999) en 360° : une Jeanne transfigurée, figure de paix en apothéose, loin de l'image guerrière traditionnelle.",
+      "Vue latérale du chœur de l'église Saint-Godard de Rouen en 360° : les verrières et l'architecture intérieure du gothique tardif.",
     body: [
-      "La statue visible dans l'église a été réalisée en 1999 par l'artiste Michel Coste. Elle représente une Jeanne d'Arc transfigurée : pas d'armure, pas de scène de bataille ni de bûcher, mais une vision intime et spirituelle — une Jeanne dans son apothéose, figure de paix baignée de lumière, presque angélique.",
-      "L'église se dresse à l'emplacement exact du martyre de Jeanne d'Arc (1431) : dehors, la grande croix du monument national marque le lieu du bûcher, près de l'ancien pilori retrouvé lors du chantier, et une statue de Maxime Real Del Sarte (1929) se tient près de l'entrée, le regard tourné vers l'endroit du supplice. Les fêtes Jeanne d'Arc s'y tiennent chaque fin mai.",
+      "Vue latérale du chœur de Saint-Godard, qui révèle les verrières et les arcades à moulures prismatiques caractéristiques de l'église. " + INTERIEUR,
     ],
     related: [
-      { uid: "nef-centre", label: "la nef et la place du Vieux-Marché" },
-      { uid: "fonts-baptismaux", label: "la chapelle des fonts baptismaux" },
-      { uid: "vitraux-1-2-3", label: "les vitraux Renaissance" },
+      { uid: "choeur-autel", label: "le chœur et l'autel" },
+      { uid: "choeur-autel2", label: "le chœur, vue arrière" },
+      { uid: "aile-nord-autel", label: "le collatéral nord" },
+    ],
+  },
+  "choeur-autel2": {
+    title: `Le chœur, vue arrière — ${EGLISE}`,
+    description:
+      "Le chœur de l'église Saint-Godard de Rouen vu de l'arrière en 360°, avec l'orgue de chœur Cavaillé-Coll et l'accès à la crypte.",
+    body: [
+      "Depuis l'arrière du chœur, cette scène embrasse l'ensemble de l'espace liturgique de Saint-Godard. " + ORGUES,
+    ],
+    related: [
+      { uid: "crypte", label: "descendre dans la crypte" },
+      { uid: "choeur-autel", label: "le chœur et l'autel" },
+      { uid: "orgue", label: "le grand orgue" },
+    ],
+  },
+  "aile-nord-autel": {
+    title: `Le collatéral nord, l'autel — ${EGLISE}`,
+    description:
+      "L'autel du collatéral nord de l'église Saint-Godard de Rouen en 360° : un collatéral achevé en 1527, marqué par ses ex-voto de 1871, 1940 et de l'Occupation.",
+    body: [
+      "Le collatéral nord de Saint-Godard a été achevé en 1527. Dans cette nef nord, plusieurs ex-voto témoignent de périodes d'angoisse collective : 1871 devant la Vierge, juin 1940 devant saint Antoine de Padoue, et l'Occupation devant saint Joseph.",
+      VITRAUX_NORD,
+    ],
+    related: [
+      { uid: "aile-nord-centre", label: "le centre du collatéral nord" },
+      { uid: "choeur-autel1", label: "le chœur, vue latérale" },
+      { uid: "aile-sud-autel", label: "le collatéral sud" },
+    ],
+  },
+  "aile-nord-centre": {
+    title: `Le collatéral nord et ses vitraux — ${EGLISE}`,
+    description:
+      "Les vitraux du collatéral nord de l'église Saint-Godard de Rouen en 360° : la Vie de saint Romain (1540), la Vie de la Vierge et l'Arbre de Jessé d'Arnoult de Nimègue.",
+    body: [
+      "Le centre du collatéral nord, achevé en 1527, est le meilleur point de vue sur le trésor de Saint-Godard : ses verrières des XVIe et XVIIIe siècles, déposées, restaurées ou recomposées au fil de l'histoire.",
+      VITRAUX_NORD,
+      "Après la Révolution, seules la Vie de saint Romain et les Apparitions du Christ ressuscité avaient réellement survécu dans la nef nord ; beaucoup de baies furent complétées par des vitraux du XIXe siècle, souvent de la maison Gsell.",
+    ],
+    related: [
+      { uid: "aile-nord-autel", label: "l'autel du collatéral nord" },
+      { uid: "entree", label: "la nef" },
+      { uid: "aile-sud-centre", label: "le collatéral sud" },
+    ],
+  },
+  "aile-sud-autel": {
+    title: `Le collatéral sud, l'autel — ${EGLISE}`,
+    description:
+      "L'autel latéral du collatéral sud de l'église Saint-Godard de Rouen en 360°, dans un collatéral achevé en 1534.",
+    body: [
+      "L'autel latéral du collatéral sud de Saint-Godard. Le collatéral sud a été achevé en 1534, sept ans après le collatéral nord, dans la grande campagne de reconstruction qui suivit l'incendie de 1248 et s'étendit jusqu'au XVIIe siècle.",
+      INTERIEUR,
+    ],
+    related: [
+      { uid: "aile-sud-autel2", label: "le second autel du collatéral sud" },
+      { uid: "aile-sud-baptistere", label: "le baptistère" },
+      { uid: "aile-nord-autel", label: "le collatéral nord" },
+    ],
+  },
+  "aile-sud-autel2": {
+    title: `Le second autel du collatéral sud — ${EGLISE}`,
+    description:
+      "Un second espace de dévotion dans le collatéral sud de l'église Saint-Godard de Rouen en 360°.",
+    body: [
+      "Second espace de dévotion du collatéral sud de Saint-Godard, achevé en 1534. L'intérêt de l'église vient du dialogue entre survivances du XVIe siècle, restaurations du XIXe siècle et réaménagements liturgiques plus récents.",
+    ],
+    related: [
+      { uid: "aile-sud-autel", label: "l'autel du collatéral sud" },
+      { uid: "aile-sud-centre", label: "le centre du collatéral sud" },
+      { uid: "aile-sud-fond", label: "le fond du collatéral sud" },
+    ],
+  },
+  "aile-sud-baptistere": {
+    title: `Le baptistère — ${EGLISE}`,
+    description:
+      "La chapelle des fonts baptismaux de l'église Saint-Godard de Rouen en 360° : un ensemble du XVIIIe siècle avec lambris, bancs, cuve et couvercle, sous le clocher.",
+    body: [
+      "Sous le clocher, la chapelle des fonts baptismaux de Saint-Godard forme un bel ensemble du XVIIIe siècle : lambris, bancs, cuve baptismale et son couvercle. C'est l'un des rares ensembles de mobilier ancien conservés dans l'église.",
+    ],
+    related: [
+      { uid: "aile-sud-autel", label: "l'autel du collatéral sud" },
+      { uid: "aile-sud-centre", label: "le centre du collatéral sud" },
+      { uid: "entree", label: "la nef" },
+    ],
+  },
+  "aile-sud-centre": {
+    title: `Le collatéral sud — ${EGLISE}`,
+    description:
+      "Le collatéral sud de l'église Saint-Godard de Rouen en 360° : colonnes, voûtes et lumière des baies d'un bas-côté achevé en 1534.",
+    body: [
+      "Le centre du collatéral sud, achevé en 1534, offre une perspective sur les colonnes et les voûtes de ce bas-côté. " + INTERIEUR,
+    ],
+    related: [
+      { uid: "aile-sud-fond", label: "le fond du collatéral sud" },
+      { uid: "aile-sud-baptistere", label: "le baptistère" },
+      { uid: "aile-nord-centre", label: "le collatéral nord et ses vitraux" },
+    ],
+  },
+  "aile-sud-fond": {
+    title: `Le fond du collatéral sud — ${EGLISE}`,
+    description:
+      "Le fond du collatéral sud de l'église Saint-Godard de Rouen en 360°, espace de recueillement baigné par la lumière des verrières.",
+    body: [
+      "Le fond du collatéral sud de Saint-Godard est un espace de recueillement baigné par la lumière filtrée des verrières. Les vitraux de l'église, des XVIe et XVIIIe siècles, forment un patrimoine vivant traversé par les accidents de l'histoire, les restaurations du XIXe siècle et les protections patrimoniales du XXe siècle.",
+    ],
+    related: [
+      { uid: "aile-sud-centre", label: "le centre du collatéral sud" },
+      { uid: "aile-sud-autel2", label: "le second autel du collatéral sud" },
+      { uid: "parvis-sud-proche", label: "la façade sud, à l'extérieur" },
+    ],
+  },
+  crypte: {
+    title: `La crypte — ${EGLISE}`,
+    description:
+      "La crypte de l'église Saint-Godard de Rouen en 360° : gothique flamboyant, croisée d'ogives et pilier central, escaliers de 1537, mémoire des saints évêques de Rouen.",
+    body: [
+      "Derrière l'orgue de chœur s'ouvre l'escalier menant à la crypte de Saint-Godard. C'est une crypte de style gothique flamboyant, voûtée sur croisée d'ogives, avec un pilier central ; ses escaliers datent de 1537.",
+      "Elle entretient le lien entre l'église visible et une mémoire plus ancienne, attachée aux saints évêques de Rouen : saint Godard, ou Gildard, évêque du VIe siècle présent au concile d'Orléans de 511 et inhumé ici selon la tradition, et saint Romain. Elle donne une profondeur spirituelle et historique que l'on ne perçoit pas depuis la nef.",
+    ],
+    related: [
+      { uid: "choeur-autel2", label: "remonter vers le chœur" },
+      { uid: "orgue-choeur", label: "l'orgue et le chœur" },
+      { uid: "entree", label: "la nef" },
     ],
   },
 };

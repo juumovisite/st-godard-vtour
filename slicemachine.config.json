@@ -1,5 +1,5 @@
 {
-  "repositoryName": "eglise-saint-maclou-rouen",
+  "repositoryName": "eglise-saint-godard",
   "adapter": "@slicemachine/adapter-next",
   "libraries": ["./slices"],
   "localSliceSimulatorURL": "http://localhost:3000/slice-simulator"

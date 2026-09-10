@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Église Saint-Godard de Rouen — visite virtuelle 360°
 
-## Getting Started
+Plateforme JUUMO (Next.js 16 + KRpano + Prismic), au format de Sainte Jeanne d'Arc.
 
-First, run the development server:
+- Prod : https://saintgodard.juumo.fr (projet Vercel `st-godard-vtour`, auto-deploy sur `main`)
+- Prismic : `eglise-saint-godard` (fr-fr master + en-us), types `scene` et `infospot`
+- Espace client : https://espace.juumo.fr (textes, vue d'arrivée, tags, audio)
+- Mode modification dans la visite : panneau partagé juumo-edit (`bridge.js` dans `public/vtour/tour.html`, `edit.js` dans le layout)
+- Matomo : matomo.juumo.fr, site 20
+
+## Développement
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Variables : `NEXT_PUBLIC_PRISMIC_REPOSITORY` (défaut `eglise-saint-godard`), `ANTHROPIC_API_KEY` (guide Juumi), `RESEND_API_KEY` + `CIERGE_FROM_EMAIL` (cierge).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contenu
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Aucun contenu client dans le code : scènes (titre, description courte et longue, catégorie, époque, badge, audio, vidéo, vue d'arrivée) et points d'information (`infospot`) vivent dans Prismic. Le SEO SSR par scène est dans `src/config/seo-scenes.ts` (faits de la base de connaissances du guide uniquement).
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Migration depuis l'ancien repo `st-godard-vtour` : `scripts/migrate-from-st-godard-vtour.py`.

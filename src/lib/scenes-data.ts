@@ -1,176 +1,102 @@
 import { client } from "@/lib/prismic";
 
+/**
+ * Scènes Prismic → format TourViewer, dans les deux langues.
+ *
+ * Règle contenu JUUMO (Max, 2026-09-04) : tout vient du document `scene`
+ * (titre, description courte/longue, catégorie, époque, badge, audio, vidéo,
+ * vue d'arrivée) et s'édite depuis l'espace client ou le panneau
+ * « Modifier dans la visite ». Aucun contenu en dur ici.
+ *
+ * Les points d'information (tags) sont du type `infospot`, rendus par le
+ * bridge partagé juumo-edit : le site ne les lit pas ici.
+ */
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function str(v: any): string | null {
-  return typeof v === "string" ? v : null;
+  return typeof v === "string" && v.trim() ? v : null;
 }
 
-// Construit un map krpano_id → tableau de docs informations (1 par vitrail, hotspot, etc.)
-// On utilise TOUJOURS les scènes FR comme référence pour les UIDs
-// (les scènes EN peuvent ne pas avoir krpano_id renseigné)
+// Rich text Prismic → paragraphes non vides (null si rien)
+function richTextToParagraphs(v: unknown): { text: string }[] | null {
+  if (!Array.isArray(v)) return null;
+  const out = (v as { text?: unknown }[])
+    .map((b) => ({ text: typeof b?.text === "string" ? b.text : "" }))
+    .filter((b) => b.text.trim().length > 0);
+  return out.length > 0 ? out : null;
+}
+
+function num(v: unknown): number | undefined {
+  return typeof v === "number" ? v : undefined;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildInfoMap(refScenes: any[], infos: any[]): Record<string, any[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const map: Record<string, any[]> = {};
-  for (const info of infos) {
-    if (!info.uid) continue;
-    const matched = refScenes.find(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (s: any) => s.data.krpano_id && info.uid.startsWith(s.data.krpano_id)
-    );
-    if (matched) {
-      const key = matched.data.krpano_id;
-      if (!map[key]) map[key] = [];
-      map[key].push(info);
-    }
-  }
-  return map;
+type RawScene = { id: string; uid: string; data: any };
+
+/**
+ * Mappe une scène FR (référence structurelle : ordre, krpano, médias) en
+ * appliquant, si fourni, le document de la langue cible pour les textes.
+ */
+function mapScene(fr: RawScene, index: number, localized?: RawScene) {
+  const d = fr.data;
+  const l = localized?.data ?? d;
+  const krpanoId = str(d.nom_scene_krpano) ?? str(d.krpano_id);
+  const videoUrl = str(l.video_url) ?? str(d.video_url) ?? str(d.video_file?.url);
+  return {
+    id: fr.id,
+    data: {
+      nom_scene_krpano: krpanoId,
+      title: str(l.title) ?? str(l.name) ?? str(d.title) ?? str(d.name),
+      // Catégorie : libellé affiché = valeur stockée (pas de table de renommage)
+      categorie: str(l.categorie) ?? str(d.categorie),
+      ordre: typeof d.ordre === "number" ? d.ordre : index,
+      badge: str(l.badge) ?? str(d.badge),
+      epoque: str(l.epoque) ?? str(d.epoque),
+      style_architectural: str(l.style_architectural) ?? str(d.style_architectural),
+      element_remarquable: str(l.element_remarquable) ?? str(d.element_remarquable),
+
+      description: richTextToParagraphs(l.description) ?? richTextToParagraphs(d.description),
+      description_longue:
+        richTextToParagraphs(l.description_longue) ?? richTextToParagraphs(d.description_longue),
+
+      // Vue d'arrivée définie par le client (espace client / mode modification), lue par bridge.js
+      vue_arrivee_ath: num(d.vue_arrivee_ath),
+      vue_arrivee_atv: num(d.vue_arrivee_atv),
+      vue_arrivee_fov: num(d.vue_arrivee_fov),
+
+      // Médias : audio de la langue cible s'il existe, sinon celui du doc FR
+      audio_file: str(l.audio_file?.url)
+        ? { url: l.audio_file.url as string }
+        : str(d.audio_file?.url)
+          ? { url: d.audio_file.url as string }
+          : null,
+      video_url: videoUrl,
+      video_ratio: null,
+
+      // Pas de docs « informations » sur cette plateforme (points d'info = infospot, rendu partagé)
+      informations_list: [],
+    },
+  };
 }
 
-// Mappe les scènes Prismic → format TourViewer
-// textInfoMap    : informations dans la langue cible (descriptions)
-// mediaInfoMap   : informations FR (URLs audio/vidéo — identiques quelle que soit la langue)
-// titleOverrides : krpano_id → titre traduit (pour EN quand on utilise FR comme base structurelle)
-function mapScenes(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  scenes: any[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  textInfoMap: Record<string, any[]>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mediaInfoMap?: Record<string, any[]>,
-  titleOverrides?: Record<string, string>
-): unknown[] {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return scenes.map((s: any, index: number) => {
-    const krpanoId    = str(s.data.krpano_id);
-    const title       = (krpanoId && titleOverrides?.[krpanoId]) ?? str(s.data.name);
-    const textInfos   = textInfoMap[krpanoId ?? ""] ?? [];
-    const mediaInfos  = (mediaInfoMap ?? textInfoMap)[krpanoId ?? ""] ?? [];
-    // Premier élément pour backward compat (audio_file, video_url)
-    const firstMedia  = mediaInfos[0];
-    const firstText   = textInfos[0];
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const isGenericItem = (info: any) => {
-      const labelRaw = info?.data?.audio_name;
-      const label: string = Array.isArray(labelRaw) && labelRaw[0]?.text ? labelRaw[0].text : "";
-      return label.toLowerCase().startsWith("bienvenu");
-    };
-
-    // Lookup textInfo par UID (FR/EN partagent le même UID dans Prismic)
-    // → garantit que le texte/label traduit correspond au bon média, peu importe l'ordre
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const textByUid: Record<string, any> = {};
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for (const ti of textInfos) if (ti?.uid) textByUid[ti.uid] = ti;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const informations_list = mediaInfos.filter((info: any) => !isGenericItem(info)).map((mediaInfo: any, i: number) => {
-      const textInfo = (mediaInfo?.uid && textByUid[mediaInfo.uid]) ?? textInfos[i] ?? firstText;
-      // Label : audio_name traduit (textInfo) en priorité, sinon FR (mediaInfo)
-      const labelRaw = textInfo?.data?.audio_name ?? mediaInfo?.data?.audio_name;
-      const label = Array.isArray(labelRaw) && labelRaw[0]?.text ? labelRaw[0].text as string : null;
-      // Description traduite
-      const txt = textInfo?.data?.txt;
-      const description =
-        Array.isArray(txt) && txt.length > 0
-          ? (txt as { text?: string }[])
-              .map((b) => ({ text: typeof b.text === "string" ? b.text : "" }))
-              .filter((b) => b.text.trim().length > 0)
-          : null;
-      return {
-        label,
-        description,
-        audio_file: mediaInfo?.data?.audio?.url
-          ? { url: mediaInfo.data.audio.url as string }
-          : null,
-        video_url: str(mediaInfo?.data?.video?.embed_url) ?? null,
-        video_ratio:
-          mediaInfo?.data?.video?.width && mediaInfo?.data?.video?.height
-            ? (mediaInfo.data.video.width as number) / (mediaInfo.data.video.height as number)
-            : null,
-      };
-    })
-    // On exclut tout hotspot sans titre (audio_name vide) → plus de "Élément N" affiché
-    .filter((item) => item.label != null && item.label.trim().length > 0);
-
-    return {
-      id: s.id,
-      data: {
-        nom_scene_krpano: krpanoId,
-        title,
-        categorie: str(s.data.category?.uid),
-        ordre:     typeof s.data.ordre === "number" ? s.data.ordre : index,
-
-        // Liste complète des informations (une par vitrail, hotspot, etc.)
-        informations_list,
-
-        // Backward compat — premier élément
-        description:
-          firstText?.data?.txt && Array.isArray(firstText.data.txt) && firstText.data.txt.length > 0
-            ? (firstText.data.txt as { text?: string }[])
-                .map((b) => ({ text: typeof b.text === "string" ? b.text : "" }))
-                .filter((b) => b.text.trim().length > 0)
-            : null,
-        audio_file: firstMedia?.data?.audio?.url
-          ? { url: firstMedia.data.audio.url as string }
-          : null,
-        // Vidéo : informations en priorité, sinon champ scène
-        video_url:
-          str(firstMedia?.data?.video?.embed_url) ??
-          str(s.data.video?.embed_url),
-        video_ratio:
-          firstMedia?.data?.video?.width && firstMedia?.data?.video?.height
-            ? (firstMedia.data.video.width as number) / (firstMedia.data.video.height as number)
-            : s.data.video?.width && s.data.video?.height
-              ? (s.data.video.width as number) / (s.data.video.height as number)
-              : null,
-      },
-    };
-  });
-}
-
-/** Assemble les scenes bilingues (logique identique a la home). */
+/** Assemble les scènes bilingues (structure = docs FR ; textes EN = docs EN, même uid). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function buildScenesByLang(): Promise<{ fr: any[]; en: any[] }> {
-  let scenesFr: unknown[] = [];
-  let scenesEn: unknown[] = [];
+  let fr: unknown[] = [];
+  let en: unknown[] = [];
   try {
-    const [rawScenesFr, rawScenesEn, rawInfosFr, rawInfosEn] = await Promise.all([
-      client.getAllByType("scene", { lang: "fr-fr" }),
-      client.getAllByType("scene", { lang: "en-us" }).catch(() => []),
-      client.getAllByType("informations", { lang: "fr-fr" }).catch(() => []),
-      client.getAllByType("informations", { lang: "en-us" }).catch(() => []),
+    const [rawFr, rawEn] = await Promise.all([
+      client.getAllByType("scene", { lang: "fr-fr" }) as unknown as Promise<RawScene[]>,
+      (client.getAllByType("scene", { lang: "en-us" }) as unknown as Promise<RawScene[]>).catch(
+        () => [] as RawScene[]
+      ),
     ]);
-
-    // FR : map normal
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const infoMapFr = buildInfoMap(rawScenesFr as any[], rawInfosFr as any[]);
-
-    // EN : on matche les infos EN avec les scènes FR (référence pour krpano_id)
-    // → textes ET médias (audio/vidéo EN) proviennent des docs EN
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const infoMapEn = buildInfoMap(rawScenesFr as any[], rawInfosEn as any[]);
-
-    scenesFr = mapScenes(rawScenesFr as any[], infoMapFr);
-
-    // EN : toujours rawScenesFr comme base structurelle (les scènes EN n'ont pas krpano_id renseigné)
-    // On récupère les titres EN depuis rawScenesEn en matchant par UID (même UID entre langues Prismic)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const enTitleMap: Record<string, string> = {};
-    for (const enScene of rawScenesEn as any[]) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const frScene = (rawScenesFr as any[]).find((s: any) => s.uid === enScene.uid);
-      if (frScene?.data?.krpano_id && enScene.data.name) {
-        enTitleMap[frScene.data.krpano_id] = enScene.data.name;
-      }
-    }
-    // Médias = infoMapEn (audio/vidéo EN), titres = enTitleMap, structure = scènes FR
-    scenesEn = mapScenes(rawScenesFr as any[], infoMapEn, infoMapEn, enTitleMap);
-
+    const valid = rawFr.filter((s) => str(s.data?.nom_scene_krpano) ?? str(s.data?.krpano_id));
+    const enByUid = new Map(rawEn.map((s) => [s.uid, s]));
+    fr = valid.map((s, i) => mapScene(s, i));
+    en = valid.map((s, i) => mapScene(s, i, enByUid.get(s.uid)));
   } catch {
     // Prismic non configuré — fallback sur DEFAULT_SCENES dans TourViewer
   }
-
-  return { fr: scenesFr, en: scenesEn };
+  return { fr, en };
 }

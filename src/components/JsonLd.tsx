@@ -1,6 +1,7 @@
 /**
  * JSON-LD schema.org (SSR) pour l'AEO — citations ChatGPT/Perplexity/Google AI.
- * Données validées manuellement. Généré par le déploiement AEO JUUMO.
+ * Faits issus de la base de connaissances du guide Juumi (src/app/api/chat/route.ts) ;
+ * coordonnées : Wikipédia (Église Saint-Godard de Rouen). Aucun fait inventé.
  */
 export function JsonLd() {
   const data = {
@@ -8,13 +9,12 @@ export function JsonLd() {
   "@graph": [
     {
       "@type": "PlaceOfWorship",
-      "@id": "https://saintejeannedarc.juumo.fr#place",
-      "name": "Église Sainte-Jeanne-d'Arc de Rouen",
-      "description": "Visite virtuelle 360° de l'église Sainte-Jeanne-d'Arc de Rouen, édifice moderne (1979) de l'architecte Louis Arretche bâti sur la place du Vieux-Marché, lieu du martyre de Jeanne d'Arc, et célèbre pour ses vitraux Renaissance. La visite explore la nef, les chapelles, les vitraux et la statue de Jeanne d'Arc.",
-      "url": "https://saintejeannedarc.juumo.fr",
+      "@id": "https://saintgodard.juumo.fr#place",
+      "name": "Église Saint-Godard de Rouen",
+      "description": "Visite virtuelle 360° de l'église Saint-Godard de Rouen, église gothique reconstruite entre la fin du XVe siècle et le XVIIe siècle, protégée au titre des Monuments historiques et célèbre pour ses vitraux du XVIe siècle (Arbre de Jessé, Vie de saint Romain), sa crypte flamboyante et ses orgues Cavaillé-Coll classés.",
+      "url": "https://saintgodard.juumo.fr",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Place du Vieux-Marché",
         "postalCode": "76000",
         "addressLocality": "Rouen",
         "addressRegion": "Normandie",
@@ -22,11 +22,11 @@ export function JsonLd() {
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": 49.442951,
-        "longitude": 1.088641
+        "latitude": 49.4449564,
+        "longitude": 1.095441
       },
       "sameAs": [
-        "https://fr.wikipedia.org/wiki/%C3%89glise_Sainte-Jeanne-d%27Arc_de_Rouen"
+        "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Godard_de_Rouen"
       ],
       "amenityFeature": [
         {
@@ -38,13 +38,13 @@ export function JsonLd() {
     },
     {
       "@type": "TouristAttraction",
-      "@id": "https://saintejeannedarc.juumo.fr#virtualtour",
-      "name": "Visite virtuelle 360° — Église Sainte-Jeanne-d'Arc de Rouen",
-      "description": "Découverte immersive 360° de Église Sainte-Jeanne-d'Arc de Rouen à Rouen. Visite virtuelle 360° de l'église Sainte-Jeanne-d'Arc de Rouen, édifice moderne (1979) de l'architecte Louis Arretche bâti sur la place du Vieux-Marché, lieu du martyre de Jeanne d'Arc, et célèbre pour ses vitraux Renaissance. La visite explore la nef, les chapelles, les vitraux et la statue de Jeanne d'Arc.",
-      "url": "https://saintejeannedarc.juumo.fr",
+      "@id": "https://saintgodard.juumo.fr#virtualtour",
+      "name": "Visite virtuelle 360° — Église Saint-Godard de Rouen",
+      "description": "Découverte immersive 360° de l'église Saint-Godard de Rouen : le parvis, la nef à trois vaisseaux et ses voûtes en carène renversée, le chœur, les collatéraux et leurs verrières du XVIe siècle, le baptistère du XVIIIe siècle, les orgues Cavaillé-Coll et la crypte gothique flamboyante.",
+      "url": "https://saintgodard.juumo.fr",
       "isAccessibleForFree": true,
       "location": {
-        "@id": "https://saintejeannedarc.juumo.fr#place"
+        "@id": "https://saintgodard.juumo.fr#place"
       },
       "additionalProperty": {
         "@type": "PropertyValue",
@@ -54,11 +54,11 @@ export function JsonLd() {
     },
     {
       "@type": "WebSite",
-      "@id": "https://saintejeannedarc.juumo.fr#website",
-      "url": "https://saintejeannedarc.juumo.fr",
-      "name": "Église Sainte-Jeanne-d'Arc de Rouen — Visite virtuelle JUUMO",
+      "@id": "https://saintgodard.juumo.fr#website",
+      "url": "https://saintgodard.juumo.fr",
+      "name": "Église Saint-Godard de Rouen — Visite virtuelle JUUMO",
       "about": {
-        "@id": "https://saintejeannedarc.juumo.fr#place"
+        "@id": "https://saintgodard.juumo.fr#place"
       },
       "publisher": {
         "@type": "Organization",
@@ -67,59 +67,58 @@ export function JsonLd() {
         "logo": "https://juumo.fr/icon.png"
       }
     },
-    // FAQ : questions réellement posées par les visiteurs (source : base de
-    // connaissances du chatbot Juumi). Cible : AI Overviews, ChatGPT,
-    // Perplexity + featured snippets Google.
+    // FAQ : questions courantes des visiteurs (source : base de connaissances
+    // du guide Juumi). Cible : AI Overviews, ChatGPT, Perplexity + featured snippets.
     {
       "@type": "FAQPage",
-      "@id": "https://saintejeannedarc.juumo.fr#faq",
+      "@id": "https://saintgodard.juumo.fr#faq",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Qui a conçu l'église Sainte-Jeanne-d'Arc de Rouen ?",
+          "name": "De quand date l'église Saint-Godard de Rouen ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "L'architecte Louis Arretche. Consacrée le 29 avril 1979 et inaugurée le 27 mai 1979 en présence du président Valéry Giscard d'Estaing, l'église mêle béton, métal et charpente en bois, dans une forme moderne évoquant un bateau viking, un poisson ou un heaume de chevalier. Elle est inscrite aux Monuments historiques depuis 2002."
+            "text": "Le site est lié à un culte très ancien. L'église a été détruite par un incendie en 1248, puis reconstruite par grandes campagnes entre la fin du XVe siècle et le XVIIe siècle : nef de la seconde moitié du XVe siècle, collatéral nord achevé en 1527, collatéral sud en 1534, escaliers de la crypte et porte sur la rue du Beffroi en 1537, tour en 1612, sacristie agrandie en 1654. Elle est protégée au titre des Monuments historiques."
           }
         },
         {
           "@type": "Question",
-          "name": "D'où viennent les vitraux de l'église Sainte-Jeanne-d'Arc ?",
+          "name": "Qui est saint Godard ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Les 13 verrières Renaissance (1520-1530) proviennent du chœur de l'ancienne église Saint-Vincent de Rouen, détruite par les bombardements de 1944. Mises à l'abri dès 1939, elles ont été intégrées ici grâce à l'abaissement du sol de deux mètres. Trois sont signées de l'atelier des Le Prince de Beauvais, les autres de l'atelier rouennais influencé par Arnoult de Nimègue."
+            "text": "Saint Godard, ou Gildard, est un évêque de Rouen du VIe siècle qui participa au concile d'Orléans de 511. La tradition rapporte qu'il fut inhumé ici. L'église est aussi fortement marquée par le souvenir de saint Romain, grand évêque de Rouen, auquel est consacrée sa plus grande verrière."
           }
         },
         {
           "@type": "Question",
-          "name": "Quel est le lien entre l'église et Jeanne d'Arc ?",
+          "name": "Quels sont les vitraux les plus remarquables de Saint-Godard ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "L'église se dresse à l'emplacement exact du martyre de Jeanne d'Arc, brûlée vive le 30 mai 1431 sur la place du Vieux-Marché, à 19 ans. La grande croix extérieure du monument national marque le lieu du bûcher, et une statue de Maxime Real Del Sarte (1929) se tient près de l'entrée. Les fêtes Jeanne d'Arc s'y tiennent chaque fin mai."
+            "text": "L'Arbre de Jessé (baie 18), largement attribué à Arnoult de Nimègue vers 1506 et souvent présenté comme l'un des sommets du vitrail rouennais de la Renaissance ; la Vie de saint Romain, plus grande verrière de la nef nord, offerte en 1540 par Richard Le Caron ; et la Vie de la Vierge (baie 6), réalisée vers 1506 et recomposée par l'atelier Gsell vers 1860-1865."
           }
         },
         {
           "@type": "Question",
-          "name": "Où se trouve l'église Sainte-Jeanne-d'Arc ?",
+          "name": "Qui a construit les orgues de Saint-Godard ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Au cœur de la place du Vieux-Marché, 76000 Rouen, en Normandie. Sur la même place se trouvent le mémorial Jeanne d'Arc et les halles du Vieux-Marché."
+            "text": "Un orgue est attesté dès 1531. Le grand orgue actuel a été construit par Aristide Cavaillé-Coll en 1884, puis l'orgue de chœur en 1885 et 1889. Les deux instruments sont classés Monuments historiques depuis 1999 et la Métropole y programme des concerts."
           }
         },
         {
           "@type": "Question",
-          "name": "Quels sont les vitraux les plus remarquables ?",
+          "name": "Peut-on visiter la crypte de Saint-Godard ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Le Triomphe de la Vierge, dit vitrail des Chars (Jean et Engrand Le Prince), chef-d'œuvre de la Renaissance verrière en Normandie ; la Vie de saint Jean-Baptiste d'Engrand Le Prince ; les Œuvres de Miséricorde ; la Crucifixion et son célèbre soldat au visage bleu pâle ; ou encore le Martyre de saint Vincent, dont le maître verrier fut surnommé « le maître du martyre de saint Vincent » par Jean Lafond."
+            "text": "La visite virtuelle 360° permet d'y descendre : derrière l'orgue de chœur s'ouvre l'escalier menant à une crypte de style gothique flamboyant, voûtée sur croisée d'ogives autour d'un pilier central. Ses escaliers datent de 1537."
           }
         },
         {
           "@type": "Question",
-          "name": "Peut-on visiter l'église Sainte-Jeanne-d'Arc en ligne gratuitement ?",
+          "name": "Peut-on visiter l'église Saint-Godard en ligne gratuitement ?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Oui, la visite virtuelle 360° sur saintejeannedarc.juumo.fr est libre et gratuite : la nef, la charpente, les chapelles, la statue de Jeanne d'Arc et les 13 vitraux Renaissance s'y explorent librement, avec un guide interactif (Juumi) pour poser ses questions."
+            "text": "Oui, la visite virtuelle 360° sur saintgodard.juumo.fr est libre et gratuite : le parvis, la nef, le chœur, les collatéraux et leurs vitraux, le baptistère, les orgues et la crypte s'y explorent librement, avec un guide interactif (Juumi) pour poser ses questions."
           }
         }
       ]

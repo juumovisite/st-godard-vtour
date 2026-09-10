@@ -35,211 +35,39 @@ interface SceneData {
   };
 }
 
+// Valeurs de secours uniquement (Prismic indisponible) — le contenu réel vit dans Prismic
+// et s'édite depuis l'espace client (règle contenu JUUMO, Max 2026-09-04).
 const DEFAULT_SCENES: SceneData[] = [
-  { id: "1", data: { title: "Nef Vue Sud", nom_scene_krpano: "scene_nef_vue_sud", categorie: "Nef", ordre: 1 } },
-  { id: "2", data: { title: "Nef Centre", nom_scene_krpano: "scene_nef_centre", categorie: "Nef", ordre: 2 } },
-  { id: "3", data: { title: "Nef Voûte", nom_scene_krpano: "scene_nef_voute", categorie: "Nef", ordre: 3 } },
-  { id: "4", data: { title: "Voûte", nom_scene_krpano: "scene_voute", categorie: "Nef", ordre: 4 } },
-  { id: "5", data: { title: "Vitraux 1-2-3", nom_scene_krpano: "scene_vitraux_1_2_3", categorie: "Vitraux", ordre: 5 } },
-  { id: "6", data: { title: "Vitraux 4-5-6", nom_scene_krpano: "scene_vitraux_4_5_6", categorie: "Vitraux", ordre: 6 } },
-  { id: "7", data: { title: "Vitraux 7-8", nom_scene_krpano: "scene_vitraux_7_8", categorie: "Vitraux", ordre: 7 } },
-  { id: "8", data: { title: "Vitraux 9-10-11", nom_scene_krpano: "scene_vitraux_9_10_11", categorie: "Vitraux", ordre: 8 } },
-  { id: "9", data: { title: "Vitraux 12-13", nom_scene_krpano: "scene_vitraux_12_13", categorie: "Vitraux", ordre: 9 } },
-  { id: "10", data: { title: "Chapelle de la Vierge", nom_scene_krpano: "scene_chapelle_de_la_vierge", categorie: "Chapelles", ordre: 10 } },
-  { id: "11", data: { title: "Chapelle Saint-Sacrement", nom_scene_krpano: "scene_chapelle_saint_sacrement", categorie: "Chapelles", ordre: 11 } },
-  { id: "12", data: { title: "Fonts Baptismaux", nom_scene_krpano: "scene_fonts_baptismaux", categorie: "Chapelles", ordre: 12 } },
-  { id: "13", data: { title: "Statue Jeanne d'Arc", nom_scene_krpano: "scene_statue_jeanne_darc", categorie: "Chapelles", ordre: 13 } },
+  { id: "1", data: { title: "Parvis Entrée", nom_scene_krpano: "scene_parvis_entree", categorie: "Extérieur", ordre: 1 } },
+  { id: "2", data: { title: "Parvis Sud", nom_scene_krpano: "scene_parvis_entree_sud", categorie: "Extérieur", ordre: 2 } },
+  { id: "3", data: { title: "Parvis Nord", nom_scene_krpano: "scene_parvis_nord", categorie: "Extérieur", ordre: 3 } },
+  { id: "4", data: { title: "Parvis Sud - Vue éloignée", nom_scene_krpano: "scene_parvis_sud_loin", categorie: "Extérieur", ordre: 4 } },
+  { id: "5", data: { title: "Parvis Sud - Vue rapprochée", nom_scene_krpano: "scene_parvis_sud_proche", categorie: "Extérieur", ordre: 5 } },
+  { id: "6", data: { title: "Vue Cathédrale", nom_scene_krpano: "scene_vue_cathedrale", categorie: "Extérieur", ordre: 6 } },
+  { id: "7", data: { title: "Vue Donjon", nom_scene_krpano: "scene_vue_donjon", categorie: "Extérieur", ordre: 7 } },
+  { id: "8", data: { title: "Entrée", nom_scene_krpano: "scene_entree", categorie: "Intérieur", ordre: 8 } },
+  { id: "9", data: { title: "Orgue", nom_scene_krpano: "scene_orgue", categorie: "Intérieur", ordre: 9 } },
+  { id: "10", data: { title: "Orgue et Chœur", nom_scene_krpano: "scene_orgue_choeur", categorie: "Intérieur", ordre: 10 } },
+  { id: "11", data: { title: "Autel", nom_scene_krpano: "scene_autel", categorie: "Intérieur", ordre: 11 } },
+  { id: "12", data: { title: "Chœur - Autel", nom_scene_krpano: "scene_choeur_autel", categorie: "Intérieur", ordre: 12 } },
+  { id: "13", data: { title: "Chœur - Vue latérale", nom_scene_krpano: "scene_choeur_autel1", categorie: "Intérieur", ordre: 13 } },
+  { id: "14", data: { title: "Chœur - Vue arrière", nom_scene_krpano: "scene_choeur_autel2", categorie: "Intérieur", ordre: 14 } },
+  { id: "15", data: { title: "Aile Nord - Autel", nom_scene_krpano: "scene_aile_nord_autel", categorie: "Intérieur", ordre: 15 } },
+  { id: "16", data: { title: "Aile Nord - Centre", nom_scene_krpano: "scene_aile_nord_centre", categorie: "Intérieur", ordre: 16 } },
+  { id: "17", data: { title: "Aile Sud - Autel", nom_scene_krpano: "scene_aile_sud_autel", categorie: "Intérieur", ordre: 17 } },
+  { id: "18", data: { title: "Aile Sud - Second autel", nom_scene_krpano: "scene_aile_sud_autel2", categorie: "Intérieur", ordre: 18 } },
+  { id: "19", data: { title: "Baptistère", nom_scene_krpano: "scene_aile_sud_baptistere", categorie: "Intérieur", ordre: 19 } },
+  { id: "20", data: { title: "Aile Sud - Centre", nom_scene_krpano: "scene_aile_sud_centre", categorie: "Intérieur", ordre: 20 } },
+  { id: "21", data: { title: "Aile Sud - Fond", nom_scene_krpano: "scene_aile_sud_fond", categorie: "Intérieur", ordre: 21 } },
+  { id: "22", data: { title: "Crypte", nom_scene_krpano: "scene_crypte", categorie: "Crypte", ordre: 22 } },
 ];
 
-// Textes descriptifs de secours FR + EN (utilisés si Prismic ne renseigne pas description_longue)
-const SCENE_FALLBACK_DESCRIPTIONS: Record<string, { fr: string[]; en: string[] }> = {
-  scene_nef_vue_sud: {
-    fr: [
-      "La nef de l'église Sainte-Jeanne-d'Arc offre depuis l'allée sud une perspective saisissante sur l'ensemble de l'édifice. Conçue par l'architecte Louis Arretche et inaugurée en 1979, l'église adopte une forme évoquant les coques de bateaux renversés — un hommage discret aux drakkar normands.",
-      "Cette vue dévoile la charpente en bois lamellé-collé qui court sur toute la longueur de la nef, créant un rythme structurel à la fois moderne et chaleureux. L'espace peut accueillir plus de 1 000 fidèles.",
-    ],
-    en: [
-      "From the south aisle, the nave of the church of Sainte-Jeanne-d'Arc offers a striking view of the entire building. Designed by architect Louis Arretche and inaugurated in 1979, the church takes the form of upturned boat hulls — a discreet homage to the Norman longships.",
-      "This viewpoint reveals the laminated timber framework running the full length of the nave, creating a structural rhythm that is both modern and warm. The space can accommodate over 1,000 worshippers.",
-    ],
-  },
-  scene_nef_centre: {
-    fr: [
-      "Au centre de la nef, le regard est immédiatement capté par la profusion de lumière colorée qui se déverse des vitraux Renaissance. Ces verrières exceptionnelles, classées Monuments Historiques, proviennent de l'ancienne église Saint-Vincent détruite lors des bombardements de 1944.",
-      "L'acoustique particulière de l'édifice, liée à sa structure en bois et à sa forme asymétrique, en fait également un lieu privilégié pour les concerts et les célébrations musicales.",
-    ],
-    en: [
-      "At the heart of the nave, the eye is immediately drawn by the profusion of coloured light pouring through the Renaissance stained glass. These exceptional windows, listed as Historic Monuments, come from the former church of Saint-Vincent, destroyed in the 1944 bombings.",
-      "The building's distinctive acoustics, shaped by its timber structure and asymmetrical form, also make it a prized venue for concerts and musical celebrations.",
-    ],
-  },
-  scene_nef_voute: {
-    fr: [
-      "La voûte de la nef révèle tout le génie constructif de Louis Arretche : une structure en bois lamellé-collé aux courbes généreuses qui rappelle l'intérieur d'une carène de navire retournée. Ce choix architectural ancre l'église dans l'identité maritime et normande de Rouen.",
-      "Chaque ferme de charpente est calculée pour épouser la légère dissymétrie du plan au sol, donnant à l'ensemble une sensation de mouvement et d'élan vers le chœur.",
-    ],
-    en: [
-      "The vault of the nave reveals the full constructive genius of Louis Arretche: a laminated timber structure with generous curves evoking the interior of an upturned ship's hull. This architectural choice roots the church in Rouen's maritime and Norman identity.",
-      "Each roof truss is calculated to follow the slight asymmetry of the floor plan, giving the whole structure a sense of movement and momentum towards the choir.",
-    ],
-  },
-  scene_voute: {
-    fr: [
-      "Vue vers la voûte de l'église Sainte-Jeanne-d'Arc, ce panorama révèle la maîtrise architecturale de Louis Arretche dans l'assemblage des structures en bois. L'absence de piliers centraux confère à la nef une unité visuelle remarquable.",
-      "La lumière naturelle, filtrée par les verrières latérales et les vitraux Renaissance, baigne l'ensemble d'une atmosphère recueillie et changeante au fil des heures.",
-    ],
-    en: [
-      "Looking up at the vault of the church of Sainte-Jeanne-d'Arc, this panorama reveals Louis Arretche's mastery of timber construction. The absence of central pillars gives the nave a remarkable visual unity.",
-      "Natural light, filtered through the lateral windows and Renaissance stained glass, bathes the interior in a contemplative atmosphere that shifts with the hours.",
-    ],
-  },
-  scene_chapelle_de_la_vierge: {
-    fr: [
-      "La chapelle de la Vierge occupe un espace latéral intimiste, dédié à la prière personnelle et à la dévotion mariale. Elle accueille une statue de la Vierge Marie ainsi qu'un espace de recueillement propice à la méditation.",
-      "Son architecture plus enveloppante, aux proportions réduites, contraste délibérément avec le grand volume de la nef et invite à un moment de silence et de paix intérieure.",
-    ],
-    en: [
-      "The Lady Chapel occupies an intimate side space dedicated to personal prayer and Marian devotion. It houses a statue of the Virgin Mary and a quiet area conducive to meditation.",
-      "Its more enveloping architecture and smaller proportions deliberately contrast with the vast volume of the nave, inviting a moment of silence and inner peace.",
-    ],
-  },
-  scene_chapelle_saint_sacrement: {
-    fr: [
-      "La chapelle du Saint-Sacrement est le lieu de conservation de l'Eucharistie au sein de l'église. Signalée par la flamme perpétuelle du cierge pascal, elle invite les fidèles à l'adoration et au recueillement.",
-      "Son décor sobre et sa lumière tamisée en font un espace de prière contemplative, distinct de l'animation de la nef principale. La communauté paroissiale y tient régulièrement des temps d'adoration.",
-    ],
-    en: [
-      "The Chapel of the Blessed Sacrament is where the Eucharist is reserved within the church. Marked by the perpetual flame of the paschal candle, it invites the faithful to adoration and quiet prayer.",
-      "Its simple decor and subdued light make it a space for contemplative prayer, set apart from the activity of the main nave. The parish community holds regular times of adoration here.",
-    ],
-  },
-  scene_fonts_baptismaux: {
-    fr: [
-      "Les fonts baptismaux marquent symboliquement l'entrée dans la communauté chrétienne. Placés traditionnellement à l'entrée de l'église, ils rappellent que le baptême est la première porte du cheminement de foi.",
-      "La cuve baptismale actuelle a été conçue dans l'esprit de l'architecture de l'édifice, alliant sobriété des matériaux et profondeur du symbole. C'est ici que chaque année des dizaines de personnes reçoivent le sacrement du baptême.",
-    ],
-    en: [
-      "The baptismal font symbolically marks the entrance into the Christian community. Traditionally placed at the entrance to the church, it is a reminder that baptism is the first doorway of the journey of faith.",
-      "The current font was designed in keeping with the building's architecture, combining simplicity of materials with the depth of the symbol. Each year, dozens of people receive the sacrament of baptism here.",
-    ],
-  },
-  scene_statue_jeanne_darc: {
-    fr: [
-      "Cette statue de Jeanne d'Arc rappelle que l'église est entièrement dédiée à la mémoire de la Pucelle d'Orléans, brûlée vive sur la place du Vieux-Marché le 30 mai 1431, à quelques mètres de l'emplacement actuel de l'édifice.",
-      "Jeanne d'Arc fut canonisée en 1920. Son procès en réhabilitation, conclu en 1456, reconnut l'injustice de sa condamnation. L'église construite en son honneur est aujourd'hui un lieu de mémoire et de pèlerinage visité chaque année par des milliers de personnes du monde entier.",
-    ],
-    en: [
-      "This statue of Joan of Arc is a reminder that the church is entirely dedicated to the memory of the Maid of Orléans, burned at the stake on the Place du Vieux-Marché on 30 May 1431, just metres from the site of the current building.",
-      "Joan of Arc was canonised in 1920. Her rehabilitation trial, concluded in 1456, recognised the injustice of her condemnation. The church built in her honour is today a place of remembrance and pilgrimage visited each year by thousands of people from around the world.",
-    ],
-  },
-  scene_vitraux_1_2_3: {
-    fr: [
-      "Les trois premiers vitraux de la série, datant du XVIe siècle, constituent un témoignage exceptionnel de l'art du vitrail de la Renaissance rouennaise. Ils proviennent de l'ancienne église Saint-Vincent, détruite en juin 1944.",
-      "Rescapés des bombardements grâce à leur dépose préventive, ces chefs-d'œuvre représentent des scènes bibliques aux coloris somptueux — bleus outremer, rouges carmin, ors — caractéristiques de l'atelier rouennais du début du XVIe siècle.",
-    ],
-    en: [
-      "The first three windows in the series, dating from the 16th century, are an exceptional testament to the art of stained glass in the Rouen Renaissance. They come from the former church of Saint-Vincent, destroyed in June 1944.",
-      "Saved from the bombing by their preventive removal, these masterpieces depict biblical scenes in sumptuous colours — ultramarine blues, crimson reds, golds — characteristic of the Rouen workshops of the early 16th century.",
-    ],
-  },
-  scene_vitraux_4_5_6: {
-    fr: [
-      "Cette travée de vitraux déploie des scènes narratives issues de l'Ancien et du Nouveau Testament, mêlant personnages en costume Renaissance et architectures antiques dans un style propre à l'école normande du XVIe siècle.",
-      "La richesse chromatique et la finesse du trait témoignent du savoir-faire des maîtres verriers rouennais, dont les ateliers rayonnaient à cette époque bien au-delà des frontières de la Normandie.",
-    ],
-    en: [
-      "This bay of windows unfolds narrative scenes from the Old and New Testaments, combining figures in Renaissance dress and antique architecture in a style typical of the 16th-century Norman school.",
-      "The chromatic richness and delicacy of line bear witness to the skill of the Rouen master glaziers, whose workshops radiated influence far beyond the borders of Normandy at this time.",
-    ],
-  },
-  scene_vitraux_7_8: {
-    fr: [
-      "Les vitraux 7 et 8 sont parmi les plus remarquables de l'ensemble : leurs compositions, d'une grande densité narrative, superposent plusieurs registres de lecture pour les fidèles lettrés comme pour les simples croyants.",
-      "Classés Monuments Historiques, ces vitraux font l'objet d'un suivi de conservation rigoureux. Leur intégration dans l'architecture contemporaine de Louis Arretche — qui conçut les ouvertures spécifiquement pour eux — constitue un dialogue unique entre art médiéval et modernité.",
-    ],
-    en: [
-      "Windows 7 and 8 are among the most remarkable in the collection: their compositions, of great narrative density, layer several levels of meaning for learned worshippers and simple believers alike.",
-      "Listed as Historic Monuments, these windows undergo rigorous conservation monitoring. Their integration into Louis Arretche's contemporary architecture — who designed the openings specifically for them — creates a unique dialogue between medieval art and modernity.",
-    ],
-  },
-  scene_vitraux_9_10_11: {
-    fr: [
-      "Cette travée présente trois verrières aux compositions foisonnantes, typiques de la production des ateliers rouennais au tournant du XVIe siècle. Les fonds en grisaille laissent apparaître des architectures en trompe-l'œil qui amplifient la profondeur des scènes.",
-      "La lumière normande, diffuse et changeante, révèle différemment ces vitraux selon l'heure et la saison, offrant à chaque visite une expérience visuelle renouvelée.",
-    ],
-    en: [
-      "This bay features three windows with richly detailed compositions, typical of the Rouen workshops around the turn of the 16th century. Grisaille backgrounds reveal trompe-l'œil architectural elements that deepen the narrative scenes.",
-      "The Norman light, diffuse and ever-changing, reveals these windows differently depending on the hour and season, offering a renewed visual experience with each visit.",
-    ],
-  },
-  scene_vitraux_12_13: {
-    fr: [
-      "Les deux derniers vitraux de la série viennent clore l'ensemble iconographique avec des compositions centrées sur la Passion et la Résurrection du Christ. Ils constituaient le point d'aboutissement du parcours narratif dans l'ancienne église Saint-Vincent.",
-      "Leur conservation et leur réinstallation dans ce nouvel écrin contemporain représentent un acte patrimonial majeur, assurant la transmission de ce trésor artistique aux générations futures.",
-    ],
-    en: [
-      "The last two windows in the series bring the iconographic cycle to a close with compositions centred on the Passion and Resurrection of Christ. They formed the culminating point of the narrative journey in the former church of Saint-Vincent.",
-      "Their conservation and reinstallation in this new contemporary setting represent a major act of heritage preservation, ensuring that this artistic treasure is passed on to future generations.",
-    ],
-  },
-};
+// Aucune description en dur : les descriptions courtes et longues viennent de Prismic.
+const SCENE_FALLBACK_DESCRIPTIONS: Record<string, { fr: string[]; en: string[] }> = {};
 
-// Phrases d'introduction par scène (fallback quand Prismic n'a pas de description courte)
-const SCENE_SHORT_INTRO: Record<string, { fr: string; en: string }> = {
-  scene_nef_vue_sud: {
-    fr: "Depuis l'allée sud, découvrez la nef dans toute sa majesté — une architecture évoquant la coque d'un navire normand renversé.",
-    en: "From the south aisle, discover the nave in all its majesty — an architecture evoking an upturned Norman ship's hull.",
-  },
-  scene_nef_centre: {
-    fr: "Au centre de la nef, la lumière colorée des vitraux Renaissance baigne l'espace d'une atmosphère unique et recueillie.",
-    en: "At the heart of the nave, the coloured light of the Renaissance stained glass fills the space with a unique, serene atmosphere.",
-  },
-  scene_nef_voute: {
-    fr: "La voûte révèle la charpente en bois lamellé-collé de Louis Arretche — une structure inspirée de la tradition navale normande.",
-    en: "The vault reveals Louis Arretche's laminated timber framework — a structure inspired by Norman shipbuilding tradition.",
-  },
-  scene_voute: {
-    fr: "Levez les yeux vers la charpente remarquable de l'église, chef-d'œuvre de bois lamellé-collé inauguré en 1979.",
-    en: "Look up at the church's remarkable timber framework, a masterpiece of laminated wood inaugurated in 1979.",
-  },
-  scene_vitraux_1_2_3: {
-    fr: "Ces trois verrières du XVIe siècle, rescapées des bombardements de 1944, comptent parmi les plus belles de la Renaissance normande.",
-    en: "These three 16th-century windows, saved from the 1944 bombings, are among the finest of the Norman Renaissance.",
-  },
-  scene_vitraux_4_5_6: {
-    fr: "Ces vitraux provenant de l'ancienne église Saint-Vincent témoignent de l'art verrier rouennais à son apogée.",
-    en: "These stained glass windows from the former Saint-Vincent church bear witness to the art of Rouen glassmakers at their peak.",
-  },
-  scene_vitraux_7_8: {
-    fr: "Classés Monuments Historiques, ces vitraux déploient une iconographie d'une rare densité, magnifiée par la lumière normande.",
-    en: "Listed as Historic Monuments, these windows display an iconography of rare density, magnified by the Norman light.",
-  },
-  scene_vitraux_9_10_11: {
-    fr: "Ces trois verrières aux compositions foisonnantes offrent une expérience visuelle renouvelée selon les heures et les saisons.",
-    en: "These three richly composed windows offer a visual experience that changes with the time of day and season.",
-  },
-  scene_vitraux_12_13: {
-    fr: "Les deux derniers vitraux clôturent l'ensemble iconographique avec des scènes de la Passion, témoignage majeur du patrimoine normand.",
-    en: "The last two windows close the iconographic cycle with scenes of the Passion — a major testament to Norman heritage.",
-  },
-  scene_chapelle_de_la_vierge: {
-    fr: "Espace de dévotion mariale, cette chapelle intimiste invite au recueillement et à la prière personnelle.",
-    en: "A space of Marian devotion, this intimate chapel invites quiet reflection and personal prayer.",
-  },
-  scene_chapelle_saint_sacrement: {
-    fr: "La chapelle du Saint-Sacrement, signalée par la flamme perpétuelle, accueille les temps d'adoration et de prière contemplative.",
-    en: "The Chapel of the Blessed Sacrament, marked by the perpetual flame, welcomes times of adoration and contemplative prayer.",
-  },
-  scene_fonts_baptismaux: {
-    fr: "Placés à l'entrée de l'église, les fonts baptismaux marquent le seuil symbolique du cheminement de foi chrétien.",
-    en: "Located at the church entrance, the baptismal font marks the symbolic threshold of the Christian journey of faith.",
-  },
-  scene_statue_jeanne_darc: {
-    fr: "Cette statue rend hommage à Jeanne d'Arc, brûlée à quelques mètres d'ici le 30 mai 1431 et canonisée en 1920.",
-    en: "This statue honours Joan of Arc, burned at the stake a few metres away on 30 May 1431 and canonised in 1920.",
-  },
-};
+// (conservé pour parité de structure avec Sainte Jeanne d'Arc — vide ici)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const SCENE_SHORT_INTRO: Record<string, { fr: string; en: string }> = {};
 
 export default function TourViewer({ scenesByLang, initialScene }: { scenesByLang: { fr: SceneData[]; en: SceneData[] }; initialScene?: string }) {
   const [lang, setLang] = useState<Lang>("fr");
@@ -1760,14 +1588,14 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
             position: "relative", width: "100%", height: 160, borderRadius: 20,
             overflow: "hidden", border: "none", cursor: "pointer", textAlign: "left", flexShrink: 0, minHeight: 160,
           }}>
-            <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/images/menu/Vitraux.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "url(/images/menu/Orgue_choeur.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 60%)" }} />
             <span style={{ position: "absolute", top: 14, left: 14, background: "rgba(26,50,80,0.92)", color: "white", fontSize: 10, fontWeight: 700, padding: "4px 12px", borderRadius: 16, letterSpacing: 0.5 }}>
               {t("guided_visit")}
             </span>
             <div style={{ position: "absolute", bottom: 14, left: 16, right: 52 }}>
               <p style={{ fontSize: 17, fontWeight: 700, color: "white", margin: 0, fontFamily: "'Inter', sans-serif" }}>{t("resume_visit")}</p>
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.72)", margin: "2px 0 0" }}>{currentScene?.data.title || "Nef"}</p>
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.72)", margin: "2px 0 0" }}>{currentScene?.data.title || t("visit_fallback")}</p>
             </div>
             <div style={{ position: "absolute", bottom: 12, right: 14, width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.22)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1849,9 +1677,9 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {[
-                { name: "Église Saint-Maclou", city: "Rouen", url: "https://saintmaclou.juumo.fr", preview: "/vtour/panos/Nef_centre.tiles/preview.jpg", available: true },
-                { name: "Église Saint-Godard", city: "Rouen", url: null, preview: "/vtour/panos/Nef_vue_sud.tiles/preview.jpg", available: false },
-                { name: "Église Saint-Gervais", city: "Rouen", url: null, preview: "/vtour/panos/Statue_jeanne_darc.tiles/preview.jpg", available: false },
+                { name: "Église Sainte-Jeanne-d'Arc", city: "Rouen", url: "https://saintejeannedarc.juumo.fr", preview: "/images/churches/sainte-jeanne-darc.jpg", available: true },
+                { name: "Église Saint-Maclou", city: "Rouen", url: "https://saintmaclou.juumo.fr", preview: "/images/churches/saint-maclou.jpg", available: true },
+                { name: "Église Saint-Gervais", city: "Rouen", url: null, preview: "/vtour/panos/Vue_cathedrale.tiles/preview.jpg", available: false },
               ].map((c) => {
                 const inner = (
                   <>
@@ -1935,7 +1763,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
               </a>
 
               {/* CTA rejoindre */}
-              <a href="mailto:contact@juumo.fr?subject=Rejoindre le projet Sainte Jeanne d'Arc" style={{
+              <a href="mailto:contact@juumo.fr?subject=Rejoindre le projet Saint-Godard" style={{
                 display: "flex", alignItems: "center", gap: 10,
                 padding: "12px 14px", borderRadius: 14, textDecoration: "none",
                 background: "rgba(26,50,80,0.07)",
@@ -2123,7 +1951,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
         </div>
       </div>
 
-      {/* Popup Chat — questions sur Sainte Jeanne d'Arc (non rendu si chatbot inactif) */}
+      {/* Popup Chat — questions sur Saint-Godard (non rendu si chatbot inactif) */}
       {juumiStatus.active && (
       <div style={{
         position: "absolute", bottom: isMobile ? navBarHeight : "calc(max(env(safe-area-inset-bottom, 0px) + 10px, 18px) + 54px)", left: "50%", transform: "translateX(-50%)",
@@ -2505,7 +2333,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
       {!isMobile && (
         <div style={{ position: "fixed", bottom: 6, right: 12, zIndex: 200, display: "flex", gap: 14 }}>
           <a
-            href="https://juumo.fr/?utm_source=visite360&utm_medium=badge&utm_campaign=sainte-jeanne-darc"
+            href="https://juumo.fr/?utm_source=visite360&utm_medium=badge&utm_campaign=saint-godard"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -2734,6 +2562,7 @@ function MenuAccordion({ open, onToggle, icon, label, children, iconColor }: {
 }
 
 function InfoRow({ icon, label, value, href }: { icon: string; label: string; value: string; href?: string }) {
+  if (!value) return null;
   return (
     <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
       <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>{icon}</span>
