@@ -93,10 +93,11 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const [activeScene, setActiveScene] = useState(
-    initialScene || "scene_nef_vue_sud"
-  );
-  const [visitedScenes, setVisitedScenes] = useState<Set<string>>(() => new Set([initialScene || "scene_nef_vue_sud"]));
+  // Scène de départ : celle demandée (/scene/…), sinon la première du parcours (ordre Prismic),
+  // sinon le parvis. Aucun id de scène en dur propre à un autre site.
+  const startScene = initialScene || sortedScenes[0]?.data?.nom_scene_krpano || "scene_parvis_entree";
+  const [activeScene, setActiveScene] = useState(startScene);
+  const [visitedScenes, setVisitedScenes] = useState<Set<string>>(() => new Set([startScene]));
   const [showMenu, setShowMenu] = useState(false);
   const [showAllVideos, setShowAllVideos] = useState(false);
   const [expandedInfo, setExpandedInfo] = useState<number | null>(null);
@@ -677,7 +678,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
       {/* KRPano iframe */}
       <iframe
         ref={iframeRef}
-        src={`/vtour/tour.html?startscene=${"scene_nef_vue_sud"}`}
+        src={`/vtour/tour.html?startscene=${startScene}`}
         width="100%"
         height="100%"
         style={{ border: "none", position: "absolute", top: 0, left: 0 }}
