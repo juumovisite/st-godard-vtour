@@ -56,10 +56,10 @@ export function SeoContent() {
             <Link prefetch={false} href="/scene/parvis-sud-proche">La façade sud de près</Link>
           </li>
           <li>
-            <Link prefetch={false} href="/scene/vue-cathedrale">La vue vers la cathédrale</Link>
+            <Link prefetch={false} href="/scene/vue-cathedrale">La vue du ciel, la cathédrale à l&apos;horizon</Link>
           </li>
           <li>
-            <Link prefetch={false} href="/scene/vue-donjon">La vue vers le donjon</Link>
+            <Link prefetch={false} href="/scene/vue-donjon">La vue du ciel vers le donjon</Link>
           </li>
         </ul>
         <h2>La nef, le chœur et les orgues</h2>
@@ -131,7 +131,7 @@ export function SeoContent() {
         <p>
           La visite virtuelle est libre et gratuite, compatible mobile et
           ordinateur, avec un guide interactif (Juumi) pour poser ses
-          questions. Adresse : 76000 Rouen, Normandie. Découvrez aussi{" "}
+          questions. Adresse : place Saint-Godard, 76000 Rouen, Normandie. Découvrez aussi{" "}
           <a href="https://eglises-rouen.juumo.fr">
             toutes les églises de Rouen en 360°
           </a>

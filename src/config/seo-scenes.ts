@@ -72,7 +72,7 @@ export const SCENES_SEO: Record<string, SceneSeo> = {
     related: [
       { uid: "aile-nord-centre", label: "le collatéral nord et ses vitraux" },
       { uid: "parvis-entree", label: "retour au parvis principal" },
-      { uid: "vue-cathedrale", label: "la vue vers la cathédrale" },
+      { uid: "vue-cathedrale", label: "la vue du ciel vers la cathédrale" },
     ],
   },
   "parvis-sud-loin": {
@@ -85,7 +85,7 @@ export const SCENES_SEO: Record<string, SceneSeo> = {
     ],
     related: [
       { uid: "parvis-sud-proche", label: "la façade sud de près" },
-      { uid: "vue-donjon", label: "la vue vers le donjon" },
+      { uid: "vue-donjon", label: "la vue du ciel vers le donjon" },
       { uid: "parvis-entree", label: "retour au parvis principal" },
     ],
   },
@@ -104,27 +104,28 @@ export const SCENES_SEO: Record<string, SceneSeo> = {
     ],
   },
   "vue-cathedrale": {
-    title: `La vue vers la cathédrale — ${EGLISE}`,
+    title: `Vue du ciel, la cathédrale à l'horizon — ${EGLISE}`,
     description:
-      "Point de vue extérieur en 360° depuis les abords de l'église Saint-Godard, vers la cathédrale de Rouen et le centre historique.",
+      "Vue aérienne 360° au-dessus de l'église Saint-Godard de Rouen : les toits du centre historique et la cathédrale qui se découpe à l'horizon.",
     body: [
-      "Depuis les abords de Saint-Godard, ce panorama s'ouvre vers la cathédrale de Rouen et le centre historique. Saint-Godard porte le nom d'un évêque de Rouen du VIe siècle, saint Godard ou Gildard, et reste fortement marquée par le souvenir de saint Romain, autre grand évêque de la ville.",
+      "Vue du ciel au-dessus de Saint-Godard : les toits du centre historique de Rouen, avec la cathédrale qui se découpe à l'horizon. L'église s'élève place Saint-Godard, juste derrière le musée des Beaux-Arts et le square Verdrel, entre la cathédrale, Saint-Ouen et le Gros-Horloge.",
+      "Saint-Godard porte le nom d'un évêque de Rouen du VIe siècle, saint Godard ou Gildard, et reste fortement marquée par le souvenir de saint Romain, autre grand évêque de la ville.",
     ],
     related: [
-      { uid: "vue-donjon", label: "la vue vers le donjon" },
+      { uid: "vue-donjon", label: "la vue du ciel vers le donjon" },
       { uid: "parvis-nord", label: "le parvis côté nord" },
       { uid: "parvis-entree", label: "retour au parvis principal" },
     ],
   },
   "vue-donjon": {
-    title: `La vue vers le donjon — ${EGLISE}`,
+    title: `Vue du ciel, le donjon — ${EGLISE}`,
     description:
-      "Point de vue extérieur en 360° depuis les abords de l'église Saint-Godard de Rouen, vers le donjon et les toits du quartier.",
+      "Vue aérienne 360° au-dessus de l'église Saint-Godard de Rouen : sa tour de 1612, le quartier des musées et les toits de la ville vers le donjon.",
     body: [
-      "Ce panorama extérieur, pris depuis un point de vue élevé aux abords de Saint-Godard, s'ouvre vers le donjon et les toits du quartier. L'église elle-même se distingue par sa tour de 1612 et ses toitures latérales remaniées au XVIIIe siècle.",
+      "Vue du ciel au-dessus de l'église : Saint-Godard, sa tour construite en 1612, ses toitures latérales remaniées au XVIIIe siècle et le quartier des musées, entre la cathédrale, Saint-Ouen et le Gros-Horloge.",
     ],
     related: [
-      { uid: "vue-cathedrale", label: "la vue vers la cathédrale" },
+      { uid: "vue-cathedrale", label: "la vue du ciel vers la cathédrale" },
       { uid: "parvis-sud-loin", label: "la façade sud vue de loin" },
       { uid: "entree", label: "entrer dans la nef" },
     ],

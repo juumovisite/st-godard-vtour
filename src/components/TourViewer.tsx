@@ -38,28 +38,28 @@ interface SceneData {
 // Valeurs de secours uniquement (Prismic indisponible) — le contenu réel vit dans Prismic
 // et s'édite depuis l'espace client (règle contenu JUUMO, Max 2026-09-04).
 const DEFAULT_SCENES: SceneData[] = [
-  { id: "1", data: { title: "Parvis Entrée", nom_scene_krpano: "scene_parvis_entree", categorie: "Extérieur", ordre: 1 } },
-  { id: "2", data: { title: "Parvis Sud", nom_scene_krpano: "scene_parvis_entree_sud", categorie: "Extérieur", ordre: 2 } },
-  { id: "3", data: { title: "Parvis Nord", nom_scene_krpano: "scene_parvis_nord", categorie: "Extérieur", ordre: 3 } },
-  { id: "4", data: { title: "Parvis Sud - Vue éloignée", nom_scene_krpano: "scene_parvis_sud_loin", categorie: "Extérieur", ordre: 4 } },
-  { id: "5", data: { title: "Parvis Sud - Vue rapprochée", nom_scene_krpano: "scene_parvis_sud_proche", categorie: "Extérieur", ordre: 5 } },
-  { id: "6", data: { title: "Vue Cathédrale", nom_scene_krpano: "scene_vue_cathedrale", categorie: "Extérieur", ordre: 6 } },
-  { id: "7", data: { title: "Vue Donjon", nom_scene_krpano: "scene_vue_donjon", categorie: "Extérieur", ordre: 7 } },
-  { id: "8", data: { title: "Entrée", nom_scene_krpano: "scene_entree", categorie: "Intérieur", ordre: 8 } },
-  { id: "9", data: { title: "Orgue", nom_scene_krpano: "scene_orgue", categorie: "Intérieur", ordre: 9 } },
-  { id: "10", data: { title: "Orgue et Chœur", nom_scene_krpano: "scene_orgue_choeur", categorie: "Intérieur", ordre: 10 } },
-  { id: "11", data: { title: "Autel", nom_scene_krpano: "scene_autel", categorie: "Intérieur", ordre: 11 } },
-  { id: "12", data: { title: "Chœur - Autel", nom_scene_krpano: "scene_choeur_autel", categorie: "Intérieur", ordre: 12 } },
-  { id: "13", data: { title: "Chœur - Vue latérale", nom_scene_krpano: "scene_choeur_autel1", categorie: "Intérieur", ordre: 13 } },
-  { id: "14", data: { title: "Chœur - Vue arrière", nom_scene_krpano: "scene_choeur_autel2", categorie: "Intérieur", ordre: 14 } },
-  { id: "15", data: { title: "Aile Nord - Autel", nom_scene_krpano: "scene_aile_nord_autel", categorie: "Intérieur", ordre: 15 } },
-  { id: "16", data: { title: "Aile Nord - Centre", nom_scene_krpano: "scene_aile_nord_centre", categorie: "Intérieur", ordre: 16 } },
-  { id: "17", data: { title: "Aile Sud - Autel", nom_scene_krpano: "scene_aile_sud_autel", categorie: "Intérieur", ordre: 17 } },
-  { id: "18", data: { title: "Aile Sud - Second autel", nom_scene_krpano: "scene_aile_sud_autel2", categorie: "Intérieur", ordre: 18 } },
-  { id: "19", data: { title: "Baptistère", nom_scene_krpano: "scene_aile_sud_baptistere", categorie: "Intérieur", ordre: 19 } },
-  { id: "20", data: { title: "Aile Sud - Centre", nom_scene_krpano: "scene_aile_sud_centre", categorie: "Intérieur", ordre: 20 } },
-  { id: "21", data: { title: "Aile Sud - Fond", nom_scene_krpano: "scene_aile_sud_fond", categorie: "Intérieur", ordre: 21 } },
-  { id: "22", data: { title: "Crypte", nom_scene_krpano: "scene_crypte", categorie: "Crypte", ordre: 22 } },
+  { id: "1", data: { title: "Parvis - Entrée", nom_scene_krpano: "scene_parvis_entree", categorie: "Extérieur", ordre: 1 } },
+  { id: "2", data: { title: "Parvis - Côté sud", nom_scene_krpano: "scene_parvis_entree_sud", categorie: "Extérieur", ordre: 2 } },
+  { id: "3", data: { title: "Parvis - Côté nord", nom_scene_krpano: "scene_parvis_nord", categorie: "Extérieur", ordre: 3 } },
+  { id: "4", data: { title: "Parvis - Vue éloignée", nom_scene_krpano: "scene_parvis_sud_loin", categorie: "Extérieur", ordre: 4 } },
+  { id: "5", data: { title: "Parvis - Vue rapprochée", nom_scene_krpano: "scene_parvis_sud_proche", categorie: "Extérieur", ordre: 5 } },
+  { id: "6", data: { title: "Vue du ciel - Cathédrale", nom_scene_krpano: "scene_vue_cathedrale", categorie: "Extérieur", ordre: 6 } },
+  { id: "7", data: { title: "Vue du ciel - Donjon", nom_scene_krpano: "scene_vue_donjon", categorie: "Extérieur", ordre: 7 } },
+  { id: "8", data: { title: "Entrée - La nef", nom_scene_krpano: "scene_entree", categorie: "Intérieur", ordre: 8 } },
+  { id: "9", data: { title: "Le grand orgue", nom_scene_krpano: "scene_orgue", categorie: "Intérieur", ordre: 9 } },
+  { id: "10", data: { title: "L'orgue et le chœur", nom_scene_krpano: "scene_orgue_choeur", categorie: "Intérieur", ordre: 10 } },
+  { id: "11", data: { title: "L'autel", nom_scene_krpano: "scene_autel", categorie: "Intérieur", ordre: 11 } },
+  { id: "12", data: { title: "Le chœur", nom_scene_krpano: "scene_choeur_autel", categorie: "Intérieur", ordre: 12 } },
+  { id: "13", data: { title: "Le chœur - Vue latérale", nom_scene_krpano: "scene_choeur_autel1", categorie: "Intérieur", ordre: 13 } },
+  { id: "14", data: { title: "Le chœur - Vue arrière", nom_scene_krpano: "scene_choeur_autel2", categorie: "Intérieur", ordre: 14 } },
+  { id: "15", data: { title: "Collatéral nord - L'autel", nom_scene_krpano: "scene_aile_nord_autel", categorie: "Intérieur", ordre: 15 } },
+  { id: "16", data: { title: "Collatéral nord - Les vitraux", nom_scene_krpano: "scene_aile_nord_centre", categorie: "Intérieur", ordre: 16 } },
+  { id: "17", data: { title: "Collatéral sud - L'autel", nom_scene_krpano: "scene_aile_sud_autel", categorie: "Intérieur", ordre: 17 } },
+  { id: "18", data: { title: "Collatéral sud - Second autel", nom_scene_krpano: "scene_aile_sud_autel2", categorie: "Intérieur", ordre: 18 } },
+  { id: "19", data: { title: "Le baptistère", nom_scene_krpano: "scene_aile_sud_baptistere", categorie: "Intérieur", ordre: 19 } },
+  { id: "20", data: { title: "Collatéral sud - Le centre", nom_scene_krpano: "scene_aile_sud_centre", categorie: "Intérieur", ordre: 20 } },
+  { id: "21", data: { title: "Collatéral sud - Le fond", nom_scene_krpano: "scene_aile_sud_fond", categorie: "Intérieur", ordre: 21 } },
+  { id: "22", data: { title: "La crypte", nom_scene_krpano: "scene_crypte", categorie: "Crypte", ordre: 22 } },
 ];
 
 // Aucune description en dur : les descriptions courtes et longues viennent de Prismic.
@@ -1659,7 +1659,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
             iconColor="#1a3250"
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 4 }}>
-              <InfoRow icon="🕐" label={t("info_hours_label")} value={t("info_hours_value")} />
+              <InfoRow icon="🕐" label={t("info_hours_label")} value={t("info_hours_value")} href="https://rouen.catholique.fr/diocese/paroisses/paroisses-du-doyenne-de-rouen-nord/paroisse-dame-de-rouen-centre/" />
               <InfoRow icon="⛪" label={t("info_mass_label")} value={t("info_mass_value")} href="https://rouen.catholique.fr/diocese/paroisses/paroisses-du-doyenne-de-rouen-nord/paroisse-dame-de-rouen-centre/" />
               <InfoRow icon="📍" label={t("info_address_label")} value={t("info_address_value")} />
               <InfoRow icon="🚇" label={t("info_access_label")} value={t("info_access_value")} />

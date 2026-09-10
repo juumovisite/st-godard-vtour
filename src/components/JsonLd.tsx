@@ -15,6 +15,7 @@ export function JsonLd() {
       "url": "https://saintgodard.juumo.fr",
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Place Saint-Godard",
         "postalCode": "76000",
         "addressLocality": "Rouen",
         "addressRegion": "Normandie",

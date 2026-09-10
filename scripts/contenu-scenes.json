@@ -1,0 +1,135 @@
+{
+  "_source": "Base de connaissances officielle du guide Juumi (document « Églises Rouen » de Max, src/app/api/chat/route.ts) + fiche Saint-Godard validée du site eglises-rouen.juumo.fr (lib/churches.ts). Aucun fait extérieur à ces deux sources. EN = traduction fidèle du FR.",
+  "parvis-entree": {
+    "fr": { "title": "Parvis - Entrée", "epoque": "XVe – XVIIe siècles", "style": "Gothique tardif", "element": "Porte sur la rue du Beffroi (1537)",
+      "description": "Le parvis de l'église Saint-Godard, l'une des plus anciennes paroisses de Rouen. Détruite par un incendie en 1248, l'église a été reconstruite par grandes campagnes entre la fin du XVe siècle et le XVIIe siècle ; sa porte sur la rue du Beffroi date de 1537." },
+    "en": { "title": "Square - Entrance", "epoque": "15th – 17th centuries", "style": "Late Gothic", "element": "Door onto rue du Beffroi (1537)",
+      "description": "The square in front of Saint-Godard, one of the oldest parishes in Rouen. Destroyed by fire in 1248, the church was rebuilt in several major campaigns between the late 15th and the 17th century; its door onto rue du Beffroi dates from 1537." }
+  },
+  "parvis-entree-sud": {
+    "fr": { "title": "Parvis - Côté sud", "epoque": "XVIe – XVIIIe siècles", "style": "Gothique tardif", "element": "Collatéral sud (1534)",
+      "description": "Le flanc sud de l'église, côté collatéral sud achevé en 1534. Au XVIIIe siècle, les toitures latérales ont été modifiées pour harmoniser les volumes de l'édifice." },
+    "en": { "title": "Square - South Side", "epoque": "16th – 18th centuries", "style": "Late Gothic", "element": "South aisle (1534)",
+      "description": "The south flank of the church, on the side of the south aisle completed in 1534. In the 18th century the side roofs were altered to harmonise the volumes of the building." }
+  },
+  "parvis-nord": {
+    "fr": { "title": "Parvis - Côté nord", "epoque": "XVIe siècle", "style": "Gothique tardif", "element": "Collatéral nord (1527)",
+      "description": "Le flanc nord de l'église, côté collatéral nord achevé en 1527. Derrière ces murs se trouvent les verrières les plus célèbres de Saint-Godard : la Vie de saint Romain et l'Arbre de Jessé." },
+    "en": { "title": "Square - North Side", "epoque": "16th century", "style": "Late Gothic", "element": "North aisle (1527)",
+      "description": "The north flank of the church, on the side of the north aisle completed in 1527. Behind these walls are Saint-Godard's most famous stained-glass windows: the Life of Saint Romain and the Tree of Jesse." }
+  },
+  "parvis-sud-loin": {
+    "fr": { "title": "Parvis - Vue éloignée", "epoque": "XVe – XVIIe siècles", "style": "Gothique tardif", "element": "Tour (1612)",
+      "description": "L'église Saint-Godard dans son quartier, avec sa tour construite en 1612. Elle s'élève place Saint-Godard, juste derrière le musée des Beaux-Arts et le square Verdrel, et est protégée au titre des Monuments historiques." },
+    "en": { "title": "Square - Distant View", "epoque": "15th – 17th centuries", "style": "Late Gothic", "element": "Tower (1612)",
+      "description": "Saint-Godard church in its neighbourhood, with its tower built in 1612. It stands on Place Saint-Godard, just behind the Musée des Beaux-Arts and Square Verdrel, and is a listed historic monument." }
+  },
+  "parvis-sud-proche": {
+    "fr": { "title": "Parvis - Vue rapprochée", "epoque": "XVe – XVIIe siècles", "style": "Gothique tardif", "element": "Façade sud",
+      "description": "Vue rapprochée de la façade sud. L'architecture de Saint-Godard garde la sobriété du gothique tardif, discrète en apparence mais d'une densité patrimoniale impressionnante." },
+    "en": { "title": "Square - Close View", "epoque": "15th – 17th centuries", "style": "Late Gothic", "element": "South façade",
+      "description": "A close view of the south façade. Saint-Godard's architecture keeps the sobriety of the late Gothic style: unassuming in appearance, yet remarkably rich in heritage." }
+  },
+  "vue-cathedrale": {
+    "fr": { "title": "Vue du ciel - Cathédrale", "epoque": "", "style": "Vue aérienne", "element": "Cathédrale de Rouen à l'horizon",
+      "description": "Vue du ciel au-dessus de Saint-Godard : les toits du centre historique de Rouen, avec la cathédrale qui se découpe à l'horizon." },
+    "en": { "title": "Aerial View - Cathedral", "epoque": "", "style": "Aerial view", "element": "Rouen Cathedral on the horizon",
+      "description": "A view from the sky above Saint-Godard: the rooftops of Rouen's historic centre, with the cathedral standing out on the horizon." }
+  },
+  "vue-donjon": {
+    "fr": { "title": "Vue du ciel - Donjon", "epoque": "", "style": "Vue aérienne", "element": "Toits de Rouen",
+      "description": "Vue du ciel au-dessus de l'église : Saint-Godard, sa tour de 1612 et le quartier des musées, entre la cathédrale, Saint-Ouen et le Gros-Horloge." },
+    "en": { "title": "Aerial View - Keep", "epoque": "", "style": "Aerial view", "element": "Rooftops of Rouen",
+      "description": "A view from the sky above the church: Saint-Godard, its 1612 tower and the museum district, between the cathedral, Saint-Ouen and the Gros-Horloge." }
+  },
+  "entree": {
+    "fr": { "title": "Entrée - La nef", "epoque": "Seconde moitié du XVe siècle", "style": "Gothique tardif", "element": "Voûtes en carène renversée",
+      "description": "Depuis l'entrée, la nef se découvre dans toute sa longueur : trois vaisseaux, une perspective de 71 mètres, des arcades sobres à moulures prismatiques et des voûtes en bois en forme de carène renversée, éclairées par vingt-quatre baies. La nef est attribuée à la seconde moitié du XVe siècle." },
+    "en": { "title": "Entrance - The Nave", "epoque": "Second half of the 15th century", "style": "Late Gothic", "element": "Upturned-hull timber vaults",
+      "description": "From the entrance, the nave unfolds in its full length: three aisles, a 71-metre perspective, plain arcades with prismatic mouldings and timber vaults shaped like an upturned hull, lit by twenty-four windows. The nave is attributed to the second half of the 15th century." }
+  },
+  "orgue": {
+    "fr": { "title": "Le grand orgue", "epoque": "1884", "style": "Aristide Cavaillé-Coll", "element": "Classé Monument historique (1999)",
+      "description": "Le grand orgue de Saint-Godard, construit par Aristide Cavaillé-Coll en 1884. Un orgue est attesté dans l'église dès 1531, avec des compositions connues en 1632 puis 1778. Classé Monument historique en 1999 avec l'orgue de chœur, il accueille des concerts programmés par la Métropole." },
+    "en": { "title": "The Great Organ", "epoque": "1884", "style": "Aristide Cavaillé-Coll", "element": "Listed historic monument (1999)",
+      "description": "Saint-Godard's great organ, built by Aristide Cavaillé-Coll in 1884. An organ is recorded in the church as early as 1531, with known specifications in 1632 and 1778. Listed as a historic monument in 1999 together with the choir organ, it hosts concerts programmed by the Métropole." }
+  },
+  "orgue-choeur": {
+    "fr": { "title": "L'orgue et le chœur", "epoque": "XVe – XIXe siècles", "style": "Gothique tardif", "element": "Perspective de la nef",
+      "description": "Du grand orgue au chœur, toute la profondeur de la nef centrale. Saint-Godard donne une impression de clarté et de légèreté, dans un dialogue constant entre la pierre et la lumière colorée des verrières." },
+    "en": { "title": "The Organ and the Choir", "epoque": "15th – 19th centuries", "style": "Late Gothic", "element": "Nave perspective",
+      "description": "From the great organ to the choir, the full depth of the central nave. Saint-Godard gives an impression of clarity and lightness, in a constant dialogue between stone and the coloured light of the stained glass." }
+  },
+  "autel": {
+    "fr": { "title": "L'autel", "epoque": "XIXe siècle", "style": "Mobilier post-révolutionnaire", "element": "Vaisseau central",
+      "description": "L'autel, au centre de la liturgie. On chercherait presque en vain un mobilier antérieur à la Révolution dans le vaisseau central : dévastée par les calvinistes en 1562, fermée pendant la Révolution puis rouverte en 1806, l'église a vu son mobilier largement renouvelé au XIXe siècle." },
+    "en": { "title": "The Altar", "epoque": "19th century", "style": "Post-Revolution furnishings", "element": "Central nave",
+      "description": "The altar, at the centre of the liturgy. Hardly any furnishings older than the Revolution survive in the central nave: ravaged by the Calvinists in 1562, closed during the Revolution and reopened in 1806, the church saw its furnishings largely renewed in the 19th century." }
+  },
+  "choeur-autel": {
+    "fr": { "title": "Le chœur", "epoque": "XVe – XIXe siècles", "style": "Gothique tardif", "element": "Orgue de chœur Cavaillé-Coll (1885-1889)",
+      "description": "Le chœur de Saint-Godard, éclairé par ses verrières. C'est ici que se trouve l'orgue de chœur construit par Aristide Cavaillé-Coll en 1885 et 1889, classé Monument historique en 1999 ; derrière lui s'ouvre l'escalier menant à la crypte." },
+    "en": { "title": "The Choir", "epoque": "15th – 19th centuries", "style": "Late Gothic", "element": "Cavaillé-Coll choir organ (1885-1889)",
+      "description": "Saint-Godard's choir, lit by its stained glass. Here stands the choir organ built by Aristide Cavaillé-Coll in 1885 and 1889, listed as a historic monument in 1999; behind it opens the staircase leading down to the crypt." }
+  },
+  "choeur-autel1": {
+    "fr": { "title": "Le chœur - Vue latérale", "epoque": "XVe – XVIe siècles", "style": "Gothique tardif", "element": "Arcades à moulures prismatiques",
+      "description": "Vue latérale du chœur : les arcades sobres à moulures prismatiques et la lumière colorée des verrières, caractéristiques de la pureté du volume de Saint-Godard." },
+    "en": { "title": "The Choir - Side View", "epoque": "15th – 16th centuries", "style": "Late Gothic", "element": "Arcades with prismatic mouldings",
+      "description": "A side view of the choir: the plain arcades with prismatic mouldings and the coloured light of the stained glass, characteristic of the purity of Saint-Godard's volume." }
+  },
+  "choeur-autel2": {
+    "fr": { "title": "Le chœur - Vue arrière", "epoque": "XVe – XIXe siècles", "style": "Gothique tardif", "element": "Accès à la crypte",
+      "description": "Depuis l'arrière du chœur, l'ensemble de l'espace liturgique et l'orgue de chœur Cavaillé-Coll. Derrière l'orgue de chœur s'ouvre l'escalier qui descend à la crypte, dont les escaliers datent de 1537." },
+    "en": { "title": "The Choir - Rear View", "epoque": "15th – 19th centuries", "style": "Late Gothic", "element": "Access to the crypt",
+      "description": "From the back of the choir, the whole liturgical space and the Cavaillé-Coll choir organ. Behind the choir organ opens the staircase down to the crypt, whose steps date from 1537." }
+  },
+  "aile-nord-autel": {
+    "fr": { "title": "Collatéral nord - L'autel", "epoque": "1527", "style": "Gothique tardif", "element": "Ex-voto de 1871, 1940 et de l'Occupation",
+      "description": "L'autel du collatéral nord, achevé en 1527. Dans cette nef nord, plusieurs ex-voto témoignent de périodes d'angoisse collective : 1871 devant la Vierge, juin 1940 devant saint Antoine de Padoue, et l'Occupation devant saint Joseph." },
+    "en": { "title": "North Aisle - The Altar", "epoque": "1527", "style": "Late Gothic", "element": "Ex-votos of 1871, 1940 and the Occupation",
+      "description": "The altar of the north aisle, completed in 1527. Several ex-votos in this north aisle bear witness to times of collective anguish: 1871 before the Virgin, June 1940 before Saint Anthony of Padua, and the Occupation before Saint Joseph." }
+  },
+  "aile-nord-centre": {
+    "fr": { "title": "Collatéral nord - Les vitraux", "epoque": "XVIe siècle", "style": "Vitrail de la Renaissance", "element": "Vie de saint Romain (1540) · Arbre de Jessé",
+      "description": "Le trésor de Saint-Godard : la Vie de saint Romain, plus grande verrière de la nef nord, offerte en 1540 par Richard Le Caron ; la Vie de la Vierge (baie 6), réalisée vers 1506 et recomposée par l'atelier Gsell vers 1860-1865 ; et l'Arbre de Jessé (baie 18), largement attribué à Arnoult de Nimègue autour de 1506, l'un des sommets du vitrail rouennais de la Renaissance." },
+    "en": { "title": "North Aisle - The Stained Glass", "epoque": "16th century", "style": "Renaissance stained glass", "element": "Life of Saint Romain (1540) · Tree of Jesse",
+      "description": "Saint-Godard's treasure: the Life of Saint Romain, the largest window of the north aisle, donated in 1540 by Richard Le Caron; the Life of the Virgin (bay 6), made around 1506 and reassembled by the Gsell workshop around 1860-1865; and the Tree of Jesse (bay 18), largely attributed to Arnoult de Nimègue around 1506, one of the summits of Renaissance stained glass in Rouen." }
+  },
+  "aile-sud-autel": {
+    "fr": { "title": "Collatéral sud - L'autel", "epoque": "1534", "style": "Gothique tardif", "element": "Autel latéral",
+      "description": "L'autel latéral du collatéral sud, achevé en 1534, sept ans après le collatéral nord, dans la grande campagne de reconstruction qui suivit l'incendie de 1248." },
+    "en": { "title": "South Aisle - The Altar", "epoque": "1534", "style": "Late Gothic", "element": "Side altar",
+      "description": "The side altar of the south aisle, completed in 1534, seven years after the north aisle, during the great rebuilding campaign that followed the fire of 1248." }
+  },
+  "aile-sud-autel2": {
+    "fr": { "title": "Collatéral sud - Second autel", "epoque": "XVIe – XIXe siècles", "style": "Gothique tardif", "element": "Espace de dévotion",
+      "description": "Un second espace de dévotion dans le collatéral sud. L'intérêt de Saint-Godard vient du dialogue entre survivances du XVIe siècle, restaurations du XIXe siècle et réaménagements liturgiques plus récents." },
+    "en": { "title": "South Aisle - Second Altar", "epoque": "16th – 19th centuries", "style": "Late Gothic", "element": "Devotional space",
+      "description": "A second devotional space in the south aisle. Saint-Godard's interest lies in the dialogue between 16th-century survivals, 19th-century restorations and more recent liturgical rearrangements." }
+  },
+  "aile-sud-baptistere": {
+    "fr": { "title": "Le baptistère", "epoque": "XVIIIe siècle", "style": "Lambris et mobilier du XVIIIe", "element": "Cuve baptismale et son couvercle",
+      "description": "Sous le clocher, la chapelle des fonts baptismaux forme un bel ensemble du XVIIIe siècle : lambris, bancs, cuve baptismale et couvercle. C'est l'un des rares ensembles de mobilier ancien conservés dans l'église." },
+    "en": { "title": "The Baptistery", "epoque": "18th century", "style": "18th-century panelling and furnishings", "element": "Baptismal font and its cover",
+      "description": "Beneath the bell tower, the baptismal chapel forms a fine 18th-century ensemble: panelling, benches, baptismal font and cover. It is one of the few sets of old furnishings preserved in the church." }
+  },
+  "aile-sud-centre": {
+    "fr": { "title": "Collatéral sud - Le centre", "epoque": "1534", "style": "Gothique tardif", "element": "Colonnes et voûtes du bas-côté",
+      "description": "Le centre du collatéral sud, achevé en 1534 : une perspective sur les colonnes et les voûtes de ce bas-côté, dans la clarté qui caractérise l'intérieur de Saint-Godard." },
+    "en": { "title": "South Aisle - The Centre", "epoque": "1534", "style": "Late Gothic", "element": "Columns and vaults of the aisle",
+      "description": "The centre of the south aisle, completed in 1534: a perspective on the columns and vaults of this side aisle, in the light that characterises Saint-Godard's interior." }
+  },
+  "aile-sud-fond": {
+    "fr": { "title": "Collatéral sud - Le fond", "epoque": "XVIe – XIXe siècles", "style": "Gothique tardif", "element": "Verrières des XVIe et XIXe siècles",
+      "description": "Le fond du collatéral sud, espace de recueillement baigné par la lumière des verrières. Les vitraux de Saint-Godard, des XVIe et XVIIIe siècles, ont été déposés, restaurés ou recomposés au fil de l'histoire, notamment par la maison Gsell au XIXe siècle." },
+    "en": { "title": "South Aisle - The Far End", "epoque": "16th – 19th centuries", "style": "Late Gothic", "element": "16th- and 19th-century windows",
+      "description": "The far end of the south aisle, a place of contemplation bathed in the light of the stained glass. Saint-Godard's windows, from the 16th and 18th centuries, were removed, restored or reassembled over the course of history, notably by the Gsell workshop in the 19th century." }
+  },
+  "crypte": {
+    "fr": { "title": "La crypte", "epoque": "XVIe siècle (escaliers de 1537)", "style": "Gothique flamboyant", "element": "Croisée d'ogives sur pilier central",
+      "description": "Derrière l'orgue de chœur, l'escalier descend vers une crypte de style gothique flamboyant, voûtée sur croisée d'ogives autour d'un pilier central ; ses escaliers datent de 1537. Elle entretient la mémoire des saints évêques de Rouen : saint Godard, ou Gildard, évêque du VIe siècle inhumé ici selon la tradition, et saint Romain." },
+    "en": { "title": "The Crypt", "epoque": "16th century (steps of 1537)", "style": "Flamboyant Gothic", "element": "Rib vault on a central pillar",
+      "description": "Behind the choir organ, the staircase leads down to a Flamboyant Gothic crypt, rib-vaulted around a central pillar; its steps date from 1537. It keeps alive the memory of Rouen's holy bishops: Saint Godard, or Gildard, a 6th-century bishop buried here according to tradition, and Saint Romain." }
+  }
+}
