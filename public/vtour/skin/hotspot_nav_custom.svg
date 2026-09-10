@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Halo — soft glow autour du cercle extérieur -->
+  <circle cx="50" cy="50" r="47"
+          fill="none" stroke="white" stroke-width="9" opacity="0.45"/>
+
+  <!-- Outer thin ring -->
+  <circle cx="50" cy="50" r="47"
+          fill="none" stroke="white" stroke-width="2.1" opacity="1.0"/>
+
+  <!-- Inner thick ring -->
+  <circle cx="50" cy="50" r="35"
+          fill="rgba(255,255,255,0.22)"
+          stroke="white" stroke-width="12.6"
+          opacity="1.0"/>
+</svg>

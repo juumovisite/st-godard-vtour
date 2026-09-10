@@ -403,11 +403,17 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expandedInfo]);
 
+  // Liste courante des scènes lisible depuis le handler postMessage (effet monté une seule fois)
+  const sortedScenesRef = useRef(sortedScenes);
+  sortedScenesRef.current = sortedScenes;
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.action === "hs_hover") {
+        // Titre de la scène visée : celui de Prismic (espace client), le titre KRpano n'est qu'un secours
+        const target = sortedScenesRef.current.find((s) => s.data.nom_scene_krpano === event.data.scene);
         setHsPreview({
-          title: event.data.title || "",
+          title: target?.data.title || event.data.title || "",
           thumburl: event.data.thumburl ? `/vtour/${event.data.thumburl}` : "",
           x: event.data.x,
           y: event.data.y,

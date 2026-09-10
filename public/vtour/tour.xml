@@ -1,8 +1,20 @@
-<krpano version="1.23" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui());">
+﻿<krpano version="1.22" title="Virtual Tour" onstart="delayedcall(0.3, hide_ui()); set(hs_hover_active,false); set(hs_hover_title,''); set(hs_hover_thumb,''); set(hs_hover_ath,''); set(hs_hover_atv,''); set(hs_hover_scene,'');">
 
 	<include url="skin/vtourskin.xml?v=2" />
 	<!-- Pas de menu contextuel KRpano (règle JUUMO) -->
 	<contextmenu enabled="false" versioninfo="false" fullscreen="false" />
+
+	<!-- Rotation d'accueil : dérive très douce vers la droite sur la 1re scène
+	     uniquement, pour faire comprendre que c'est du 360. La 1re interaction
+	     l'arrête (waittime énorme = ne reprend jamais) et le 1er changement de
+	     scène la coupe définitivement. -->
+	<!-- tofov/horizon off : le skin met tofov=80 (zoom progressif) — on veut une
+	     dérive horizontale pure, sans zoom ni recentrage vertical -->
+	<autorotate enabled="true" speed="2.0" accel="0.3" waittime="1.5" tofov="off" horizon="off" devices="mobile" />
+	<events name="welcome_autorotate_once" keep="true"
+	        onmousedown="set(autorotate.enabled,false);"
+	        onnewscene="if(welcome_rotate_done, set(autorotate.enabled,false), set(welcome_rotate_done,true));" />
+
 
 	<events name="hide_on_scene" onscenechange="delayedcall(0.3, hide_ui());" keep="true" />
 
@@ -31,14 +43,16 @@
 		set(layer[skin_title].y, -9999);
 	</action>
 
-	<!-- Custom hotspot styles - arrow navigation with tooltip -->
-	<style name="hotspot_nav" url="skin/hotspot_arrow.png?v=2" edge="center" distorted="false"
+	<!-- Hotspot : anneau fin extérieur + anneau gras intérieur -->
+	<!-- Hover : +25% scale + aperçu de la scène dans le cercle + titre dessous -->
+	<style name="hotspot_nav" url="skin/hotspot_nav_custom.svg" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
 	       onclick="skin_hotspotstyle_click();"
-	       depth="1000" scale="0.22"
-	       onloaded.addevent="hotspot_arrow_setup(); skin_hotspotstyle_setup();"
-	       onover.addevent="tween(scale,0.35,0.3,easeOutBack);"
-	       onout.addevent="tween(scale,0.22,0.3,easeOutQuad);"
+	       depth="1000" scale="0.312"
+	       alpha="1.0"
+	       onloaded.addevent="hotspot_arrow_setup(); skin_hotspotstyle_setup(); hs_pulse_up();"
+	       onover.addevent="tween(scale,0.487,0.28,easeOutBack); hs_set_hover();"
+	       onout.addevent="tween(scale,0.312,0.35,easeOutQuad,hs_pulse_up()); hs_clear_hover();"
 	       />
 
 	<action name="hotspot_arrow_setup" scope="local">
@@ -46,6 +60,60 @@
 			copy(caller.tooltip, scene[get(caller.linkedscene)].title);
 		);
 	</action>
+
+	<!-- Calque preview hotspot — centré sur le hotspot via spheretoscreen -->
+	<layer name="hs_preview" keep="true" visible="false" zorder="250"
+	       type="text" html=""
+	       width="200" height="0"
+	       align="lefttop"
+	       ox="-65" oy="-65"
+	       bgalpha="0"
+	       handcursor="false" capture="false" />
+
+	<action name="hs_show_preview" scope="local"><![CDATA[
+		if(isvalue(caller.linkedscene) AND caller.linkedscene != '',
+			copy(hs_url, scene[get(caller.linkedscene)].thumburl);
+			copy(hs_lbl, caller.tooltip);
+			concat(layer[hs_preview].html,
+				'<div style="display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none">',
+				'<div style="width:130px;height:130px;border-radius:65px;border:3px solid rgba(255,255,255,0.95);background:url(', get(hs_url), ') center/cover;box-shadow:0 4px 20px rgba(0,0,0,0.6)"></div>',
+				'<span style="color:#fff;font-size:12px;font-weight:700;font-family:Arial,sans-serif;text-shadow:0 2px 6px rgba(0,0,0,0.9);white-space:nowrap;background:rgba(0,0,0,0.42);border-radius:16px;padding:3px 10px">', get(hs_lbl), '</span>',
+				'</div>');
+			copy(layer[hs_preview].x, mouse.x);
+			copy(layer[hs_preview].y, mouse.y);
+			set(layer[hs_preview].visible, true);
+		);
+	]]></action>
+
+	<action name="hs_hide_preview"><![CDATA[
+		set(layer[hs_preview].visible, false);
+	]]></action>
+
+	<!-- Preview hotspot : set variables → poll depuis tour.html → postMessage → React -->
+	<!-- scope="local" requis pour accéder à caller (le hotspot) -->
+	<!-- Variables pré-déclarées globalement au onstart → copy() les met à jour même en scope local -->
+	<!-- On lit scene[...].title directement (caller.tooltip ne persiste pas, set par copy en scope local dans hotspot_arrow_setup) -->
+	<action name="hs_set_hover" scope="local"><![CDATA[
+		set(hs_hover_active, true);
+		copy(hs_hover_title, scene[get(caller.linkedscene)].title);
+		copy(hs_hover_thumb, scene[get(caller.linkedscene)].thumburl);
+		copy(hs_hover_ath, caller.ath);
+		copy(hs_hover_atv, caller.atv);
+		copy(hs_hover_scene, caller.linkedscene);
+	]]></action>
+	<action name="hs_clear_hover"><![CDATA[
+		set(hs_hover_active, false);
+		set(hs_hover_title, '');
+		set(hs_hover_thumb, '');
+	]]></action>
+
+	<!-- Pulse loop : scale 0.312↔0.352 en boucle (alpha fixe à 1.0) -->
+	<action name="hs_pulse_up"><![CDATA[
+		tween(scale, 0.352, 0.75, easeInOutSine, hs_pulse_down());
+	]]></action>
+	<action name="hs_pulse_down"><![CDATA[
+		tween(scale, 0.312, 0.75, easeInOutSine, hs_pulse_up());
+	]]></action>
 
 	<style name="hotspot_info" url="skin/hotspot_info.svg?v=2" edge="center" distorted="false"
 	       linkedscene="" linkedscene_lookat="" linkedscene_hoffset="0" use3dtransition="false"
@@ -65,7 +133,7 @@
 	               thumbs_opened="false"
 	               tooltips_buttons="false"
 	               tooltips_thumbs="false"
-	               tooltips_hotspots="true"
+	               tooltips_hotspots="false"
 	               tooltips_mapspots="false"
 	               deeplinking="false"
 	               loadscene_flags="MERGE"
@@ -79,6 +147,17 @@
 	               controlbar_offset="-9999"
 	               controlbar_offset_closed="-9999"
 	               />
+
+	<!--
+	    For an alternative skin design either change the <skin_settings> values 
+	    from above or optionally include one of the predefined designs from below.
+	-->
+	<!-- <include url="skin/vtourskin_design_flat_light.xml"  /> -->
+	<!-- <include url="skin/vtourskin_design_glass.xml"       /> -->
+	<!-- <include url="skin/vtourskin_design_ultra_light.xml" /> -->
+	<!-- <include url="skin/vtourskin_design_117.xml"         /> -->
+	<!-- <include url="skin/vtourskin_design_117round.xml"    /> -->
+	<!-- <include url="skin/vtourskin_design_black.xml"       /> -->
 	
 
 	
