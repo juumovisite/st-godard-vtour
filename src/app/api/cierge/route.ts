@@ -10,7 +10,7 @@ const PARISH_EMAIL = "cathorouen.pastorale@gmail.com";
 // aucun DNS à ajouter, l'envoi vers n'importe quel destinataire est autorisé.
 const FROM =
   process.env.CIERGE_FROM_EMAIL ??
-  "Église Sainte Jeanne d'Arc <cierges@notifications.juumo.fr>";
+  "Église Saint-Godard <cierges@notifications.juumo.fr>";
 
 async function sendEmail(to: string, subject: string, html: string) {
   const key = process.env.RESEND_API_KEY;
