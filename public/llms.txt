@@ -1,0 +1,30 @@
+# Église Sainte-Jeanne-d'Arc de Rouen — Visite virtuelle 360°
+
+> Visite virtuelle immersive 360° de l'église Sainte-Jeanne-d'Arc, place du Vieux-Marché, 76000 Rouen, Normandie. Réalisée par JUUMO (juumo.fr), studio spécialisé en visites virtuelles. Un chatbot guide (Juumi) répond aux questions des visiteurs directement dans la visite.
+
+## Le lieu
+
+- Église moderne inaugurée le 27 mai 1979 (consacrée le 29 avril 1979), conçue par l'architecte Louis Arretche. Inscrite aux Monuments historiques depuis 2002.
+- Double mission : honorer sainte Jeanne d'Arc, brûlée sur cette place le 30 mai 1431 à 19 ans, et remplacer l'ancienne église Saint-Vincent, détruite par les bombardements de 1944.
+- Béton, métal et charpente en bois : forme évoquant un bateau viking, un poisson ou un heaume de chevalier ; toiture en ardoise taillée comme des écailles ; un seul pilier interne.
+- Intérieur épuré et lumineux : autel au centre, toit en lamelles de sapin inspiré de la construction navale (coque renversée), fenêtres latérales en forme de poisson, silex incrustés dans le ciment (hommage à la pierre de Caumont normande).
+- La grande croix extérieure du monument national marque l'emplacement exact du bûcher de Jeanne d'Arc ; statue de Maxime Real Del Sarte (1929) près de l'entrée ; statue intérieure de Michel Coste (1999), une Jeanne en apothéose. Fêtes Jeanne d'Arc chaque fin mai.
+
+## Les 13 vitraux Renaissance (1520-1530)
+
+- Proviennent du chœur de l'église Saint-Vincent, mis à l'abri dès 1939, intégrés grâce à l'abaissement du sol de deux mètres. L'une des plus importantes commandes de vitraux de la Renaissance en France.
+- Trois verrières signées de l'atelier des Le Prince de Beauvais : vitrail des Chars (Triomphe de la Vierge), Vie de saint Jean-Baptiste, Œuvres de Miséricorde. Les autres viennent de l'atelier rouennais influencé par Arnoult de Nimègue.
+- Protection par double verrière ; position au nord (pas de soleil direct). Mécènes locaux : familles Boyvin, Le Roux de Bourgtheroulde, Le Roux de l'Esprevier.
+- Cycle complet : Vie de saint Pierre, Sainte Anne (signée Jean Le Vieil), vitrail des Chars, Arbre de sainte Anne, Vie de saint Jean-Baptiste, Œuvres de Miséricorde, Saint Antoine de Padoue (grisaille et sanguine), divers saints, Enfance et Vie publique du Christ, Passion du Christ, Crucifixion, Vie glorieuse du Christ, Martyre de saint Vincent.
+
+## La visite virtuelle
+
+- URL : https://saintejeannedarc.juumo.fr
+- 13 scènes 360° : la nef, la charpente, la voûte, les chapelles (Vierge, Saint-Sacrement, fonts baptismaux), la statue de Jeanne d'Arc et les 13 vitraux Renaissance.
+- Chaque scène a sa page dédiée : https://saintejeannedarc.juumo.fr/scene/<uid> (ex. /scene/vitraux-1-2-3, /scene/statue-jeanne-darc).
+- Accès libre et gratuit, compatible mobile et desktop.
+
+## Éditeur
+
+- Visite produite par JUUMO — visites virtuelles 360° en Normandie : https://juumo.fr
+- Toutes les églises de Rouen en 360° : https://eglises-rouen.juumo.fr

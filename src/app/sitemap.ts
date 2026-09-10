@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 
 import { client } from "@/lib/prismic";
 
-export const revalidate = 3600;
-
-const BASE_URL = "https://st-godard-vtour.vercel.app";
+const BASE_URL = "https://saintejeannedarc.juumo.fr";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let scenes: { uid: string }[] = [];
   try {
-    scenes = (await client.getAllByType("scene")) as unknown as { uid: string }[];
+    scenes = (await client.getAllByType("scene", {
+      lang: "fr-fr",
+    })) as unknown as { uid: string }[];
   } catch {
     scenes = [];
   }
@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...scenes.filter(s => s.uid).map(s => ({
       url: `${BASE_URL}/scene/${s.uid}`,
       lastModified: now,
-      priority: 0.8
-    }))
+      priority: 0.8,
+    })),
   ];
 }

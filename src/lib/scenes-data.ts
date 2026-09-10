@@ -1,19 +1,8 @@
 import { client } from "@/lib/prismic";
-import TourViewer from "@/components/TourViewer";
-import { SeoContent } from "@/components/SeoContent";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function str(v: any): string | null {
   return typeof v === "string" ? v : null;
-}
-
-// Rich text Prismic → paragraphes non vides (null si rien)
-function richTextToParagraphs(v: unknown): { text: string }[] | null {
-  if (!Array.isArray(v)) return null;
-  const out = (v as { text?: unknown }[])
-    .map((b) => ({ text: typeof b?.text === "string" ? b.text : "" }))
-    .filter((b) => b.text.trim().length > 0);
-  return out.length > 0 ? out : null;
 }
 
 // Construit un map krpano_id → tableau de docs informations (1 par vitrail, hotspot, etc.)
@@ -49,16 +38,12 @@ function mapScenes(
   textInfoMap: Record<string, any[]>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mediaInfoMap?: Record<string, any[]>,
-  // EN : titre + description traduits (krpano_id → valeur) ; la structure reste celle des scènes FR
-  overrides?: { title: Record<string, string>; description: Record<string, unknown> }
+  titleOverrides?: Record<string, string>
 ): unknown[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return scenes.map((s: any, index: number) => {
     const krpanoId    = str(s.data.krpano_id);
-    const title       = (krpanoId && overrides?.title[krpanoId]) ?? str(s.data.name);
-    // Description courte de la scène (champ `description` du doc scène — celui que le client
-    // modifie dans le panneau « Modifier dans la visite ») ; en EN : le doc EN, jamais le FR
-    const description = richTextToParagraphs(overrides ? overrides.description[krpanoId ?? ""] : s.data.description);
+    const title       = (krpanoId && titleOverrides?.[krpanoId]) ?? str(s.data.name);
     const textInfos   = textInfoMap[krpanoId ?? ""] ?? [];
     const mediaInfos  = (mediaInfoMap ?? textInfoMap)[krpanoId ?? ""] ?? [];
     // Premier élément pour backward compat (audio_file, video_url)
@@ -120,13 +105,13 @@ function mapScenes(
         // Liste complète des informations (une par vitrail, hotspot, etc.)
         informations_list,
 
-        description,
-        // Vue d'arrivée définie par le client (espace client / mode modification), lue par bridge.js
-        vue_arrivee_ath: typeof s.data.vue_arrivee_ath === "number" ? s.data.vue_arrivee_ath : undefined,
-        vue_arrivee_atv: typeof s.data.vue_arrivee_atv === "number" ? s.data.vue_arrivee_atv : undefined,
-        vue_arrivee_fov: typeof s.data.vue_arrivee_fov === "number" ? s.data.vue_arrivee_fov : undefined,
-
         // Backward compat — premier élément
+        description:
+          firstText?.data?.txt && Array.isArray(firstText.data.txt) && firstText.data.txt.length > 0
+            ? (firstText.data.txt as { text?: string }[])
+                .map((b) => ({ text: typeof b.text === "string" ? b.text : "" }))
+                .filter((b) => b.text.trim().length > 0)
+            : null,
         audio_file: firstMedia?.data?.audio?.url
           ? { url: firstMedia.data.audio.url as string }
           : null,
@@ -145,7 +130,9 @@ function mapScenes(
   });
 }
 
-export default async function Home() {
+/** Assemble les scenes bilingues (logique identique a la home). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function buildScenesByLang(): Promise<{ fr: any[]; en: any[] }> {
   let scenesFr: unknown[] = [];
   let scenesEn: unknown[] = [];
   try {
@@ -171,28 +158,19 @@ export default async function Home() {
     // On récupère les titres EN depuis rawScenesEn en matchant par UID (même UID entre langues Prismic)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const enTitleMap: Record<string, string> = {};
-    const enDescMap: Record<string, unknown> = {};
     for (const enScene of rawScenesEn as any[]) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const frScene = (rawScenesFr as any[]).find((s: any) => s.uid === enScene.uid);
-      if (!frScene?.data?.krpano_id) continue;
-      if (enScene.data.name) enTitleMap[frScene.data.krpano_id] = enScene.data.name;
-      if (enScene.data.description) enDescMap[frScene.data.krpano_id] = enScene.data.description;
+      if (frScene?.data?.krpano_id && enScene.data.name) {
+        enTitleMap[frScene.data.krpano_id] = enScene.data.name;
+      }
     }
-    // Médias = infoMapEn (audio/vidéo EN), titres/descriptions = docs EN, structure = scènes FR
-    scenesEn = mapScenes(rawScenesFr as any[], infoMapEn, infoMapEn, { title: enTitleMap, description: enDescMap });
+    // Médias = infoMapEn (audio/vidéo EN), titres = enTitleMap, structure = scènes FR
+    scenesEn = mapScenes(rawScenesFr as any[], infoMapEn, infoMapEn, enTitleMap);
 
   } catch {
     // Prismic non configuré — fallback sur DEFAULT_SCENES dans TourViewer
   }
 
-  return (
-    <>
-      {/* Contenu SSR sr-only : SEO/AEO + maillage vers les pages /scene/… */}
-      <SeoContent />
-      <TourViewer
-        scenesByLang={{ fr: scenesFr as never[], en: scenesEn as never[] }}
-      />
-    </>
-  );
+  return { fr: scenesFr, en: scenesEn };
 }

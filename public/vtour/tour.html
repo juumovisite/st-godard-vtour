@@ -10,6 +10,10 @@
     <style>
         html { height:100%; }
         body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; }
+        /* Fiche des tags du rendu partagé (bridge.js) : au-dessus de la barre du bas du site
+           (--juumo-ui-bottom posée par le parent sur <html> de cette iframe) */
+        aside.jfiche { bottom: calc(16px + var(--juumo-ui-bottom, 0px)); max-height: min(70vh, 640px, calc(100vh - 32px - var(--juumo-ui-bottom, 0px))); }
+        @media (max-width:640px) { aside.jfiche { bottom: calc(8px + var(--juumo-ui-bottom, 0px)); } }
     </style>
 </head>
 <body>
@@ -33,6 +37,57 @@
                 }
             }
         }, 300);
+
+        // Hotspot hover preview — poll KRpano state toutes les 80ms
+        // Position : spheretoscreen(ath, atv) → centre exact du hotspot (pas la souris)
+        var lastHoverActive = false;
+        var lastMouseX = 0, lastMouseY = 0;
+        document.addEventListener("mousemove", function(e) {
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        function getHotspotScreenPos(krpano) {
+            // ath/atv = '' au 1er hover (onstart init) → on retourne null → fallback souris
+            // ath/atv = valeur réelle dès le 2e hover → spheretoscreen donne le centre exact
+            try {
+                var ath = krpano.get("hs_hover_ath");
+                var atv = krpano.get("hs_hover_atv");
+                if (!ath || !atv) return null;
+                krpano.call("spheretoscreen(" + ath + "," + atv + ", hs_sx, hs_sy)");
+                var sx = parseFloat(krpano.get("hs_sx"));
+                var sy = parseFloat(krpano.get("hs_sy"));
+                if (!isNaN(sx) && !isNaN(sy) && sx > 10 && sy > 10
+                    && sx < window.innerWidth - 10 && sy < window.innerHeight - 10) {
+                    return { x: sx, y: sy };
+                }
+            } catch(e) {}
+            return null;
+        }
+
+        setInterval(function() {
+            var krpano = document.getElementById("krpanoSWFObject");
+            if (krpano && krpano.get) {
+                var hoverActive = krpano.get("hs_hover_active") === "true";
+                if (hoverActive !== lastHoverActive) {
+                    lastHoverActive = hoverActive;
+                    if (hoverActive) {
+                        var pos = getHotspotScreenPos(krpano);
+                        var x = pos ? pos.x : lastMouseX;
+                        var y = pos ? pos.y : lastMouseY;
+                        window.parent.postMessage({
+                            action: "hs_hover",
+                            title:    krpano.get("hs_hover_title") || "",
+                            thumburl: krpano.get("hs_hover_thumb") || "",
+                            x: x,
+                            y: y
+                        }, "*");
+                    } else {
+                        window.parent.postMessage({action: "hs_out"}, "*");
+                    }
+                }
+            }
+        }, 80);
 
         window.showInfoPoint = function(infoId) {
             window.parent.postMessage({action: "showinfo", id: infoId}, "*");
@@ -63,6 +118,10 @@
     <script>
         window.addEventListener("message", function(e) {
             if (e.data && e.data.action === "loadscene") {
+                // Le pont partagé bridge.js (chargé plus bas) traite aussi « loadscene » :
+                // on garde la transition du site et on lui coupe ce message pour ne pas
+                // charger la scène deux fois. Les autres messages lui parviennent normalement.
+                e.stopImmediatePropagation();
                 var krpano = document.getElementById("krpanoSWFObject");
                 if (krpano && krpano.call) {
                     krpano.call("loadscene(" + e.data.scene + ", null, MERGE, BLEND(1))");
@@ -72,5 +131,7 @@
     </script>
 </div>
 
+    <!-- JUUMO : pont partagé (vues d'arrivée des visiteurs + mode modification) -->
+    <script src="https://juumo-edit.vercel.app/bridge.js"></script>
 </body>
 </html>

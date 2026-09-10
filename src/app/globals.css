@@ -37,8 +37,29 @@ input, textarea, select {
   touch-action: manipulation;
 }
 
+/* Waveform audio player animation */
+@keyframes waveBar {
+  0%   { transform: scaleY(0.25); }
+  100% { transform: scaleY(1); }
+}
+
+/* Hotspot hover preview — ouverture depuis le centre */
+@keyframes hs-preview-in {
+  0%   { transform: scale(0.05); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.hs-preview-enter {
+  animation: hs-preview-in 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: center center;
+}
+
 /* Inline chat animations */
 @keyframes chat-fade-in {
   from { opacity: 0; transform: translateX(-50%) translateY(10px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes jw-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
