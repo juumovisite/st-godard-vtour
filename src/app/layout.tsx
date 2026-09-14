@@ -87,7 +87,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html:
               "try{var t=new URLSearchParams(location.search).get('edit');if(t&&/^[A-Za-z0-9_-]{20,80}$/.test(t))sessionStorage.setItem('juumo_edit',t);" +
-              "if(t||sessionStorage.getItem('juumo_edit')){var s=document.createElement('script');s.src='https://juumo-edit.vercel.app/edit.js';s.defer=true;document.head.appendChild(s);}}catch(e){}",
+              "if(t||sessionStorage.getItem('juumo_edit')){var s=document.createElement('script');s.src='https://edit.juumo.fr/edit.js';s.defer=true;document.head.appendChild(s);}}catch(e){}",
           }}
         />
         <JsonLd />
