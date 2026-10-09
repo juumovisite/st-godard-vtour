@@ -88,7 +88,40 @@ async function fetchJuumiKnowledge(host: string): Promise<string> {
   }
 }
 
+/** Message envoyé chaque matin par la Santé du parc (juumo-espace-client, src/lib/chatbot-logs.ts). */
+const SONDE_SANTE_PING = "Ping monitoring JUUMO — réponds juste OK.";
+
+/**
+ * Sonde Santé du parc : vérifie clé, crédits et modèle par un appel minimal, sans prompt ni base
+ * (le prompt complet était facturé à chaque sonde). Échec = 500, que la Santé du parc signale en
+ * rouge. Renvoie null quand la requête n'est pas la sonde.
+ */
+async function repondreSondeSante(req: Request): Promise<Response | null> {
+  let derniere: unknown;
+  try {
+    const corps = (await req.clone().json()) as { messages?: Array<{ content?: unknown }> };
+    derniere = Array.isArray(corps.messages) ? corps.messages[corps.messages.length - 1]?.content : undefined;
+  } catch {
+    return null;
+  }
+  if (derniere !== SONDE_SANTE_PING) return null;
+  try {
+    await new Anthropic().messages.create({
+      model: "claude-haiku-4-5-20251001", max_tokens: 8,
+      messages: [{ role: "user", content: "Réponds OK." }],
+    });
+  } catch {
+    return Response.json({ error: "sonde : appel modèle en échec" }, { status: 500 });
+  }
+  return new Response(`data: ${JSON.stringify({ text: "OK" })}\n\ndata: [DONE]\n\n`, {
+    headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" },
+  });
+}
+
 export async function POST(request: Request) {
+  const sonde = await repondreSondeSante(request);
+  if (sonde) return sonde;
+
   const { messages, scene } = await request.json();
 
   if (!messages || !Array.isArray(messages)) {
