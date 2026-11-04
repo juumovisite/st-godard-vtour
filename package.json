@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "slicemachine": "start-slicemachine"
+    "slicemachine": "start-slicemachine",
+    "test": "vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
@@ -29,6 +30,8 @@
     "eslint-config-next": "16.2.2",
     "slice-machine-ui": "^2.21.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "4.20.6",
+    "typescript": "^5",
+    "vitest": "3.2.4"
   }
 }

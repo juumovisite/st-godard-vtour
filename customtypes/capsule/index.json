@@ -1,0 +1,70 @@
+{
+  "id": "capsule",
+  "label": "Capsule (+)",
+  "repeatable": true,
+  "status": true,
+  "json": {
+    "Main": {
+      "scene": {
+        "type": "Text",
+        "config": {
+          "label": "Scène KRpano",
+          "placeholder": "scene_nef_vue_sud"
+        }
+      },
+      "ath": {
+        "type": "Number",
+        "config": {
+          "label": "Position horizontale (ath)"
+        }
+      },
+      "atv": {
+        "type": "Number",
+        "config": {
+          "label": "Position verticale (atv)"
+        }
+      },
+      "ordre": {
+        "type": "Number",
+        "config": {
+          "label": "Ordre"
+        }
+      },
+      "contenu_scene": {
+        "type": "Boolean",
+        "config": {
+          "label": "Contenu de la scène",
+          "placeholder_true": "Oui",
+          "placeholder_false": "Non",
+          "default_value": false
+        }
+      },
+      "titre": {
+        "type": "Text",
+        "config": {
+          "label": "Titre"
+        }
+      },
+      "texte": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Texte",
+          "multi": "paragraph"
+        }
+      },
+      "audio": {
+        "type": "Link",
+        "config": {
+          "label": "Audio",
+          "select": "media"
+        }
+      },
+      "video": {
+        "type": "Text",
+        "config": {
+          "label": "Vidéo (lien JUUMO Vidéos)"
+        }
+      }
+    }
+  }
+}
