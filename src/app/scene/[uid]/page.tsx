@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { client } from "@/lib/prismic";
 import { buildScenesByLang } from "@/lib/scenes-data";
 import TourViewer from "@/components/TourViewer";
+import { getCapsules } from "@/lib/capsules/read";
 import { SCENES_SEO } from "@/config/seo-scenes";
 
 const BASE_URL = "https://saintgodard.juumo.fr";
@@ -72,6 +73,7 @@ export default async function ScenePage({
   if (!scene || !krpanoOf(scene)) notFound();
   const name = titleOf(scene);
   const scenesByLang = await buildScenesByLang();
+  const capsules = await getCapsules();
   // Contenu SEO/AEO unique par scène + maillage interne (src/config/seo-scenes.ts).
   const seo = SCENES_SEO[uid];
   const breadcrumb = {
@@ -134,6 +136,7 @@ export default async function ScenePage({
       <TourViewer
         scenesByLang={{ fr: scenesByLang.fr as never[], en: scenesByLang.en as never[] }}
         initialScene={krpanoOf(scene)}
+        capsules={capsules}
       />
     </>
   );

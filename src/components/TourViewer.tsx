@@ -1,8 +1,14 @@
 "use client";
-import { useState, useRef, useEffect, useLayoutEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useMemo, useCallback } from "react";
 import { Lang, translations, TranslationKey } from "@/lib/i18n";
+import { CapsulesEditor } from "@/components/CapsulesEditor";
+import { PointCapsules, type Capsule, type CapsuleAction, type Krpano } from "@/components/PointCapsules";
+import { NavPoints } from "@/components/NavPoints";
+import type { CapsuleTexte, FicheCapsule } from "@/lib/capsules/types";
+import { texteAffiche } from "@/lib/capsules/model";
 
 interface InfoItem {
+  uid?: string | null;
   label?: string | null;
   description?: { text: string }[] | null;
   audio_file?: { url: string } | null;
@@ -69,7 +75,10 @@ const SCENE_FALLBACK_DESCRIPTIONS: Record<string, { fr: string[]; en: string[] }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SCENE_SHORT_INTRO: Record<string, { fr: string; en: string }> = {};
 
-export default function TourViewer({ scenesByLang, initialScene }: { scenesByLang: { fr: SceneData[]; en: SceneData[] }; initialScene?: string }) {
+const AUCUNE_CAPSULE: FicheCapsule[] = [];
+const AUCUNE_CAPSULE_AFFICHEE: Capsule[] = [];
+
+export default function TourViewer({ scenesByLang, initialScene, capsules: fichesPubliees = AUCUNE_CAPSULE }: { scenesByLang: { fr: SceneData[]; en: SceneData[] }; initialScene?: string; capsules?: FicheCapsule[] }) {
   const [lang, setLang] = useState<Lang>("fr");
   const sortedScenes = useMemo(() => {
     const raw = lang === "en" ? (scenesByLang.en ?? []) : (scenesByLang.fr ?? []);
@@ -114,6 +123,18 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
   const videoDragDir = useRef<"h" | "v" | null>(null);
   const [pipVideoUrl, setPipVideoUrl] = useState<string | null>(null);
   const [pipVideoRatio, setPipVideoRatio] = useState(16 / 9);
+  // JUUMO Vidéos : format réel de la vidéo (verticale ou horizontale) lu dans son oEmbed public
+  useEffect(() => {
+    if (!pipVideoUrl || !/video\.juumo\.fr\//.test(pipVideoUrl)) return;
+    let annule = false;
+    fetch(`https://video.juumo.fr/api/oembed?url=${encodeURIComponent(pipVideoUrl)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((o: { width?: number; height?: number } | null) => {
+        if (!annule && o?.width && o?.height) setPipVideoRatio(o.width / o.height);
+      })
+      .catch(() => undefined);
+    return () => { annule = true; };
+  }, [pipVideoUrl]);
   const [videoTime, setVideoTime] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
   const [videoIsPlaying, setVideoIsPlaying] = useState(false);
@@ -130,6 +151,20 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
   const [hsPreview, setHsPreview] = useState<{ title: string; thumburl: string; x: number; y: number } | null>(null);
   // Popup actif au-dessus de la barre : "scene" | "chat" | "don" | null
   const [activePopup, setActivePopup] = useState<"scene" | "chat" | "don" | null>(null);
+  // Capsule dont l'encart montre le contenu (null = contenu de la scène)
+  const [capsuleOuverteCle, setCapsuleOuverteCle] = useState<string | null>(null);
+  // Outil des capsules : `?capsules` en local seulement (next dev)
+  const [modeCapsules, setModeCapsules] = useState(false);
+  // `?placer` : même outil réduit au placement (contenus préparés, il ne reste qu'à glisser)
+  const [modePlacement, setModePlacement] = useState(false);
+  useEffect(() => {
+    const local = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    const p = new URLSearchParams(window.location.search);
+    const dev = process.env.NODE_ENV === "development" && local;
+    setModeCapsules(dev && (p.has("capsules") || p.has("placer")));
+    setModePlacement(dev && p.has("placer"));
+  }, []);
+  useEffect(() => { if (activePopup !== "scene") setCapsuleOuverteCle(null); }, [activePopup]);
   const [chatInput, setChatInput] = useState("");
   // Coach-mark 1ère visite (desktop + mobile) : signale que le titre de scène (barre du bas) se déroule
   const [showTitleHint, setShowTitleHint] = useState(false);
@@ -427,6 +462,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
         setVisitedScenes(prev => new Set([...prev, event.data.scene]));
         setActivePopup(prev => prev === "scene" ? "scene" : null);
         setShowDetailedInfo(false);
+        setCapsuleOuverteCle(null);
         setExpandedInfo(null);
         setShowVideo(false);
         if (!audioPlayingRef.current) {
@@ -559,6 +595,109 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
       videoDragDir.current = null;
       videoDragStart.current = null;
     },
+  };
+
+  // Capsules de la scène : fiches Prismic `capsule`
+  const langueCapsules = lang === "en" ? "en" : "fr";
+  const fichesScene = useMemo(
+    () => fichesPubliees.filter((f) => f.scene === activeScene),
+    [fichesPubliees, activeScene]
+  );
+  const contenuDeScene = useMemo(() => {
+    const d = currentScene?.data;
+    const volets = (d?.informations_list ?? []).filter((i) => i.description && i.description.length > 0).length;
+    return {
+      audio: d?.informations_list?.find((i) => i.audio_file?.url)?.audio_file?.url ?? d?.audio_file?.url ?? "",
+      video: d?.video_file?.url || d?.video_url || "",
+      texte: !!(d?.description?.[0]?.text || d?.description_longue?.[0]?.text || SCENE_FALLBACK_DESCRIPTIONS[activeScene] || volets > 0),
+    };
+  }, [activeScene, currentScene]);
+  // Vitraux de la scène (hors présentation générale), FR + EN reliés par uid : l'outil en fait un « + » chacun
+  const vitrauxParScene = useMemo(() => {
+    const items = (l: "fr" | "en", scene: string) => {
+      const d = (scenesByLang[l] ?? []).find((s) => s.data.nom_scene_krpano === scene)?.data;
+      if (!d?.categorie?.toLowerCase().includes("vitraux")) return [];
+      return (d.informations_list ?? []).filter((x) => x.label && x.description?.length && !/^(les vitraux|the stained glass|le vetrate|bienvenu|welcome)/i.test(x.label.trim()));
+    };
+    const texte = (i?: InfoItem) => ({ titre: i?.label ?? "", texte: (i?.description ?? []).map((p) => p.text).join("\n\n"), audio: i?.audio_file?.url ?? "" });
+    const res: Record<string, { fr: ReturnType<typeof texte>; en: ReturnType<typeof texte> }[]> = {};
+    for (const s of scenesByLang.fr ?? []) {
+      const id = s.data.nom_scene_krpano;
+      if (!id) continue;
+      const en = items("en", id);
+      const fr = items("fr", id).map((x) => ({ fr: texte(x), en: texte(en.find((e) => e.uid && e.uid === x.uid)) }));
+      if (fr.length) res[id] = fr;
+    }
+    return res;
+  }, [scenesByLang]);
+
+  // Contenu de la scène en FR et EN, pour l'aperçu et la copie dans l'outil des capsules
+  const contenuSceneParLangue = useMemo(() => {
+    const contenu = (l: "fr" | "en") => {
+      const d = (scenesByLang[l] ?? []).find((s) => s.data.nom_scene_krpano === activeScene)?.data;
+      return {
+        texte: [...(d?.description ?? []), ...(d?.description_longue ?? [])].map((p) => p.text).filter(Boolean).join("\n\n")
+          || (SCENE_FALLBACK_DESCRIPTIONS[activeScene]?.[l] ?? []).join("\n\n"),
+        audio: d?.informations_list?.find((i) => i.audio_file?.url)?.audio_file?.url ?? d?.audio_file?.url ?? "",
+        video: d?.video_file?.url || d?.video_url || "",
+      };
+    };
+    return { fr: contenu("fr"), en: contenu("en") };
+  }, [scenesByLang, activeScene]);
+  const capsules = useMemo<Capsule[]>(() => fichesScene.flatMap((f) => {
+    const t = texteAffiche(f, langueCapsules);
+    if (f.contenuScene) {
+      const c = contenuDeScene;
+      if (!c.texte && !c.audio && !c.video) return [];
+      return [{ id: f.cle, ath: f.ath, atv: f.atv, titre: t.titre || (currentScene?.data.title ?? ""), hasTexte: c.texte, hasAudio: !!c.audio, hasVideo: !!c.video }];
+    }
+    // Vitraux : les capsules propres sont les « sous » de la capsule de scène, numérotées dans l'ordre de l'encart
+    const serie = currentScene?.data.categorie?.toLowerCase().includes("vitraux")
+      ? fichesScene.filter((x) => !x.contenuScene).sort((a, b) => a.ordre - b.ordre || a.ath - b.ath)
+      : [];
+    const numero = serie.indexOf(f) + 1 || undefined;
+    return [{ id: f.cle, ath: f.ath, atv: f.atv, titre: t.titre, hasTexte: !!t.texte, hasAudio: !!t.audio, hasVideo: !!t.video, numero }];
+  }), [fichesScene, langueCapsules, contenuDeScene, currentScene]);
+  // Capsule ouverte dans l'encart, dans la langue affichée (suit un changement de langue)
+  const capsuleOuverte = useMemo<CapsuleTexte | null>(() => {
+    const f = fichesScene.find((x) => x.cle === capsuleOuverteCle);
+    return f && !f.contenuScene ? texteAffiche(f, langueCapsules) : null;
+  }, [fichesScene, capsuleOuverteCle, langueCapsules]);
+
+  const titresScenes = useMemo(
+    () => Object.fromEntries(sortedScenes.map((s) => [s.data.nom_scene_krpano, s.data.title])),
+    [sortedScenes]
+  );
+
+  const getPanoDocument = useCallback(() => iframeRef.current?.contentDocument, []);
+  const getPanoKrpano = useCallback(() => getPanoDocument()?.getElementById("krpanoSWFObject") as unknown as Krpano | null, [getPanoDocument]);
+
+  const onCapsule = (id: string, action: CapsuleAction) => {
+    const f = fichesScene.find((x) => x.cle === id);
+    if (!f) return;
+    const d = currentScene?.data;
+    const t = texteAffiche(f, langueCapsules);
+    const audio = f.contenuScene ? contenuDeScene.audio : t.audio?.url ?? "";
+    const video = f.contenuScene ? contenuDeScene.video : t.video;
+    if (action === "read") {
+      if (f.contenuScene) {
+        // Depuis la capsule, Lire montre le texte tout de suite
+        setShowDetailedInfo(!!d?.description_longue?.some((p) => p.text) || !!SCENE_FALLBACK_DESCRIPTIONS[activeScene]);
+        setExpandedInfo(0);
+        setCapsuleOuverteCle(null);
+      } else {
+        setCapsuleOuverteCle(f.cle);
+      }
+      setActivePopup("scene");
+    }
+    if (action === "listen" && audio) { setShowSceneAudio(true); playAudio(audio, activeScene, f.contenuScene ? null : t.titre); }
+    if (action === "watch" && video) {
+      setActivePopup(null);
+      pauseAudio();
+      setPipVideoUrl(video);
+      setPipVideoRatio(f.contenuScene ? d?.video_ratio || 16 / 9 : 16 / 9);
+      setVideoPip(true);
+    }
   };
 
   const playAudio = (url: string, scene: string, label?: string | null) => {
@@ -972,9 +1111,32 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
           onClick={() => { setShowFullMenu(!showFullMenu); setActivePopup(null); setShowMenu(false); }}
           active={showFullMenu}
         >
-          {showFullMenu ? "✕" : "≡"}
+          {showFullMenu ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+          )}
         </HeaderButton>
       </div>
+
+      <NavPoints getKrpano={getPanoKrpano} titres={titresScenes} base="/vtour/" />
+      {modeCapsules && (
+        <CapsulesEditor
+          getKrpano={getPanoKrpano}
+          scene={activeScene}
+          titreScene={currentScene?.data.title ?? activeScene}
+          contenuDeLaScene={contenuSceneParLangue}
+          vitrauxParScene={vitrauxParScene}
+          placement={modePlacement}
+        />
+      )}
+      <PointCapsules
+        capsules={modeCapsules ? AUCUNE_CAPSULE_AFFICHEE : capsules}
+        getKrpano={getPanoKrpano}
+        panoDocument={getPanoDocument}
+        labels={{ read: t("read"), listen: t("listen"), watch: t("watch") }}
+        onAction={onCapsule}
+      />
 
       {/* Popup Scène — description + actions */}
       <div style={{
@@ -998,8 +1160,15 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
           onTouchCancel={() => { setSwipeDeltaY(0); swipeDir.current = null; }}
         >
         {currentScene && (() => {
-          const sceneVideo = currentScene.data.video_file?.url || currentScene.data.video_url || "";
-          const hasAudio = !!currentScene.data.audio_file?.url;
+          const sceneVideo = capsuleOuverte ? capsuleOuverte.video : currentScene.data.video_file?.url || currentScene.data.video_url || "";
+          // Vitraux présentés « + » par « + » : l'encart de la scène ne montre que la présentation générale
+          const fichesPropres = fichesScene.filter((f) => !f.contenuScene);
+          const vitrauxEnCapsules = !!currentScene.data.categorie?.toLowerCase().includes("vitraux") && fichesPropres.length > 0;
+          const presentation = vitrauxEnCapsules
+            ? (currentScene.data.informations_list ?? []).find((i) => /^(les vitraux|the stained glass|le vetrate)/i.test((i.label ?? "").trim()))
+            : undefined;
+          const sceneAudio = capsuleOuverte ? capsuleOuverte.audio?.url ?? "" : presentation ? presentation.audio_file?.url ?? "" : currentScene.data.informations_list?.find(i => i.audio_file?.url)?.audio_file?.url
+            ?? currentScene.data.audio_file?.url ?? "";
           // Descriptifs depuis informations_list (un par vitrail ou hotspot)
           const infoItems = (currentScene.data.informations_list ?? [])
             .filter(i => i.description && i.description.length > 0)
@@ -1019,9 +1188,11 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
           // (statue, vitraux, architecture visibles depuis la scène) mais ne doivent
           // afficher qu'un seul descriptif — pas d'accordéon.
           const isVitraux = currentScene.data.categorie?.toLowerCase().includes("vitraux");
-          const hasInfoItems = isVitraux && infoItems.length >= 2;
-          const longTextParagraphs = !hasInfoItems && prismicLongText.length > 0 ? prismicLongText : !hasInfoItems ? fallbackLongText : [];
+          const hasInfoItems = !capsuleOuverte && !vitrauxEnCapsules && isVitraux && infoItems.length >= 2;
+          const longTextParagraphs = presentation?.description?.length ? presentation.description : !hasInfoItems && prismicLongText.length > 0 ? prismicLongText : !hasInfoItems ? fallbackLongText : [];
           const hasLongText = hasInfoItems || longTextParagraphs.length > 0;
+          // Série des vitraux : la présentation s'ouvre texte déplié (Lire referme)
+          const texteOuvert = vitrauxEnCapsules ? !showDetailedInfo : showDetailedInfo;
           const isThisAudio = audioPlayingScene === activeScene;
           const audioPos = isThisAudio ? audioTime : 0;
           const d = isThisAudio ? audioDuration : 0;
@@ -1045,89 +1216,121 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
                 width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
               }}>✕</button>
               <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#8b1c1c", textTransform: "uppercase", margin: 0 }}>
-                {t("chapter")} {currentIndex + 1} {t("of")} {totalScenes}
+                {capsuleOuverte
+                  ? sceneTitle
+                  : <>{t("chapter")} {currentIndex + 1} {t("of")} {totalScenes}</>}
               </p>
               <h2 style={{
                 fontSize: 24, fontWeight: 700, color: "#1a2332", margin: "5px 0 0",
                 fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", lineHeight: 1.12,
                 paddingRight: 34,
               }}>
-                {sceneTitle}
+                {capsuleOuverte ? capsuleOuverte.titre || sceneTitle : sceneTitle}
               </h2>
-              {meta && (
+              {meta && !capsuleOuverte && (
                 <p style={{ fontSize: 11, fontWeight: 600, color: "#8a96a3", margin: "5px 0 0", letterSpacing: 0.3 }}>
                   {meta}
                 </p>
               )}
             </div>
 
-            {/* Actions — juste sous le titre, avant le descriptif */}
-            <div style={{ padding: "10px 18px 2px", flexShrink: 0, display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {!hasInfoItems && hasLongText && (
-                <button onClick={() => setShowDetailedInfo(!showDetailedInfo)} style={{
-                  display: "flex", alignItems: "center", gap: 5, padding: "7px 13px",
-                  borderRadius: 20, border: "none", cursor: "pointer",
-                  fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
-                  background: showDetailedInfo ? "#2D3E50" : "rgba(45,62,80,0.08)",
-                  color: showDetailedInfo ? "white" : "#2D3E50",
-                  transition: "all 0.2s ease", flexShrink: 0,
-                }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="16" y2="12"/></svg>
-                  {showDetailedInfo ? t("collapse") : t("read_more")}
+            {/* Passer à la capsule voisine de la scène (la vue tourne vers elle) ; pour les vitraux, la présentation de la scène ouvre la série */}
+            {(capsuleOuverte || vitrauxEnCapsules) && (() => {
+              const propres = fichesPropres.slice().sort((a, b) => a.ordre - b.ordre || a.ath - b.ath);
+              const capsuleScene = fichesScene.find((f) => f.contenuScene);
+              const suite = vitrauxEnCapsules ? [capsuleScene ?? null, ...propres] : propres;
+              const i = capsuleOuverteCle ? suite.findIndex((f) => f?.cle === capsuleOuverteCle) : suite.indexOf(capsuleScene ?? null);
+              if (i < 0 || suite.length < 2) return null;
+              const aller = (j: number) => {
+                const f = suite[(j + suite.length) % suite.length];
+                pauseAudio();
+                // Présentation de la série : texte déplié (cf. texteOuvert)
+                if (!f) { setCapsuleOuverteCle(null); setShowDetailedInfo(false); return; }
+                if (f.contenuScene) { setCapsuleOuverteCle(null); setShowDetailedInfo(false); }
+                else setCapsuleOuverteCle(f.cle);
+                getPanoKrpano()?.call(`lookto(${f.ath},${f.atv},get(view.fov),smooth(),true)`);
+              };
+              const fleche = { width: 34, height: 34, borderRadius: "50%", border: "none", background: "#F1ECE7", color: "#8b1c1c", fontSize: 18, fontWeight: 700, cursor: "pointer" } as const;
+              return (
+                <div style={{ padding: "8px 18px 0", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                  <button onClick={() => aller(i - 1)} aria-label="Précédent" style={fleche}>‹</button>
+                  {/* Sommaire de la série : présentation puis un numéro par « + » (même numéro que dans le panorama) */}
+                  {/* Défiler les boutons au doigt ne doit pas changer de scène (swipe horizontal de l'encart) */}
+                  <div
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                    style={{ flex: 1, display: "flex", gap: 6, overflowX: "auto", scrollbarWidth: "none" }}
+                  >
+                    {suite.map((f, j) => {
+                      const actif = j === i;
+                      const presentationEtape = vitrauxEnCapsules && j === 0;
+                      return (
+                        <button
+                          key={f?.cle ?? "scene"}
+                          onClick={() => aller(j)}
+                          title={f && !f.contenuScene ? texteAffiche(f, langueCapsules).titre : sceneTitle}
+                          style={{
+                            flex: "none", height: 30, padding: "0 12px", borderRadius: 99, border: "none", cursor: "pointer", whiteSpace: "nowrap",
+                            background: actif ? "#8b1c1c" : "#F1ECE7", color: actif ? "#fff" : "#8b1c1c",
+                            fontSize: 12, fontWeight: 700, fontFamily: "'Inter', sans-serif",
+                          }}
+                        >
+                          {presentationEtape ? t("overview") : f ? texteAffiche(f, langueCapsules).titre || sceneTitle : sceneTitle}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button onClick={() => aller(i + 1)} aria-label="Suivant" style={fleche}>›</button>
+                </div>
+              );
+            })()}
+
+            {/* Actions (Lire / Écouter / Voir) — sous le titre, avant le descriptif */}
+            <div style={{ padding: "12px 18px 4px", flexShrink: 0, display: "flex", gap: 7, flexWrap: "wrap" }}>
+              {!hasInfoItems && (capsuleOuverte ? !!capsuleOuverte.texte : (hasLongText || sceneAudio || sceneVideo)) && (
+                <button
+                  onClick={() => { if (!capsuleOuverte) setShowDetailedInfo(!showDetailedInfo); }}
+                  style={actionPill(capsuleOuverte ? true : hasLongText ? texteOuvert : !texteOuvert)}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 6h14M5 12h14M5 18h9"/></svg>
+                  {t("read")}
                 </button>
               )}
-              {/* Bouton audio principal — mode standard (non-vitraux) : un seul audio "Écouter" */}
-              {!hasInfoItems && (() => {
-                const audioInfos = currentScene.data.informations_list?.filter(i => i.audio_file?.url) ?? [];
-                const url = audioInfos[0]?.audio_file?.url ?? currentScene.data.audio_file?.url;
-                if (!url) return null;
-                const isThisOne = audioPlayingUrl === url && audioPlayingScene === activeScene;
+              {/* Bouton audio principal — mode standard (non-vitraux) : un seul audio */}
+              {!hasInfoItems && sceneAudio && (() => {
+                const isThisOne = audioPlayingUrl === sceneAudio && audioPlayingScene === activeScene;
                 return (
                   <button onClick={() => {
                     if (isThisOne && audioPlaying) pauseAudio();
-                    else { setShowSceneAudio(true); playAudio(url, activeScene, null); }
-                  }} style={{
-                    display: "flex", alignItems: "center", gap: 5, padding: "7px 13px",
-                    borderRadius: 20, border: "none", cursor: "pointer",
-                    fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
-                    background: isThisOne ? "#2D3E50" : "rgba(45,62,80,0.08)",
-                    color: isThisOne ? "white" : "#2D3E50",
-                    transition: "all 0.2s ease", flexShrink: 0,
-                  }}>
-                    {isThisOne && audioPlaying
-                      ? <svg width="11" height="11" viewBox="0 0 24 24" fill={isThisOne ? "white" : "#2D3E50"} stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-                      : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                    }
+                    else { setShowSceneAudio(true); playAudio(sceneAudio, activeScene, null); }
+                  }} style={actionPill(isThisOne)}>
+                    {isThisOne && audioPlaying ? <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg> : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>}
                     {isThisOne && audioPlaying ? t("pause") : t("listen")}
                   </button>
                 );
               })()}
-              {sceneVideo && !isVitraux && (
+              {sceneVideo && (capsuleOuverte || !isVitraux) && (
                 <button onClick={() => {
                   setActivePopup(null);
                   pauseAudio();
-                  const fileUrl = currentScene?.data.video_file?.url;
-                  const embedUrl = currentScene?.data.video_url;
-                  setPipVideoUrl(fileUrl || embedUrl || "");
-                  setPipVideoRatio(currentScene?.data.video_ratio || 16 / 9);
+                  setPipVideoUrl(sceneVideo);
+                  setPipVideoRatio(capsuleOuverte ? 16 / 9 : currentScene?.data.video_ratio || 16 / 9);
                   setVideoPip(true);
-                }} style={{
-                  display: "flex", alignItems: "center", gap: 5, padding: "7px 13px",
-                  borderRadius: 20, border: "none", cursor: "pointer",
-                  fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
-                  background: "#8b1c1c", color: "white",
-                  transition: "all 0.2s ease", flexShrink: 0,
-                }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="white" stroke="none" style={{marginLeft:1}}><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  {t("video")}
+                }} style={actionPill(false)}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                  {t("watch")}
                 </button>
               )}
             </div>
 
             {/* Zone principale : cartes vitrails OU description standard */}
             <div style={{ flex: 1, overflowY: "auto", minHeight: 0, padding: isMobile ? "8px 16px 20px" : "8px 16px 14px", WebkitOverflowScrolling: "touch" as const }}>
+              {capsuleOuverte && capsuleOuverte.texte.split(/\n{2,}/).map((p, i) => (
+                <p key={i} style={{ fontSize: 12.5, lineHeight: 1.65, color: "#3a4a5a", margin: "0 0 8px", padding: "0 4px" }}>{p}</p>
+              ))}
               {/* Description courte de la scène (Prismic `description`, modifiable dans la visite) — au-dessus de l'accordéon / du texte long */}
-              {sceneShortDesc.length > 0 && (
+              {!capsuleOuverte && sceneShortDesc.length > 0 && (hasLongText || !texteOuvert) && (
                 <div style={{ padding: "2px 4px 10px" }}>
                   {sceneShortDesc.map((p, i) => (
                     <p key={i} style={{ fontSize: 12.5, lineHeight: 1.65, color: "#3a4a5a", margin: i > 0 ? "6px 0 0" : 0 }}>
@@ -1174,15 +1377,6 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
                         {/* Contenu déplié */}
                         {isOpen && (
                           <div style={{ padding: "0 12px 12px" }}>
-                            {info.description && info.description.length > 0 && (
-                              <div style={{ marginBottom: url ? 10 : 0 }}>
-                                {info.description.map((p, j) => (
-                                  <p key={j} style={{ fontSize: 12, lineHeight: 1.65, color: "#4a5563", margin: j > 0 ? "5px 0 0" : 0 }}>
-                                    {p.text}
-                                  </p>
-                                ))}
-                              </div>
-                            )}
                             {url && (
                               <button
                                 onClick={(e) => {
@@ -1190,14 +1384,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
                                   if (isPlayingThis && audioPlaying) pauseAudio();
                                   else { setShowSceneAudio(true); playAudio(url, activeScene, info.label); }
                                 }}
-                                style={{
-                                  display: "flex", alignItems: "center", gap: 5,
-                                  padding: "6px 12px", borderRadius: 20, border: "none", cursor: "pointer",
-                                  fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 600,
-                                  background: isPlayingThis ? "#2D3E50" : "rgba(45,62,80,0.10)",
-                                  color: isPlayingThis ? "white" : "#2D3E50",
-                                  transition: "all 0.2s",
-                                }}
+                                style={{ ...actionPill(isPlayingThis), marginBottom: 10 }}
                               >
                                 {isPlayingThis && audioPlaying
                                   ? <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/></svg>
@@ -1206,13 +1393,22 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
                                 {isPlayingThis && audioPlaying ? t("pause") : t("listen")}
                               </button>
                             )}
+                            {info.description && info.description.length > 0 && (
+                              <div style={{ marginBottom: 0 }}>
+                                {info.description.map((p, j) => (
+                                  <p key={j} style={{ fontSize: 12, lineHeight: 1.65, color: "#4a5563", margin: j > 0 ? "5px 0 0" : 0 }}>
+                                    {p.text}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
                     );
                   })}
                 </div>
-              ) : showDetailedInfo && hasLongText ? (
+              ) : !capsuleOuverte && texteOuvert && hasLongText ? (
                 // Mode standard : description unique expandée
                 <div style={{ padding: 14, background: "rgba(45,62,80,0.04)", borderRadius: 12 }}>
                   {longTextParagraphs.map((p: { text: string }, i: number) => (
@@ -1275,7 +1471,8 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
                   allow="autoplay; fullscreen; picture-in-picture"
                   allowFullScreen
                 />
-                {/* Custom Vimeo controls overlay */}
+                {/* Custom Vimeo controls overlay (JUUMO Vidéos a ses propres contrôles) */}
+                {!isJuumoVideo(pipVideoUrl || currentScene!.data.video_url!) && (
                 <div style={{
                   position: "absolute", bottom: 0, left: 0, right: 0,
                   background: "linear-gradient(transparent, rgba(0,0,0,0.78))",
@@ -1312,6 +1509,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
                     </span>
                   </div>
                 </div>
+                )}
               </>
             )}
             <div style={{ position: "absolute", top: -44, right: 0, display: "flex", gap: 8 }}>
@@ -1343,7 +1541,7 @@ export default function TourViewer({ scenesByLang, initialScene }: { scenesByLan
 
       {/* Video PiP (picture-in-picture mini player) */}
       {videoPip && pipVideoUrl && (() => {
-        const isEmbed = /vimeo\.com|youtu/.test(pipVideoUrl);
+        const isEmbed = /vimeo\.com|youtu|video\.juumo\.fr/.test(pipVideoUrl);
         const pipW = isMobile ? 200 : 320;
         const pipH = Math.round(pipW / pipVideoRatio);
         return (
@@ -2536,6 +2734,18 @@ function HeaderButton({ children, onClick, active }: {
   );
 }
 
+/** Bouton Lire / Écouter / Voir du panneau de scène */
+function actionPill(active: boolean): React.CSSProperties {
+  return {
+    display: "flex", alignItems: "center", gap: 7, padding: "9px 14px",
+    borderRadius: 99, border: "none", cursor: "pointer",
+    fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 500,
+    background: active ? "#8b1c1c" : "#F1ECE7",
+    color: active ? "white" : "#8b1c1c",
+    transition: "all 0.2s ease", flexShrink: 0,
+  };
+}
+
 function MenuAccordion({ open, onToggle, icon, label, children, iconColor }: {
   open: boolean; onToggle: () => void; icon: React.ReactNode; label: string; children: React.ReactNode;
   iconColor?: string;
@@ -2589,7 +2799,13 @@ function InfoRow({ icon, label, value, href }: { icon: string; label: string; va
   );
 }
 
+const isJuumoVideo = (u: string) => /video\.juumo\.fr\//.test(u);
+
 function getEmbedUrl(url: string): string {
+  // JUUMO Vidéos (video.juumo.fr) : lecteur seul, avec ses propres contrôles,
+  // jamais la page de partage /v/.
+  const juumo = url.match(/video\.juumo\.fr\/(?:v|embed)\/([A-Za-z0-9_-]{8,})/);
+  if (juumo) return `https://video.juumo.fr/embed/${juumo[1]}?autoplay=1&api=1&title=0`;
   // Vimeo
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&controls=0&api=1`;
