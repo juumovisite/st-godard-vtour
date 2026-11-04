@@ -206,7 +206,7 @@
 
 		<preview url="panos/Aile_sud_autel.tiles/preview.jpg" />
 
-		<image>
+		<image prealign="0|1.5|2.5">
 			<cube url="panos/Aile_sud_autel.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
@@ -224,7 +224,7 @@
 
 		<preview url="panos/Aile_sud_autel2.tiles/preview.jpg" />
 
-		<image>
+		<image prealign="0|0|1.5">
 			<cube url="panos/Aile_sud_autel2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
@@ -241,7 +241,7 @@
 
 		<preview url="panos/Aile_sud_baptistere.tiles/preview.jpg" />
 
-		<image>
+		<image prealign="0|0|2.5">
 			<cube url="panos/Aile_sud_baptistere.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2624" />
 		</image>
 
