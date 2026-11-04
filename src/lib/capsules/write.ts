@@ -54,7 +54,7 @@ export function aJeton(): boolean {
   try { jeton(); return true; } catch { return false; }
 }
 
-async function migration(method: "POST" | "PUT", path: string, body?: unknown): Promise<Record<string, unknown>> {
+export async function migration(method: "POST" | "PUT", path: string, body?: unknown): Promise<Record<string, unknown>> {
   const envoi = () => fetch(`https://migration.prismic.io${path}`, {
     method,
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${jeton()}`, repository: REPO, "x-api-key": API_KEY },
@@ -119,7 +119,7 @@ async function lireCapsule(id: string): Promise<DocCapsule | null> {
 }
 
 /** Données lues sur le CDN, remises au format d'écriture (liens média `{ link_type: "Media", id? }`). */
-function donneesEcriture(data: Record<string, unknown>): Record<string, unknown> {
+export function donneesEcriture(data: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(data)) {
     if (v && typeof v === "object" && !Array.isArray(v) && (v as { link_type?: unknown }).link_type === "Media") {
@@ -156,9 +156,19 @@ export function enregistrer(
   fiches: FicheCapsule[],
   supprimees: { id: string; idEn: string | null }[],
 ): Promise<{ erreurs: { cle: string; message: string }[]; publie: boolean; fiches: FicheCapsule[] }> {
-  const run = file.then(() => enregistrerSerie(fiches, supprimees), () => enregistrerSerie(fiches, supprimees));
+  return enSerie(() => enregistrerSerie(fiches, supprimees));
+}
+
+/** Toute écriture Prismic de l'outil passe par cette file (capsules, noms de scènes). */
+export function enSerie<T>(travail: () => Promise<T>): Promise<T> {
+  const run = file.then(travail, travail);
   file = run.catch(() => undefined);
   return run;
+}
+
+/** Publie la Migration Release (les PUT / POST n'y sont qu'en brouillon). */
+export async function publier(): Promise<void> {
+  await migration("POST", "/migration-release/publish", {});
 }
 
 async function enregistrerSerie(
@@ -216,7 +226,7 @@ async function enregistrerSerie(
     }
   }
   let publie = false;
-  try { await migration("POST", "/migration-release/publish", {}); publie = true; } catch (e) {
+  try { await publier(); publie = true; } catch (e) {
     erreurs.push({ cle: "publication", message: e instanceof Error ? e.message : String(e) });
   }
   return { erreurs, publie, fiches };

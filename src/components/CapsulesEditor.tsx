@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Krpano } from "@/components/PointCapsules";
 import { texteVide } from "@/lib/capsules/model";
+import { avecPrealign, BORNES, formatPrealign, lirePrealign, memePrealign, ZERO, type Prealign } from "@/lib/capsules/prealign";
+import type { NomScene } from "@/lib/capsules/scenes";
 import type { CapsuleAudio, FicheCapsule, Langue } from "@/lib/capsules/types";
 
 const ACCENT = "#8b1c1c";
@@ -11,6 +13,14 @@ const LARGEUR = 380;
 
 type Medias = { audios: CapsuleAudio[]; videos: { url: string; titre: string }[] };
 type Supprimee = { id: string; idEn: string | null };
+/** Le KRpano de l'iframe expose aussi `set` (contenu des scènes en mémoire). */
+type KrpanoSet = Krpano & { set?: (k: string, v: unknown) => void };
+type Resultat = { texte: string; erreur: boolean };
+const AXES: { cle: keyof Prealign; label: string }[] = [
+  { cle: "tilt", label: "Inclinaison (tilt)" },
+  { cle: "pan", label: "Axe (pan)" },
+  { cle: "roll", label: "Roulis (roll)" },
+];
 
 const CSS = `
 .cped .apercu{margin-top:8px;display:flex;flex-direction:column;gap:8px}
@@ -36,6 +46,11 @@ const CSS = `
 .cped .msg.err{color:#b00020}
 .cped .vide{color:#b00020;font-size:13px}
 .cped button:disabled{opacity:.5;cursor:not-allowed}
+.cped .bloc{border:1px solid #eee;border-radius:10px;padding:4px 12px 12px;margin:0 0 14px}
+.cped .bloc>summary{cursor:pointer;font-weight:600;padding:8px 0 0}
+.cped .curseur{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#6b7380;margin:10px 0 2px}
+.cped input[type=range]{width:100%;accent-color:${ACCENT}}
+.cped .note{display:block;margin-top:6px}
 .cpm{position:fixed;left:0;top:0;width:0;height:0;z-index:999;display:none}
 .cpm button{position:absolute;left:-20px;top:-20px;width:40px;height:40px;border-radius:50%;border:0;background:${ACCENT};color:#fff;font:700 22px/40px Inter,sans-serif;cursor:grab;box-shadow:0 4px 14px rgba(0,0,0,.3),0 0 0 3px rgba(255,255,255,.6);touch-action:none}
 .cpm.sel button{box-shadow:0 0 0 4px #fff,0 0 0 7px ${ACCENT}}
@@ -94,6 +109,114 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
   // Clés des fiches modifiées depuis la dernière lecture / sauvegarde : seules celles-là sont envoyées
   const modifiees = useRef(new Set<string>());
 
+  // Noms des scènes : valeur stockée dans les docs Prismic `scene` (champ `title`), FR + EN.
+  // `nomsEdits` ne contient que les noms qui diffèrent de la valeur stockée.
+  const [noms, setNoms] = useState<NomScene[] | null>(null);
+  const [erreurNoms, setErreurNoms] = useState<string | null>(null);
+  const [nomsEdits, setNomsEdits] = useState<Record<string, Partial<Record<Langue, string>>>>({});
+  // Redressage : prealign écrit dans tour.xml (disque) et réglages en cours par scène,
+  // gardés quand on change de scène tant qu'ils ne sont pas enregistrés.
+  const [prealignDisque, setPrealignDisque] = useState<Record<string, string> | null>(null);
+  const [prealignEdits, setPrealignEdits] = useState<Record<string, Prealign>>({});
+  const prealignEditsRef = useRef(prealignEdits);
+  prealignEditsRef.current = prealignEdits;
+  const prealignAttente = useRef<{ sc: string; p: Prealign } | null>(null);
+  const prealignMinuteur = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const chargerScenes = useCallback(async () => {
+    setNomsEdits({});
+    try {
+      const r = await fetch("/api/capsules/scenes", { cache: "no-store" });
+      const j = (await r.json()) as { scenes?: NomScene[]; erreur?: string };
+      if (!r.ok || !Array.isArray(j.scenes)) throw new Error(j.erreur ?? `HTTP ${r.status}`);
+      setNoms(j.scenes);
+      setErreurNoms(null);
+    } catch (e) {
+      setNoms(null);
+      setErreurNoms(`Lecture des noms impossible : ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }, []);
+  const chargerPrealign = useCallback(async () => {
+    try {
+      const r = await fetch("/api/capsules/prealign", { cache: "no-store" });
+      const j = (await r.json()) as { prealign?: Record<string, string>; erreur?: string };
+      if (!r.ok || !j.prealign) throw new Error(j.erreur ?? `HTTP ${r.status}`);
+      setPrealignDisque(j.prealign);
+    } catch (e) {
+      setPrealignDisque(null);
+      setMessage({ texte: `Lecture du tour.xml impossible : ${e instanceof Error ? e.message : String(e)}`, erreur: true });
+    }
+  }, []);
+  useEffect(() => { chargerScenes(); chargerPrealign(); }, [chargerScenes, chargerPrealign]);
+
+  const prealignEnregistre = useCallback((sc: string): Prealign => lirePrealign(prealignDisque?.[sc]) ?? ZERO, [prealignDisque]);
+
+  /**
+   * Applique un prealign à une scène : dans son contenu en mémoire (tout chargement suivant,
+   * par la navigation ou le menu, la relit redressée) et, si c'est la scène affichée,
+   * en direct par loadscene (prealign passé dans les vars, sinon le rechargement relit le XML).
+   */
+  const appliquerPrealign = useCallback((sc: string, p: Prealign) => {
+    const k = getKrpano() as KrpanoSet | null | undefined;
+    if (!k?.get) return;
+    const contenu = k.get(`scene[${sc}].content`);
+    if (typeof contenu === "string" && k.set) {
+      try { k.set(`scene[${sc}].content`, avecPrealign(contenu, p)); } catch { /* scène sans <image> : on laisse */ }
+    }
+    if (String(k.get("xml.scene") ?? "") !== sc) return;
+    k.call(`loadscene(${sc}, image.prealign=${formatPrealign(p)}, MERGE|KEEPVIEW, BLEND(0.3));`);
+    // Le rechargement retire les tags ajoutés par le pont juumo-edit : on les lui fait reposer
+    const fenetre = (k as unknown as HTMLElement).ownerDocument?.defaultView as (Window & { juumoBridgeNewScene?: () => void }) | null | undefined;
+    setTimeout(() => { try { fenetre?.juumoBridgeNewScene?.(); } catch { /* pont absent */ } }, 400);
+  }, [getKrpano]);
+
+  // Curseurs : rechargements limités à un toutes les 150 ms, la dernière valeur gagne
+  const reglerPrealign = (p: Prealign) => {
+    const sc = scene;
+    setPrealignEdits((e) => {
+      const n = { ...e };
+      if (memePrealign(p, prealignEnregistre(sc))) delete n[sc]; else n[sc] = p;
+      return n;
+    });
+    prealignAttente.current = { sc, p };
+    if (prealignMinuteur.current) return;
+    prealignMinuteur.current = setTimeout(() => {
+      prealignMinuteur.current = null;
+      const a = prealignAttente.current;
+      if (a) appliquerPrealign(a.sc, a.p);
+    }, 150);
+  };
+
+  // Retour sur une scène réglée mais pas enregistrée : on vérifie que le réglage est bien là
+  useEffect(() => {
+    const p = prealignEditsRef.current[scene];
+    if (!p) return;
+    const t = setTimeout(() => {
+      const k = getKrpano();
+      if (!k?.get || String(k.get("xml.scene") ?? "") !== scene) return;
+      const actuel = lirePrealign(String(k.get("image.prealign") ?? "")) ?? ZERO;
+      if (!memePrealign(actuel, p)) appliquerPrealign(scene, p);
+    }, 700);
+    return () => clearTimeout(t);
+  }, [scene, getKrpano, appliquerPrealign]);
+
+  const nomScene = (noms ?? []).find((n) => n.krpano === scene) ?? null;
+  const majNom = (l: Langue, v: string) => {
+    if (!nomScene?.[l]) return;
+    const stocke = nomScene[l]?.titre ?? "";
+    setNomsEdits((e) => {
+      const cur = { ...(e[scene] ?? {}) };
+      if (v === stocke) delete cur[l]; else cur[l] = v;
+      const n = { ...e };
+      if (Object.keys(cur).length) n[scene] = cur; else delete n[scene];
+      return n;
+    });
+  };
+  const nomsModifies = Object.keys(nomsEdits).length > 0;
+  const prealignModifie = Object.keys(prealignEdits).length > 0;
+  const toutModifie = modifie || nomsModifies || prealignModifie;
+  const reglage = prealignEdits[scene] ?? prealignEnregistre(scene);
+
   const charger = useCallback(async () => {
     try {
       const r = await fetch("/api/capsules", { cache: "no-store" });
@@ -132,11 +255,11 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
 
   // Changement non enregistré : confirmation avant de quitter la page
   useEffect(() => {
-    if (!modifie) return;
+    if (!toutModifie) return;
     const avant = (e: BeforeUnloadEvent) => { e.preventDefault(); };
     window.addEventListener("beforeunload", avant);
     return () => window.removeEventListener("beforeunload", avant);
-  }, [modifie]);
+  }, [toutModifie]);
 
   const changer = (cle: string, maj: (f: FicheCapsule) => FicheCapsule) => {
     modifiees.current.add(cle);
@@ -215,10 +338,9 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
     setModifie(true);
   };
 
-  const enregistrerTout = async () => {
-    if (!charge || !fiches) return;
-    setEnCours(true);
-    setMessage({ texte: "Enregistrement et publication…", erreur: false });
+  /** Capsules modifiées : création / mise à jour / retrait dans Prismic, puis publication. */
+  const enregistrerCapsules = async (): Promise<Resultat> => {
+    if (!fiches) return { texte: "Capsules non chargées : rien d'enregistré.", erreur: true };
     try {
       const r = await fetch("/api/capsules", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -235,27 +357,107 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
       }
       if (!r.ok || j.erreur || erreurs.length) {
         const detail = [j.erreur, ...erreurs.map((e) => `${e.cle} : ${e.message}`)].filter(Boolean).join(" · ");
-        setMessage({ texte: detail || `Enregistrement refusé (HTTP ${r.status})`, erreur: true });
         if (!Array.isArray(j.fiches)) { setCharge(false); setErreurLecture("Enregistrement incertain : recharger la page avant de continuer."); }
-        return;
+        return { texte: `Capsules : ${detail || `enregistrement refusé (HTTP ${r.status})`}`, erreur: true };
       }
       if (!Array.isArray(j.fiches)) {
         // Enregistré sans nouvelle liste : re-sauver dupliquerait les nouvelles fiches
         setCharge(false);
         setErreurLecture("Enregistrement incertain : recharger la page avant de continuer.");
-        setMessage({ texte: "Enregistrement incertain : recharger la page avant de continuer.", erreur: true });
-        return;
+        return { texte: "Capsules : enregistrement incertain, recharger la page avant de continuer.", erreur: true };
       }
       setSupprimees([]);
       modifiees.current.clear();
       setModifie(false);
       setSel(null);
-      setMessage({ texte: j.publie ? "Enregistré et publié : en ligne d'ici une minute." : "Enregistré mais pas publié : publier la release dans Prismic.", erreur: !j.publie });
+      return j.publie
+        ? { texte: "Capsules enregistrées et publiées : en ligne d'ici une minute.", erreur: false }
+        : { texte: "Capsules enregistrées mais pas publiées : publier la release dans Prismic.", erreur: true };
     } catch (e) {
-      setMessage({ texte: `Enregistrement impossible : ${e instanceof Error ? e.message : String(e)}`, erreur: true });
+      return { texte: `Capsules : enregistrement impossible (${e instanceof Error ? e.message : String(e)})`, erreur: true };
+    }
+  };
+
+  /** Noms de scènes changés : seul le champ `title` des docs `scene` FR / EN est réécrit, puis publication. */
+  const enregistrerNoms = async (): Promise<Resultat> => {
+    const envoi = Object.entries(nomsEdits).map(([krpano, e]) => ({ krpano, ...e }));
+    try {
+      const r = await fetch("/api/capsules/scenes", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ scenes: envoi }),
+      });
+      let j: { erreurs?: { cle: string; message: string }[]; publie?: boolean; scenes?: NomScene[] | null };
+      try { j = await r.json(); } catch { throw new Error(`réponse illisible (HTTP ${r.status})`); }
+      if (Array.isArray(j.scenes)) {
+        const recues = j.scenes;
+        setNoms(recues);
+        // Ne garder en attente que les noms encore différents de la valeur stockée (échecs)
+        setNomsEdits((e) => {
+          const n: typeof e = {};
+          for (const [k, v] of Object.entries(e)) {
+            const s = recues.find((x) => x.krpano === k);
+            const reste = Object.fromEntries(Object.entries(v).filter(([l, t]) => s?.[l as Langue]?.titre !== t));
+            if (Object.keys(reste).length) n[k] = reste;
+          }
+          return n;
+        });
+      }
+      const erreurs = j.erreurs ?? [];
+      if (!r.ok || erreurs.length || !j.publie) {
+        const detail = erreurs.map((e) => `${e.cle} : ${e.message}`).join(" · ");
+        return { texte: `Noms : ${detail || `enregistrement refusé (HTTP ${r.status})`}`, erreur: true };
+      }
+      return { texte: "Noms enregistrés et publiés : en ligne d'ici une minute.", erreur: false };
+    } catch (e) {
+      return { texte: `Noms : enregistrement impossible (${e instanceof Error ? e.message : String(e)})`, erreur: true };
+    }
+  };
+
+  /** Redressages : attribut prealign des scènes réglées écrit dans public/vtour/tour.xml (à committer). */
+  const enregistrerPrealign = async (): Promise<Resultat> => {
+    const envoi = prealignEdits;
+    try {
+      const r = await fetch("/api/capsules/prealign", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prealign: envoi }),
+      });
+      let j: { prealign?: Record<string, string>; erreur?: string };
+      try { j = await r.json(); } catch { throw new Error(`réponse illisible (HTTP ${r.status})`); }
+      if (!r.ok || !j.prealign) return { texte: `Redressage : ${j.erreur ?? `refusé (HTTP ${r.status})`}`, erreur: true };
+      setPrealignDisque(j.prealign);
+      setPrealignEdits({});
+      return { texte: `Redressage écrit dans tour.xml (${Object.keys(envoi).length} scène${Object.keys(envoi).length > 1 ? "s" : ""}) : à committer pour la mise en ligne.`, erreur: false };
+    } catch (e) {
+      return { texte: `Redressage : enregistrement impossible (${e instanceof Error ? e.message : String(e)})`, erreur: true };
+    }
+  };
+
+  /** Un seul Enregistrer : capsules, noms et redressages modifiés, chacun seulement s'il a changé. */
+  const enregistrerTout = async () => {
+    if (enCours || !toutModifie) return;
+    if (Object.values(nomsEdits).some((e) => Object.values(e).some((t) => !t?.trim()))) {
+      setMessage({ texte: "Un nom de scène est vide : le remplir avant d'enregistrer.", erreur: true });
+      return;
+    }
+    setEnCours(true);
+    setMessage({ texte: "Enregistrement et publication…", erreur: false });
+    const resultats: Resultat[] = [];
+    try {
+      if (modifie && charge) resultats.push(await enregistrerCapsules());
+      if (nomsModifies) resultats.push(await enregistrerNoms());
+      if (prealignModifie) resultats.push(await enregistrerPrealign());
     } finally {
       setEnCours(false);
+      setMessage(resultats.length ? { texte: resultats.map((r) => r.texte).join(" "), erreur: resultats.some((r) => r.erreur) } : null);
     }
+  };
+
+  /** Annuler : relecture des capsules et des noms, scènes remises au prealign du tour.xml. */
+  const annulerTout = () => {
+    if (!window.confirm("Annuler les modifications non enregistrées ?")) return;
+    setMessage(null);
+    if (modifie) charger();
+    if (nomsModifies) chargerScenes();
+    for (const sc of Object.keys(prealignEdits)) appliquerPrealign(sc, prealignEnregistre(sc));
+    setPrealignEdits({});
   };
 
   const deposerAudio = async (file: File) => {
@@ -334,9 +536,53 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
       <aside className="cped">
         <header>
           <h2>Capsules « + » — {titreScene}</h2>
-          <small>{placement ? "Glisse chaque + à sa place, clique-le pour voir et modifier son contenu, change de scène avec la visite, puis Enregistrer une seule fois." : "Glisse un + dans la visite pour le déplacer."} {modifie ? "Modifications non enregistrées." : ""}</small>
+          <small>{placement ? "Glisse chaque + à sa place, clique-le pour voir et modifier son contenu, change de scène avec la visite, puis Enregistrer une seule fois." : "Glisse un + dans la visite pour le déplacer."} {toutModifie ? "Modifications non enregistrées." : ""}</small>
         </header>
         <div className="corps">
+          <details className="bloc" open={!placement}>
+            <summary>Nom de la scène</summary>
+            {!noms && <div className="vide">{erreurNoms ?? "Chargement des noms…"}</div>}
+            {noms && !nomScene && <div className="vide">Cette scène n&apos;a pas de document dans Prismic : rien à renommer ici.</div>}
+            {noms && nomScene && (["fr", "en"] as Langue[]).map((l) => (
+              <div key={l}>
+                <label htmlFor={`cped-nom-${l}`}>{l === "fr" ? "Français" : "Anglais"}</label>
+                {nomScene[l] ? (
+                  <input id={`cped-nom-${l}`} type="text" disabled={enCours} value={nomsEdits[scene]?.[l] ?? nomScene[l]?.titre ?? ""} onChange={(e) => majNom(l, e.target.value)} />
+                ) : (
+                  <div className="vide">Pas de document EN pour cette scène dans Prismic : le créer avant de pouvoir la nommer en anglais.</div>
+                )}
+              </div>
+            ))}
+            {nomsModifies && <small className="note">Noms modifiés : {Object.keys(nomsEdits).length} scène{Object.keys(nomsEdits).length > 1 ? "s" : ""} (envoyés à l&apos;enregistrement).</small>}
+          </details>
+
+          <details className="bloc">
+            <summary>Redresser la scène</summary>
+            {!prealignDisque && <div className="vide">tour.xml non lu : redressage indisponible.</div>}
+            {prealignDisque && (
+              <>
+                {AXES.map(({ cle, label }) => (
+                  <div key={cle}>
+                    <div className="curseur"><span>{label}</span><span>{reglage[cle]}°</span></div>
+                    <input
+                      type="range" aria-label={label} disabled={enCours}
+                      min={BORNES[cle][0]} max={BORNES[cle][1]} step={0.5} value={reglage[cle]}
+                      onChange={(e) => reglerPrealign({ ...reglage, [cle]: parseFloat(e.target.value) })}
+                    />
+                  </div>
+                ))}
+                <button className="act" disabled={enCours} onClick={() => reglerPrealign(ZERO)} style={{ marginTop: 8 }}>Remettre à zéro</button>
+                <small className="note">
+                  Enregistré : {prealignDisque[scene] ?? "aucun"}{prealignEdits[scene] ? ` · en cours : ${formatPrealign(prealignEdits[scene])}` : ""}.
+                  {" "}Axe puis inclinaison pour niveler, roulis pour finir. Écrit dans tour.xml à l&apos;enregistrement (à committer).
+                </small>
+                {Object.keys(prealignEdits).filter((sc) => sc !== scene).length > 0 && (
+                  <small className="note">Réglages non enregistrés aussi sur : {Object.keys(prealignEdits).filter((sc) => sc !== scene).join(", ")}.</small>
+                )}
+              </>
+            )}
+          </details>
+
           <div className="liste">
             {!charge && <div className="vide">{erreurLecture ?? "Chargement des capsules…"}</div>}
             {charge && ficheScene.map((f) => (
@@ -382,7 +628,7 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
               <input id="cped-titre" type="text" disabled={enCours} value={t.titre} onChange={(e) => majTexte("titre", e.target.value)} />
               {ficheSel.contenuScene && (
                 <>
-                  <label>Contenu de la scène (modifiable dans l'espace client)</label>
+                  <label>Contenu de la scène (modifiable dans l&apos;espace client)</label>
                   <Apercu texte={contenuDeLaScene[langue].texte} audio={contenuDeLaScene[langue].audio} video={contenuDeLaScene[langue].video} />
                   <small>Pour le modifier dans ce + (retirer le son, changer la vidéo…), décocher « Contenu de la scène » : il est alors recopié ici.</small>
                 </>
@@ -428,8 +674,8 @@ export function CapsulesEditor({ getKrpano, scene, titreScene, contenuDeLaScene,
           )}
         </div>
         <footer>
-          <button className="act plein" disabled={!charge || enCours || !modifie} onClick={enregistrerTout}>{enCours ? "En cours…" : "Enregistrer"}</button>
-          <button className="act" disabled={!charge || enCours || !modifie} onClick={() => { if (window.confirm("Annuler les modifications non enregistrées ?")) { setMessage(null); charger(); } }}>Annuler</button>
+          <button className="act plein" disabled={enCours || !toutModifie} onClick={enregistrerTout}>{enCours ? "En cours…" : "Enregistrer"}</button>
+          <button className="act" disabled={enCours || !toutModifie} onClick={annulerTout}>Annuler</button>
           {message && <div role="status" aria-live="polite" className={`msg${message.erreur ? " err" : ""}`}>{message.texte}</div>}
         </footer>
       </aside>
