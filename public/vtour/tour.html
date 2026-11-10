@@ -118,6 +118,8 @@
     </script>
     <script>
         window.addEventListener("message", function(e) {
+            if (e.origin !== location.origin) return; // seule la page de la visite (même origine) pilote KRpano
+            if (e.data && e.data.scene != null && !(typeof e.data.scene === "string" && /^[A-Za-z0-9_-]+$/.test(e.data.scene))) return;
             if (e.data && e.data.action === "loadscene") {
                 // Le pont partagé bridge.js (chargé plus bas) traite aussi « loadscene » :
                 // on garde la transition du site et on lui coupe ce message pour ne pas
